@@ -18,5 +18,5 @@ gitploy ls 2>&1 | grep -qi "serverbase" || eval $git_cmd
 
 cd /srv/builder
 npm install
-grunt server_build
+grunt build_server
 
