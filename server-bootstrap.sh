@@ -5,7 +5,7 @@ curl  https://raw.githubusercontent.com/jeremyBass/gitploy/master/gitploy | sudo
 yum install -y epel-release
 yum install -y nodejs
 yum install -y npm
-
+npm install -g grunt-cli
 
 $build_folder="/srv/builder"
 
