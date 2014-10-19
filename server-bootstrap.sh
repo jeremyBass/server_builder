@@ -20,5 +20,6 @@ gitploy init 2>&1 | grep -qi "already initialized" && echo ""
 gitploy ls 2>&1 | grep -qi "serverbase" || eval $git_cmd
 
 cd "${build_folder}"
+npm install
 grunt server_build
 
