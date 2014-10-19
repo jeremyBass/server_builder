@@ -1,0 +1,16 @@
+{
+	"name": "server_builder",
+	"version": "0.1.0",
+	"latest_stable": "1",
+	"build_version": "develop",
+	"build_location": "",
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/jeremyBass/server_builder.git"
+	},
+	"devDependencies": {
+		"load-grunt-tasks": "~0.6.0",
+		"glob": "~4.0.6",
+		"grunt": "~0.4.2"
+	}
+}

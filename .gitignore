@@ -1,0 +1,25 @@
+# Because OSX
+.DS_Store
+
+
+
+
+# Ignore Web files pulled into the mapped www directory.
+/app/*
+!app/.gitshow
+
+# Ignore Sublime project files.
+*.sublime*
+
+# Ignore PHPStorm project files.
+/.idea
+
+# Ignore Vagrant's runtime files.
+/.vagrant
+
+# Ignore all minions but the template.
+#provision/salt/minions/*.conf
+!provision/salt/minions/_template.conf
+log.txt
+config.json
+log.txt
