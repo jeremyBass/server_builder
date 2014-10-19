@@ -8,7 +8,7 @@ yum install -y nodejs
 yum install -y npm
 npm install -g grunt-cli
 
-[ -d "/srv/builder" ] || mkdir -p "/srv/builder"
+[ -d /srv/builder ] || mkdir -p /srv/builder
 
 
 git_cmd="gitploy add -p /srv/builder serverbase https://github.com/jeremyBass/server_builder.git"
