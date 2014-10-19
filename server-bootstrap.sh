@@ -8,7 +8,7 @@ yum install -y nodejs
 yum install -y npm
 npm install -g grunt-cli
 
-build_folder="/srv/builder"
+build_folder='/srv/builder'
 
 
 [ -d "${build_folder}" ] || mkdir -p "${build_folder}"
