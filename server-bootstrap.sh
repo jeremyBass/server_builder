@@ -16,11 +16,10 @@ $build_folder="/srv/builder"
 
 git_cmd="gitploy add -p /srv/builder serverbase https://github.com/jeremyBass/server_builder.git"
 
-
 gitploy init 2>&1 | grep -qi "already initialized" && echo ""
 gitploy ls 2>&1 | grep -qi "serverbase" || eval $git_cmd
 
-cd "${build_folder}"
+cd $build_folder
 npm install
 grunt server_build
 
