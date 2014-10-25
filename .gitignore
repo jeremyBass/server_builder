@@ -17,6 +17,8 @@
 # Ignore Vagrant's runtime files.
 /.vagrant
 
+node_modules
+
 # Ignore all minions but the template.
 #provision/salt/minions/*.conf
 !provision/salt/minions/_template.conf
