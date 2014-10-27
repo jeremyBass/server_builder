@@ -1,7 +1,7 @@
 if !@destroying
 
-	tempfilename = "#{@vagrant_dir}/provision/salt/minions/_template.conf"
-	filename = "#{@vagrant_dir}/provision/salt/minions/#{@server_obj[:minion]}_#{@server_obj[:hostname]}.conf"
+	tempfilename = "#{@vagrant_dir}/tasks/jigs/salt/minions/_template.conf"
+	filename = "#{@vagrant_dir}/tasks/jigs/salt/minions/#{@server_obj[:minion]}_#{@server_obj[:hostname]}.conf"
 	text = File.read(tempfilename)
 
 	$PILLARFILE=   "#PILLAR_ROOT-\n"
