@@ -18,6 +18,8 @@
 /.vagrant
 
 node_modules
+includes
+Vagrantfile
 
 # Ignore all minions but the template.
 #provision/salt/minions/*.conf
@@ -25,3 +27,4 @@ node_modules
 log.txt
 config.json
 log.txt
+server_project.conf
