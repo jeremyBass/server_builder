@@ -91,9 +91,15 @@ module.exports = function(grunt) {
 		var sourceDir = 'tasks/jigs/vagrant/includes';
 		var targetDir = '.vagrant/includes';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir);
-		
+		fs.mkdir("server", 0777, true, function (err) {
+			if (err) {
+				grunt.log.writeln("failed to make folder .vagrant");
+			} else {
+				grunt.log.writeln("made folder .vagrant");
+			}
+		});
 		var sourceDir = 'tasks/jigs/salt';
-		var targetDir = 'salt';
+		var targetDir = 'server/salt';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir);
 		
 		
