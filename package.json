@@ -11,6 +11,7 @@
 	"devDependencies": {
 		"load-grunt-tasks": "~0.6.0",
 		"glob": "~4.0.6",
+		"extend":"~2.0.0",
 		"grunt": "~0.4.2",
 		"wrench":"~1.5.8",
 		"nunjucks":"~1.1.0"
