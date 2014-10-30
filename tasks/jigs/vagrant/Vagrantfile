@@ -43,7 +43,7 @@
 # Start Vagrant
 ################################################################   
 Vagrant.configure("2") do |config|
-	load 'includes/vagrant_env.rb'
+	load '.vagrant/includes/vagrant_env.rb'
 
 		#for dev
 		owner="washingtonstateuniversity"
@@ -58,11 +58,11 @@ Vagrant.configure("2") do |config|
 			# Box choice
 			################################################################
 				{% if vagrant.hostname -%}
-					config.vm.box     = "{{ vagrant.box }}"
-					config.vm.box_url = "{{ vagrant.box_url }}"
+					vmConfig.vm.box     = "{{ vagrant.box }}"
+					vmConfig.vm.box_url = "{{ vagrant.box_url }}"
 				{% else -%}
-					config.vm.box     = "centos-64-x64-puppetlabs"
-					config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box"
+					vmConfig.vm.box     = "centos-64-x64-puppetlabs"
+					vmConfig.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box"
 				{% endif -%}
 
 
@@ -125,13 +125,7 @@ Vagrant.configure("2") do |config|
 
 				# Provisioning: Salt 
 				################################################################
-					bootstrap_path="{{ vagrant.owner }}/WSU-Web-Serverbase/{{ vagrant.branch }}"
-					$provision_script=""
-					$provision_script<<"curl -L https://raw.githubusercontent.com/#{bootstrap_path}/server-bootstrap.sh | sudo sh -s -- "
-					vmConfig.vm.synced_folder "tasks/jigs/salt/minions", "/srv/salt/base/minions"
-					$provision_script<<" -m {{ vagrant.minion }}_{{ vagrant.hostname }} "
-
-					vmConfig.vm.provision :shell, :inline => "cp /vagrant/config.json /srv/salt/base/config.json"
+					vmConfig.vm.provision :shell, :inline => "cp /vagrant/server_project.conf /srv/salt/server_project.conf"
 
 				# Set up the web apps
 				################################################################  
@@ -145,12 +139,8 @@ Vagrant.configure("2") do |config|
 							vmConfig.vm.synced_folder "{{ fobj.from }}", "{{ fobj.dest }}", :mount_options => [ "{{ fobj.user }}", "{{ fobj.dmode }}", "{{ fobj.fmode }}" ]
 						{% endfor -%}
 
-						{% for appname,app in apps -%}
-							$provision_script<<" -a {{ appname }}:{{ app.repoid }} "
-						{% endfor -%}
-
-						$provision_script<<" -b {{ vagrant.owner }} -o {{ vagrant.branch }} \n"
-					
+						vmConfig.vm.provision "shell", path: "server-bootstrap.sh"
+							
 					if !@destroying
 						$running="echo \"about to run running: #{$provision_script} \" \n"
 						vmConfig.vm.provision "shell", inline: "#{$running}#{$provision_script}"

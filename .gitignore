@@ -20,6 +20,7 @@
 node_modules
 includes
 Vagrantfile
+salt
 
 # Ignore all minions but the template.
 #provision/salt/minions/*.conf

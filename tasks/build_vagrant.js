@@ -81,10 +81,21 @@ module.exports = function(grunt) {
 		fs.writeFile(targetFile, res, function(err){
 			grunt.log.writeln("wrote to file");
 		});
-		
+		fs.mkdir(".vagrant", 0777, true, function (err) {
+			if (err) {
+				grunt.log.writeln("failed to make folder .vagrant");
+			} else {
+				grunt.log.writeln("made folder .vagrant");
+			}
+		});
 		var sourceDir = 'tasks/jigs/vagrant/includes';
-		var targetDir = 'includes';
+		var targetDir = '.vagrant/includes';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir);
+		
+		var sourceDir = 'tasks/jigs/salt';
+		var targetDir = 'salt';
+		wrench.copyDirSyncRecursive(sourceDir,targetDir);
+		
 		
 		//fs.createReadStream(sourceFile).pipe(fs.createWriteStream(targetFile));
 		/*
