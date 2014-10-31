@@ -77,3 +77,106 @@ To be clear the the data is compiled in this manner.
 ***[ remote + vagrant ] + [ app/remote + app/vagrant ] = [ final data object ]***
 
 This also allows us to let an app load a new environment to the server object with out any need to alter the provisioning.  An example of that will be below.
+
+
+### Sample usage
+
+```json
+
+{
+	"servers":{
+		"server2": {
+			"remote": {
+				"ip": "10.255.255.3",
+				"salt":{
+					"env": [
+						"serverbase",
+						"database",
+						"security",
+						"web",
+						"webcaching"
+					],
+					pillars:{
+						mysql:{}
+					}
+				}
+			},
+			"vagrant": {
+				"hostname": "web_app_block",
+				"memory": "6144",
+				"vram": "8",
+				"cores": "2",
+				"host_64bit": "false",
+				"minion": "vagrant",
+				"verbose_output": "true",
+				"shared_folders": {
+					"/var/app": {
+						"dest": "/var/app",
+						"from": "server/app",
+						"user": "uid=510,gid=510",
+						"dmode": "dmode=775",
+						"fmode": "fmode=774"
+					}
+				},
+				"salt":{
+					"env": [
+						"-webcaching"
+					],
+					pillars:{
+						mysql:{}
+					}
+				}
+			},
+			"apps": {
+				"store.wsu.edu": {
+					"repo": "-b master https://github.com/washingtonstateuniversity/WSUMAGE-base.git",
+					"repoid": "jeremyBass/WSUMAGE-base",
+					"install_dir":"stores",
+					"remote": {
+						"database_host": "10.255.255.3",
+						"sample_date": "false",
+						"hosts": [
+							"store.mage.dev"
+						],
+						"salt":{
+							"env": [
+								"serverbase",
+								"database",
+								"security",
+								"web",
+								"webcaching"
+							],
+							pillars:{
+								mysql:{}
+							}
+						}
+					},
+					"vagrant": {
+						"database_host": "2",
+						"sample_data": "true",
+						"hosts": [
+							"store.mage.dev",
+							"events.store.mage.dev",
+							"student.store.mage.dev",
+							"general.store.mage.dev",
+							"store.admin.mage.dev",
+							"tech.store.mage.dev"
+						],
+						"salt":{
+							"env": [
+								"magento"
+								"-webcaching"
+							],
+							pillars:{
+								mysql:{},
+								magento:{}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+```
