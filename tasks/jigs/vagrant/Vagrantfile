@@ -53,7 +53,8 @@ Vagrant.configure("2") do |config|
 		{% for name,server in servers -%}
 			{% set vagrant = server.vagrant -%}
 			{% set apps = server.apps -%}
-			config.vm.define "{{ vagrant.hostname }}" do |vmConfig|
+			{% set hostname = vagrant.hostname | replace("-", "") | replace("_", "") -%}
+			config.vm.define "{{ hostname }}" do |vmConfig|
 
 			# Box choice
 			################################################################
@@ -82,8 +83,8 @@ Vagrant.configure("2") do |config|
 				################################################################ 
 					vmConfig.vm.provider :virtualbox do |v|
 						v.gui = {{ vagrant.gui }}
-						{% if vagrant.hostname -%}
-							v.name = "{{ vagrant.hostname }}"
+						{% if hostname -%}
+							v.name = "{{ hostname }}"
 						{% endif -%}
 							v.memory = {{ vagrant.memory }}
 						{% if vagrant.vram>8 -%}
@@ -99,8 +100,8 @@ Vagrant.configure("2") do |config|
 
 				# Set networking options
 				################################################################   
-					{% if vagrant.hostname -%}
-						vmConfig.vm.hostname = '{{ vagrant.hostname | replace("_", "-") }}'
+					{% if hostname -%}
+						vmConfig.vm.hostname = '{{ hostname }}'
 					{% endif -%}
 					vmConfig.vm.network :private_network, ip: "{{ vagrant.ip }}"
 
@@ -125,7 +126,7 @@ Vagrant.configure("2") do |config|
 
 				# Provisioning: Salt 
 				################################################################
-					vmConfig.vm.provision :shell, :inline => "cp /vagrant/server_project.conf /srv/builder/server_project.conf"
+					vmConfig.vm.provision :shell, :inline => "echo 'export SERVER_TYPE=\"VAGRANT\"' >> /etc/profile"
 
 				# Set up the web apps
 				################################################################  

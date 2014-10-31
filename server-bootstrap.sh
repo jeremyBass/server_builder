@@ -1,5 +1,9 @@
 #!/bin/bash
-
+echo "Server type is: ${SERVER_TYPE}"
+if [ $SERVER_TYPE = "VAGRANT" ]; then
+	mkdir -p /srv/builder
+	cp /vagrant/server_project.conf /srv/builder/server_project.conf
+fi
 cd /
 curl  https://raw.githubusercontent.com/jeremyBass/gitploy/master/gitploy | sudo sh -s -- install
 [ -h /usr/sbin/gitploy ] || echoerr "gitploy failed install"
