@@ -69,10 +69,15 @@ Vagrant.configure("2") do |config|
 
 				if !@destroying 
 					{% for appname,app in apps -%}
-					if !File.exist?("server/app/{{ appname }}")
+					{% if vagrant.hostname -%}
+						{% set install_dir = app.install_dir -%}
+					{% else -%}
+						{% set install_dir = appname -%}
+					{% endif -%}
+					if !File.exist?("server/app/{{ install_dir }}")
 						puts "cloning repo that was missing"
-						puts "git clone {{ app.repo }} server/app/{{ appname }}"
-						puts `git clone --depth=1 {{ app.repo }} server/app/{{ appname }}`
+						puts "git clone {{ app.repo }} server/app/{{ install_dir }}"
+						puts `git clone --depth=1 {{ app.repo }} server/app/{{ install_dir }}`
 					end
 					{% endfor -%}
 				end
