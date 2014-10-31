@@ -128,6 +128,7 @@ Vagrant.configure("2") do |config|
 
 				# Provisioning: Salt based
 				################################################################
+					# we are marking the server that it's a vagrant control server for dev usage
 					vmConfig.vm.provision :shell, :inline => "echo 'export SERVER_TYPE=\"VAGRANT\"' >> /etc/profile"
 						# Set file mounts
 						################################################################           
