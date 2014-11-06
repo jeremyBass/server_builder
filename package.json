@@ -11,7 +11,7 @@
 	"devDependencies": {
 		"load-grunt-tasks": "~0.6.0",
 		"glob": "~4.0.6",
-		"tv4 ":"~1.1.4 ",
+		"deepmerge ":"~0.2.7",
 		"extend":"~2.0.0",
 		"ping-wrapper":"~0.0.2",
 		"grunt": "~0.4.2",

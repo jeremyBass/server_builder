@@ -1,5 +1,9 @@
+/* 
+ * Location: within the server itself
+ * State: bare
+*/
 module.exports = function(grunt) {
-	grunt.registerTask('build_vagrant', 'Setting up Vagrant and then building the server', function() {
+	grunt.registerTask('build_salt', 'Setting up the salt provisioner', function() {
 		function cmd_exec(cmd, args, cb_stdout, cb_end) {
 			var spawn = require('child_process').spawn,
 				child = spawn(cmd, args),
@@ -14,6 +18,7 @@ module.exports = function(grunt) {
 		var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util');
+		var merge = require('deepmerge')
 		var ip,_ip="10.255.255.2";
 		/*come back to this.
 		function ip_inuse(_ip){
@@ -36,21 +41,24 @@ module.exports = function(grunt) {
 				break;
 			}
 		}*/
+
+		/* start by moving base file over to the area needed */
+		if (!fs.existsSync("server")) {
+			fs.mkdir("server", 0777, true, function (err) {
+				if (err) {
+					grunt.log.writeln("failed to make folder server");
+				} else {
+					grunt.log.writeln("made folder server");
+				}
+			});
+		}
+		var sourceDir = 'tasks/jigs/salt';
+		var targetDir = 'server/salt';
+		wrench.copyDirSyncRecursive(sourceDir,targetDir);
+		grunt.log.writeln("building the salt minions");
 		
-		
-		var default_vagrant = {
-			"ip": ip,
-			"branch": "master",
-			"owner": "washingtonstateuniversity",
-			"box": "centos-64-x64-puppetlabs",
-			"box_url": "http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box",
-			"hostname": "general_server",
-			"memory": "1024",
-			"vram": "8",
-			"cores": "1",
-			"host_64bit": "false",
-			"verbose_output": "true",
-			"gui":"false"
+		var default_salt = {
+			
 		};
 		serverobj = grunt.file.readJSON('server_project.conf');
 		var servers = serverobj.servers;
@@ -58,74 +66,64 @@ module.exports = function(grunt) {
 		//the vagrant needs some defaults, and so it's vagrant default then remote then 
 		//vagrant opptions
 		for (var key in servers) {
-			grunt.log.writeln("found server "+key);
+			grunt.log.writeln("found server salt "+key);
 			var server = servers[key];
-			server.vagrant = extend(default_vagrant,server.remote,server.vagrant||{});
-			grunt.log.writeln("extenting server "+key);
-			servers[key]=server;
-		}
-		serverobj.servers = servers;
-
-
-		var sourceFile = 'tasks/jigs/vagrant/Vagrantfile';
-		var tmpFile = 'tasks/jigs/vagrant/Vagrantfile.tmp';
-		var targetFile = 'Vagrantfile';
-		var content = fs.readFileSync(sourceFile,'utf8')
-
-		grunt.log.writeln("read file");
-		grunt.log.writeln("renderString of file");
-		var tmpl = new nunjucks.Template(content);
-		grunt.log.writeln("compile");
-		var res = tmpl.render(serverobj);
-		grunt.log.writeln("renderd");
-		fs.writeFile(targetFile, res, function(err){
-			grunt.log.writeln("wrote to file");
-		});
-		if (!fs.existsSync(".vagrant")) {
-			fs.mkdir(".vagrant", 0777, true, function (err) {
-				if (err) {
-					grunt.log.writeln("failed to make folder .vagrant");
-				} else {
-					grunt.log.writeln("made folder .vagrant");
+			server.salt={};
+			
+			var remote_env = typeof(server.remote.salt)!=="undefined"?server.remote.salt.env:[];
+			var vagrant_env = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.env:[];
+			var app_env = [];
+			for (var app_key in server.apps) {
+				var app = server.apps[app_key];
+				if(typeof(app["salt"])!=="undefined"){
+					if(typeof(app["salt"]["env"])!=="undefined"){
+						app_env = merge(app_env,app.salt.env);
+					}
 				}
-			});
-		}
-
-		var sourceDir = 'tasks/jigs/vagrant/includes';
-		var targetDir = '.vagrant/includes';
-		wrench.copyDirSyncRecursive(sourceDir,targetDir);
-		if (!fs.existsSync("server")) {
-			fs.mkdir("server", 0777, true, function (err) {
-				if (err) {
-					grunt.log.writeln("failed to make folder .vagrant");
-				} else {
-					grunt.log.writeln("made folder .vagrant");
-				}
-			});
-		}
-		var sourceDir = 'tasks/jigs/salt';
-		var targetDir = 'server/salt';
-		wrench.copyDirSyncRecursive(sourceDir,targetDir);
-		
-		
-		//fs.createReadStream(sourceFile).pipe(fs.createWriteStream(targetFile));
-		/*
-		var t;
-		var foo = new cmd_exec('vagrant', ['up'], 
-			function (me, data) {me.stdout = data.toString();},
-			function (me) {me.exit = 1;t=null;}
-		);
-		var lastout;
-		function stdoutStream(){
-			var out = foo.stdout;
-			if(lastout!=out){
-				lastout=out;
-				grunt.log.writeln(out);
 			}
-			t=setTimeout(stdoutStream,250);
+
+			server.salt = extend(default_salt,server.remote.salt,server.vagrant.salt||{});
+
+			var env = merge(merge(remote_env, vagrant_env),app_env);
+			var _env = [];
+			env.forEach(function(entry) {
+				//grunt.log.writeln("looking at env "+entry);
+				if(entry.indexOf('-') == 0){
+					var _entry = entry.substring(1);
+					//grunt.log.writeln("checking for "+_entry);
+					var exc = _env.indexOf(_entry);
+					//grunt.log.writeln(_entry+" has index at "+exc);
+					if( exc > -1){
+						_env.splice(exc, 1);
+					}
+				}else{
+					if(_env.indexOf(entry) == -1){
+						_env.push(entry);
+					}
+				}
+			});
+			server.salt.env=_env;
+			/*_env.forEach(function(entry) {
+				grunt.log.writeln("env has "+entry);
+			});*/
+			grunt.log.writeln("extenting server salt for "+key);
+			grunt.log.writeln("minion "+server.salt.minion);
+			var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
+			var targetFile = 'tasks/jigs/salt/minions/'+ server.salt.minion +'.conf';
+			var content = fs.readFileSync(sourceFile,'utf8')
+
+			grunt.log.writeln("read file");
+			grunt.log.writeln("renderString of file");
+			var tmpl = new nunjucks.Template(content);
+			grunt.log.writeln("compile");
+			var res = tmpl.render(server);
+			grunt.log.writeln("renderd");
+			fs.writeFile(targetFile, res, function(err){
+				grunt.log.writeln("wrote to file");
+			});
+
 		}
-		stdoutStream();*/
-		
+
 		grunt.task.current.async();
 	});
 };
