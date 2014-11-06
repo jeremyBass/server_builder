@@ -17,7 +17,15 @@ module.exports = function(grunt) {
 			util = require('util');
 		
 		grunt.task.run(['build_salt']);
-		
+		if (!fs.existsSync("/srv/salt")) {
+			fs.mkdir("/srv/salt", 0777, true, function (err) {
+				if (err) {
+					grunt.log.writeln("failed to make folder server");
+				} else {
+					grunt.log.writeln("made folder server");
+				}
+			});
+		}
 		var sourceDir = 'server/salt';
 		var targetDir = '/srv/salt';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir);
