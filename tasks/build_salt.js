@@ -19,28 +19,6 @@ module.exports = function(grunt) {
 		var wrench = require('wrench'),
 			util = require('util');
 		var merge = require('deepmerge')
-		var ip,_ip="10.255.255.2";
-		/*come back to this.
-		function ip_inuse(_ip){
-			var Ping = require('ping-wrapper');
-			Ping.configure();
-
-			var pings=false;
-			var ping = new Ping('127.0.0.1');
-			ping.on('ping', function(data){pings=true});
-
-			return pings;
-		}
-		
-		for(var i=2,n=255;i<n;i+=1) {
-			 _ip="10.255.255."+i;
-			if(ip_inuse(_ip)){
-				continue;
-			}else{
-				ip=_ip;
-				break;
-			}
-		}*/
 
 		/* start by moving base file over to the area needed */
 		if (!fs.existsSync("server")) {

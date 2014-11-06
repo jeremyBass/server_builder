@@ -53,9 +53,12 @@ Vagrant.configure("2") do |config|
 
 			# Box choice
 			################################################################
-				{% if vagrant.hostname -%}
+				vmConfig.vm.box_download_insecure = true
+				{% if vagrant.box -%}
 					vmConfig.vm.box     = "{{ vagrant.box }}"
-					vmConfig.vm.box_url = "{{ vagrant.box_url }}"
+					{% if vagrant.box_url -%}
+						vmConfig.vm.box_url = "{{ vagrant.box_url }}"
+					{% endif -%}
 				{% else -%}
 					vmConfig.vm.box     = "centos-64-x64-puppetlabs"
 					vmConfig.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box"
