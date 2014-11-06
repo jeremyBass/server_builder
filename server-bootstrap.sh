@@ -24,7 +24,6 @@ cd /srv/builder
 npm install
 grunt build_server
 
-
 sh /srv/salt/bootstrap_salt.sh -K stable
 rm /etc/salt/minion.d/*.conf
 cp /srv/salt/minions/server.conf /etc/salt/minion.d/
