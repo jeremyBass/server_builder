@@ -26,7 +26,7 @@ module.exports = function(grunt) {
 				}
 			});
 		}
-		var sourceDir = 'server/salt';
+		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = '/srv/salt';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir);
 		grunt.log.writeln(sourceDir+" >> "+targetDir);
