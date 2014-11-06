@@ -22,6 +22,7 @@ gitploy ls 2>&1 | grep -qi "serverbase" || eval $git_cmd
 
 cd /srv/builder
 npm install
+grunt build_salt
 grunt build_server
 
 sh /srv/salt/bootstrap_salt.sh -K stable

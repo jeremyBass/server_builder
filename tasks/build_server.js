@@ -15,8 +15,7 @@ module.exports = function(grunt) {
 		var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util');
-		
-		grunt.task.run(['build_salt']);
+
 		if (!fs.existsSync("/srv/salt")) {
 			fs.mkdir("/srv/salt", 0777, true, function (err) {
 				if (err) {
