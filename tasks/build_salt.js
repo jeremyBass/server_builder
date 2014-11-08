@@ -41,7 +41,9 @@ module.exports = function(grunt) {
 		}
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = 'server/salt';
-		wrench.copyDirSyncRecursive(sourceDir,targetDir);
+		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
+			forceDelete: true
+		});
 		grunt.log.writeln("building the salt minions");
 		
 		var default_salt = {
