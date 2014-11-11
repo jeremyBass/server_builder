@@ -3,7 +3,7 @@
 {%- set nginx_version = pillar['nginx']['version'] -%} 
 {% set vars = {'isLocal': False} %}
 {% if vars.update({'ip': salt['cmd.run']('ifconfig eth1 | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
-{% if vars.update({'isLocal': salt['cmd.run']('echo $SERVER_TYPE') }) %} {% endif %}
+{% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
 {% set cpu_count = salt['grains.get']('num_cpus', '') %}
 
 

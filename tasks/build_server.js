@@ -26,7 +26,7 @@ module.exports = function(grunt) {
 			});
 		}
 		var sourceDir = 'tasks/jigs/salt';
-		var targetDir = '../srv/salt';
+		var targetDir = '/srv/salt';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		});
