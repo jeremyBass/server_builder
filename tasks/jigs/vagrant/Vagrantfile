@@ -132,7 +132,7 @@ Vagrant.configure("2") do |config|
 				# Provisioning: Salt based
 				################################################################
 					# we are marking the server that it's a vagrant control server for dev usage
-					vmConfig.vm.provision :shell, :inline => "echo 'export SERVER_TYPE=\"VAGRANT\"' >> /etc/profile"
+					vmConfig.vm.provision :shell, :inline => "echo 'export SERVER_TYPE=\"VAGRANT\"' >> /etc/environment"
 						# Set file mounts
 						################################################################           
 						# Mount the local project's server/app/ directory as /var/app inside the virtual machine. This will
