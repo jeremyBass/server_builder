@@ -98,7 +98,7 @@ module.exports = function(grunt) {
 			grunt.log.writeln("extenting server salt for "+key);
 			grunt.log.writeln("minion "+server.salt.minion);
 			var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
-			var targetFile = 'tasks/jigs/salt/minions/'+ server.salt.minion +'.conf';
+			var targetFile = 'server/salt/deploy_minions/'+ server.salt.minion +'.conf';
 			var content = fs.readFileSync(sourceFile,'utf8')
 
 			grunt.log.writeln("read file");
