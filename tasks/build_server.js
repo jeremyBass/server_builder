@@ -30,6 +30,12 @@ module.exports = function(grunt) {
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		});
+		
+		var sourceDir = '/srv/salt/minions/';
+		var targetDir = '/etc/salt/minion.d/';
+		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
+			forceDelete: true
+		});
 		grunt.log.writeln(sourceDir+" >> "+targetDir);
 	});
 };
