@@ -142,7 +142,7 @@ Vagrant.configure("2") do |config|
 							vmConfig.vm.synced_folder "{{ fobj.from }}", "{{ fobj.dest }}", :mount_options => [ "{{ fobj.user }}", "{{ fobj.dmode }}", "{{ fobj.fmode }}" ]
 						{% endfor -%}
 
-						vmConfig.vm.provision "shell", path: "server-bootstrap.sh"
+						vmConfig.vm.provision "shell", inline: "sh /vagrant/server-bootstrap.sh"
 							
 					if !@destroying
 						$running="echo \"about to run running: #{$provision_script} \" \n"
