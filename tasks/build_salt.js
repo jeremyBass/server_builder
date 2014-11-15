@@ -30,8 +30,18 @@ module.exports = function(grunt) {
 				}
 			});
 		}
-		if (!fs.existsSync("salt")) {
-			fs.mkdir("salt", 0777, true, function (err) {
+		/* start by moving base file over to the area needed */
+		if (!fs.existsSync("server/salt")) {
+			fs.mkdir("server/salt", 0777, true, function (err) {
+				if (err) {
+					grunt.log.writeln("failed to make folder server");
+				} else {
+					grunt.log.writeln("made folder server");
+				}
+			});
+		}
+		if (!fs.existsSync("server/salt/deploy_minions")) {
+			fs.mkdir("server/salt/deploy_minions", 0777, true, function (err) {
 				if (err) {
 					grunt.log.writeln("failed to make folder server");
 				} else {

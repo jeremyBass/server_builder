@@ -31,7 +31,7 @@ module.exports = function(grunt) {
 			forceDelete: true
 		});
 		
-		var sourceDir = '/srv/salt/deploy_minions/';
+		var sourceDir = 'server/salt/deploy_minions/';
 		var targetDir = '/etc/salt/minion.d/';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
