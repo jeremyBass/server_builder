@@ -2,32 +2,6 @@
 {% if vars.update({'ip': salt['cmd.run']('ifconfig eth1 | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
 
-{% if vars.isLocal %}
-#this maybe can be removed?  Look in to this.
-group-vagrant:
-  group.present:
-    - name: vagrant
-
-user-vagrant:
-  user.present:
-    - name: vagrant
-    - groups:
-      - vagrant
-      - www-data
-{% if 'database' in grains.get('roles') %}
-      - mysql
-{%- endif %}
-    - require:
-      - group: www-data
-{% if 'database' in grains.get('roles') %}
-      - group: mysql
-    - require_in:
-      - pkg: mysql
-{%- endif %}
-{%- endif %}
-
-
-
 {% if 'web' in grains.get('roles') %}
 ###########################################################
 ###########################################################
@@ -92,4 +66,30 @@ user-memcached:
 
 
 
+{% if vars.isLocal %}
+#this maybe can be removed?  Look in to this.
+group-vagrant:
+  group.present:
+    - name: vagrant
 
+user-vagrant:
+  user.present:
+    - name: vagrant
+    - groups:
+      - vagrant
+{% if 'web' in grains.get('roles') %}
+      - www-data
+{%- endif %}
+{% if 'database' in grains.get('roles') %}
+      - mysql
+{%- endif %}
+    - require:
+{% if 'web' in grains.get('roles') %}
+      - group: www-data
+{%- endif %}
+{% if 'database' in grains.get('roles') %}
+      - group: mysql
+    - require_in:
+      - pkg: mysql
+{%- endif %}
+{%- endif %}
