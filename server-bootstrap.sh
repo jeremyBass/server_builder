@@ -25,7 +25,8 @@ grunt build_server
 
 sh /srv/salt/boot/bootstrap-salt.sh -K stable
 
-salt-call --log-level=info state.highstate env=base
+salt-call --log-level=info state.highstate
+#env=base
 
 
 #rm /etc/salt/minion.d/*.conf
