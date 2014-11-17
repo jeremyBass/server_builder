@@ -37,16 +37,63 @@ module.exports = function(grunt) {
 			forceDelete: true
 		});
 		grunt.log.writeln(sourceDir+" >> "+targetDir);
-		
-		cmd_exec("sh /srv/salt/boot/bootstrap-salt.sh -K stable");
-		cmd_exec("salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env=base");
-		
+
+
+
+		var t;
+		var foo = new cmd_exec('sh /srv/salt/boot/bootstrap-salt.sh -K stable', [], 
+			function (me, data) {me.stdout = data.toString();},
+			function (me) {me.exit = 1;t=null;}
+		);
+		var lastout;
+		function stdoutStream(){
+			var out = foo.stdout;
+			if(lastout!=out){
+				lastout=out;
+				grunt.log.writeln(out);
+			}
+			t=setTimeout(stdoutStream,250);
+		}
+		stdoutStream();
+
+
+		var t;
+		var foo = new cmd_exec('salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env=base', [], 
+			function (me, data) {me.stdout = data.toString();},
+			function (me) {me.exit = 1;t=null;}
+		);
+		var lastout;
+		function stdoutStream(){
+			var out = foo.stdout;
+			if(lastout!=out){
+				lastout=out;
+				grunt.log.writeln(out);
+			}
+			t=setTimeout(stdoutStream,250);
+		}
+		stdoutStream();
+
+
 		serverobj = grunt.file.readJSON('server_project.conf');
 		var servers = serverobj.servers;
 		for (var key in servers) {
 			var server = servers[key];
 			for (var app_key in server.apps) {
-				cmd_exec("salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env="+app_key);
+				var t;
+				var foo = new cmd_exec("salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env="+app_key, [], 
+					function (me, data) {me.stdout = data.toString();},
+					function (me) {me.exit = 1;t=null;}
+				);
+				var lastout;
+				function stdoutStream(){
+					var out = foo.stdout;
+					if(lastout!=out){
+						lastout=out;
+						grunt.log.writeln(out);
+					}
+					t=setTimeout(stdoutStream,250);
+				}
+				stdoutStream();
 			}
 		}
 		
