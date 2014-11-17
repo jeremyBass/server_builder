@@ -42,7 +42,7 @@ module.exports = function(grunt) {
 
 		var t;
 		grunt.log.writeln("install salt");
-		var foo = new cmd_exec('sh /srv/salt/boot/bootstrap-salt.sh -K stable', [], 
+		var foo = new cmd_exec('sh', ['/srv/salt/boot/bootstrap-salt.sh','-K','stable'], 
 			function (me, data) {me.stdout = data.toString();},
 			function (me) {me.exit = 1;t=null;}
 		);
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 
 		var t;
 		grunt.log.writeln("run salt env base");
-		var foo = new cmd_exec('salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env=base', [], 
+		var foo = new cmd_exec('salt-call', ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env=base'], 
 			function (me, data) {me.stdout = data.toString();},
 			function (me) {me.exit = 1;t=null;}
 		);
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
 			for (var app_key in server.apps) {
 				var t;
 				grunt.log.writeln("run salt env "+app_key);
-				var foo = new cmd_exec("salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env="+app_key, [], 
+				var foo = new cmd_exec("salt-call", ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env='+app_key], 
 					function (me, data) {me.stdout = data.toString();},
 					function (me) {me.exit = 1;t=null;}
 				);
