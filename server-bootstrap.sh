@@ -23,9 +23,9 @@ npm install
 grunt build_salt
 grunt build_server
 
-sh /srv/salt/boot/bootstrap-salt.sh -K stable
 
-salt-call --log-level=info state.highstate
+
+#salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env=base
 #env=base
 
 

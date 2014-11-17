@@ -37,5 +37,17 @@ module.exports = function(grunt) {
 			forceDelete: true
 		});
 		grunt.log.writeln(sourceDir+" >> "+targetDir);
+		
+		cmd_exec("sh /srv/salt/boot/bootstrap-salt.sh -K stable");
+		cmd_exec("salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env=base");
+		
+		serverobj = grunt.file.readJSON('server_project.conf');
+		var servers = serverobj.servers;
+		for (var key in servers) {
+			for (var app_key in server.apps) {
+				cmd_exec("salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env="+app_key);
+			}
+		}
+		
 	});
 };
