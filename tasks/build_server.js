@@ -44,6 +44,7 @@ module.exports = function(grunt) {
 		serverobj = grunt.file.readJSON('server_project.conf');
 		var servers = serverobj.servers;
 		for (var key in servers) {
+			var server = servers[key];
 			for (var app_key in server.apps) {
 				cmd_exec("salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env="+app_key);
 			}
