@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 		var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util'),
-    		spawn = require('child_process').spawn;
+			spawn = require('child_process').spawn;
 
 		
 		if (!fs.existsSync("/srv/salt")) {
@@ -21,10 +21,11 @@ module.exports = function(grunt) {
 		}
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = '/srv/salt';
+		grunt.log.writeln("about to move "+sourceDir+" >> "+targetDir);
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		},function(){
-		
+			grunt.log.writeln(sourceDir+" >> "+targetDir);
 			grunt.log.writeln("run salt env base");
 			ls    = spawn('sh', ['/srv/salt/boot/bootstrap-salt.sh','-K','stable']);
 			var lastout;
