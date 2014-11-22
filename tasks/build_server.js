@@ -23,78 +23,80 @@ module.exports = function(grunt) {
 		var targetDir = '/srv/salt';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
-		});
-
-		grunt.log.writeln("run salt env base");
-		ls    = spawn('sh', ['/srv/salt/boot/bootstrap-salt.sh','-K','stable']);
-		var lastout;
-		ls.stdout.on('data', function (data) {
-			var out = data.toString().trim();
-			if( out!='\n' && out!=null && out!="" && lastout!=out){
-				lastout=out;
-				console.log(out);
-			}
-		});
-		ls.stderr.on('data', function (data) {
-		  console.log('stderr: ' + data);
-		});
-		ls.on('exit', function (code) {
-		  console.log('child process exited with code ' + code);
-		});
+		},function(){
 		
-		
-		var sourceDir = 'server/salt/deploy_minions/';
-		var targetDir = '/etc/salt/minion.d/';
-		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
-			forceDelete: true
-		});
-		grunt.log.writeln(sourceDir+" >> "+targetDir);
+			grunt.log.writeln("run salt env base");
+			ls    = spawn('sh', ['/srv/salt/boot/bootstrap-salt.sh','-K','stable']);
+			var lastout;
+			ls.stdout.on('data', function (data) {
+				var out = data.toString().trim();
+				if( out!='\n' && out!=null && out!="" && lastout!=out){
+					lastout=out;
+					console.log(out);
+				}
+			});
+			ls.stderr.on('data', function (data) {
+			  console.log('stderr: ' + data);
+			});
+			ls.on('exit', function (code) {
+			  console.log('child process exited with code ' + code);
+			});
+
+			
 
 
+			var sourceDir = 'server/salt/deploy_minions/';
+			var targetDir = '/etc/salt/minion.d/';
+			wrench.copyDirSyncRecursive(sourceDir,targetDir,{
+				forceDelete: true
+			},function(){
+				grunt.log.writeln(sourceDir+" >> "+targetDir);
 
-		grunt.log.writeln("run salt env base");
-		ls    = spawn('salt-call', ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env=base']);
-		var lastout;
-		ls.stdout.on('data', function (data) {
-			var out = data.toString().trim();
-			if( out!='\n' && out!=null && out!="" && lastout!=out){
-				lastout=out;
-				console.log(out);
-			}
-		});
-		ls.stderr.on('data', function (data) {
-		  console.log('stderr: ' + data);
-		});
-		ls.on('exit', function (code) {
-		  console.log('child process exited with code ' + code);
-		});
-	
-
-
-
-		serverobj = grunt.file.readJSON('server_project.conf');
-		var servers = serverobj.servers;
-		for (var key in servers) {
-			var server = servers[key];
-			for (var app_key in server.apps) {
-				grunt.log.writeln("run salt env "+app_key);
-				ls    = spawn('salt-call', ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env='+app_key]);
-				var lastout;
-				ls.stdout.on('data', function (data) {
-					var out = data.toString().trim();
-					if( out!='\n' && out!=null && out!="" && lastout!=out){
-						lastout=out;
-						console.log(out);
+				var env_obj = ['base'];
+				serverobj = grunt.file.readJSON('server_project.conf');
+				var servers = serverobj.servers;
+				for (var key in servers) {
+					var server = servers[key];
+					for (var app_key in server.apps) {
+						grunt.log.writeln("add salt env "+app_key);
+						env_obj[]=app_key;
 					}
-				});
-				ls.stderr.on('data', function (data) {
-				  console.log('stderr: ' + data);
-				});
-				ls.on('exit', function (code) {
-				  console.log('child process exited with code ' + code);
-				});
-			}
-		}
+				}
+
+				function run_env(env_obj){
+					var current_env = env_obj[0];
+					env_obj.shift();
+					ls    = spawn('salt-call', ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env='+current_env]);
+					var lastout;
+					ls.stdout.on('data', function (data) {
+						var out = data.toString().trim();
+						if( out!='\n' && out!=null && out!="" && lastout!=out){
+							lastout=out;
+							console.log(out);
+						}
+					});
+					ls.stderr.on('data', function (data) {
+					  console.log('stderr: ' + data);
+					});
+					ls.on('exit', function (code) {
+						console.log('child process exited with code ' + code);
+						grunt.log.writeln("<<<<<<<< finished sever "+current_env);
+						
+						if(env_obj.length>0){
+							run_env(env_obj);
+						}
+					});
+				}
+				run_env(env_obj);
+
+
+				
+			});
+
+		
+		});
+
+		
 		
 	});
 };
