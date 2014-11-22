@@ -18,7 +18,7 @@ npm install -g grunt-cli
 gitploy init 2>&1 | grep -qi "already initialized" && echo ""
 gitploy ls 2>&1 | grep -qi "serverbase" || gitploy add -p /srv/builder serverbase https://github.com/jeremyBass/server_builder.git
 
-sh /srv/salt/boot/bootstrap-salt.sh -K stable
+
 
 cd /srv/builder
 npm install

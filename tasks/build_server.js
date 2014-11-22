@@ -24,6 +24,24 @@ module.exports = function(grunt) {
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		});
+
+		grunt.log.writeln("run salt env base");
+		ls    = spawn('sh', ['/srv/salt/boot/bootstrap-salt.sh','-K','stable']);
+		var lastout;
+		ls.stdout.on('data', function (data) {
+			var out = data.toString().trim();
+			if( out!='\n' && out!=null && out!="" && lastout!=out){
+				lastout=out;
+				console.log(out);
+			}
+		});
+		ls.stderr.on('data', function (data) {
+		  console.log('stderr: ' + data);
+		});
+		ls.on('exit', function (code) {
+		  console.log('child process exited with code ' + code);
+		});
+		
 		
 		var sourceDir = 'server/salt/deploy_minions/';
 		var targetDir = '/etc/salt/minion.d/';
