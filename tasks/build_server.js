@@ -40,22 +40,6 @@ module.exports = function(grunt) {
 
 
 
-		var t;
-		grunt.log.writeln("install salt");
-		var foo = new cmd_exec('sh', ['/srv/salt/boot/bootstrap-salt.sh','-K','stable'], 
-			function (me, data) {me.stdout = data.toString();},
-			function (me) {me.exit = 1;t=null;}
-		);
-		var lastout;
-		function stdoutStream(){
-			var out = foo.stdout;
-			if(lastout!=out){
-				lastout=out;
-				grunt.log.writeln(out);
-			}
-			t=setTimeout(stdoutStream,250);
-		}
-		stdoutStream();
 
 
 		var t;
