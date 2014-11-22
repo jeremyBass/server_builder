@@ -59,7 +59,7 @@ module.exports = function(grunt) {
 					var server = servers[key];
 					for (var app_key in server.apps) {
 						grunt.log.writeln("add salt env "+app_key);
-						env_obj[]=app_key;
+						env_obj.push(app_key);
 					}
 				}
 
