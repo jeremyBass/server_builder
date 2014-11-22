@@ -1,21 +1,15 @@
 module.exports = function(grunt) {
 	grunt.registerTask('build_server', 'Building the server', function() {
 		grunt.log.writeln("Would start building the sever");
-		function cmd_exec(cmd, args, cb_stdout, cb_end) {
-			var spawn = require('child_process').spawn,
-				child = spawn(cmd, args),
-				me = this;
-			me.exit = 0;  // Send a cb to set 1 when cmd exits
-			child.stdout.on('data', function (data) { cb_stdout(me, data) });
-			child.stdout.on('end', function () { cb_end(me) });
-		}
 		
 		var nunjucks = require('nunjucks');
 		var fs = require('fs');
 		var extend = require('extend');
 		var wrench = require('wrench'),
-			util = require('util');
+			util = require('util'),
+    		spawn = require('child_process').spawn;
 
+		
 		if (!fs.existsSync("/srv/salt")) {
 			fs.mkdir("/srv/salt", 0777, true, function (err) {
 				if (err) {
@@ -40,16 +34,24 @@ module.exports = function(grunt) {
 
 
 
-
-
-		var t;
 		grunt.log.writeln("run salt env base");
-		var foo = new cmd_exec('salt-call', ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env=base'], 
-			function (me, data) {me.stdout = data.toString();},
-			function (me) {me.exit = 1;t=null;}
-		);
+		ls    = spawn('salt-call', ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env=base']);
 		var lastout;
-		stdoutStream();
+		ls.stdout.on('data', function (data) {
+			var out = data.toString().trim();
+			if( out!='\n' && out!=null && out!="" && lastout!=out){
+				lastout=out;
+				console.log(out);
+			}
+		});
+		ls.stderr.on('data', function (data) {
+		  console.log('stderr: ' + data);
+		});
+		ls.on('exit', function (code) {
+		  console.log('child process exited with code ' + code);
+		});
+	
+
 
 
 		serverobj = grunt.file.readJSON('server_project.conf');
@@ -57,14 +59,22 @@ module.exports = function(grunt) {
 		for (var key in servers) {
 			var server = servers[key];
 			for (var app_key in server.apps) {
-				var t;
 				grunt.log.writeln("run salt env "+app_key);
-				var foo = new cmd_exec("salt-call", ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env='+app_key], 
-					function (me, data) {me.stdout = data.toString();},
-					function (me) {me.exit = 1;t=null;}
-				);
+				ls    = spawn('salt-call', ['--local','--log-level=info','--config-dir=/etc/salt','state.highstate','env='+app_key]);
 				var lastout;
-				stdoutStream();
+				ls.stdout.on('data', function (data) {
+					var out = data.toString().trim();
+					if( out!='\n' && out!=null && out!="" && lastout!=out){
+						lastout=out;
+						console.log(out);
+					}
+				});
+				ls.stderr.on('data', function (data) {
+				  console.log('stderr: ' + data);
+				});
+				ls.on('exit', function (code) {
+				  console.log('child process exited with code ' + code);
+				});
 			}
 		}
 		

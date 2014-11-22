@@ -16,6 +16,7 @@
 		"ping-wrapper":"~0.0.2",
 		"grunt": "~0.4.2",
 		"wrench":"~1.5.8",
-		"nunjucks":"~1.1.0"
+		"nunjucks":"~1.1.0",
+		"shelljs":"~0.3.0"
 	}
 }
