@@ -91,7 +91,8 @@ module.exports = function(grunt) {
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = '/srv/salt';
 		grunt.log.writeln("about to move "+sourceDir+" >> "+targetDir);
-		wrench.copyDirRecursive(sourceDir,targetDir,{ forceDelete: true },run_salt_prep);
+		wrench.copyDirRecursive(sourceDir,targetDir,{ forceDelete: true });
+		run_salt_prep();
 
 		
 		
