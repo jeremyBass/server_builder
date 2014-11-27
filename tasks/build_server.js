@@ -32,10 +32,10 @@ module.exports = function(grunt) {
 				output_stream(data);
 			});
 			ls.stderr.on('data', function (data) {
-				output_stream(data,'stderr: ');
+				output_stream(data,'\rstderr: ');
 			});
 			ls.on('exit', function (code) {
-				output_stream(data,'','<<<<<<<< finished sever "+current_env'+current_env);
+				output_stream(data,'','<<<<<<<< finished sever "+current_env'+current_env+'\r');
 				if(env_obj.length>0){
 					run_env(env_obj);
 				}
@@ -58,10 +58,10 @@ module.exports = function(grunt) {
 					output_stream(data);
 				});
 				ls.stderr.on('data', function (data) {
-					output_stream(data,'stderr: ');
+					output_stream(data,'\rstderr: ');
 				});
 				ls.on('exit', function (code) {
-					console.log('child process exited with code ' + code);
+					output_stream('child process exited with code ' + code);
 					wrench.mkdirSyncRecursive('/etc/salt/minion.d/', 0777);
 					var sourceDir = 'server/salt/deploy_minions/';
 					var targetDir = '/etc/salt/minion.d/';
