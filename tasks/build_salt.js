@@ -20,42 +20,16 @@ module.exports = function(grunt) {
 			util = require('util');
 		var merge = require('deepmerge')
 
-		/* start by moving base file over to the area needed */
-		if (!fs.existsSync("server")) {
-			fs.mkdir("server", 0777, true, function (err) {
-				if (err) {
-					grunt.log.writeln("failed to make folder server");
-				} else {
-					grunt.log.writeln("made folder server");
-				}
-			});
-		}
-		/* start by moving base file over to the area needed */
-		if (!fs.existsSync("server/salt")) {
-			fs.mkdir("server/salt", 0777, true, function (err) {
-				if (err) {
-					grunt.log.writeln("failed to make folder server");
-				} else {
-					grunt.log.writeln("made folder server");
-				}
-			});
-		}
 
+		wrench.mkdirSyncRecursive("server/salt", 0777);
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = 'server/salt';
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		});
 		grunt.log.writeln("building the salt minions");
-		if (!fs.existsSync("server/salt/deploy_minions")) {
-			fs.mkdir("server/salt/deploy_minions", 0777, true, function (err) {
-				if (err) {
-					grunt.log.writeln("failed to make folder server");
-				} else {
-					grunt.log.writeln("made folder server");
-				}
-			});
-		}
+		
+		wrench.mkdirSyncRecursive("server/salt/deploy_minions", 0777);
 		var default_salt = {
 			
 		};

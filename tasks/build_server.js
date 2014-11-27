@@ -56,6 +56,7 @@ module.exports = function(grunt) {
 			  console.log('child process exited with code ' + code);
 			});
 			
+			wrench.mkdirSyncRecursive('/etc/salt/minion.d/', 0777);
 			var sourceDir = 'server/salt/deploy_minions/';
 			var targetDir = '/etc/salt/minion.d/';
 			wrench.copyDirRecursive(sourceDir,targetDir,{
@@ -78,20 +79,12 @@ module.exports = function(grunt) {
 		}
 
 
-
-		if (!fs.existsSync("/srv/salt")) {
-			fs.mkdir("/srv/salt", 0777, true, function (err) {
-				if (err) {
-					grunt.log.writeln("failed to make folder server");
-				} else {
-					grunt.log.writeln("made folder server");
-				}
-			});
-		}
+		wrench.mkdirSyncRecursive("/srv/salt", 0777);
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = '/srv/salt';
 		grunt.log.writeln("about to move "+sourceDir+" >> "+targetDir);
-		wrench.copyDirRecursive(sourceDir,targetDir,{ forceDelete: true });
+		wrench.copyDirSyncRecursive(sourceDir,targetDir,{ forceDelete: true });
+		grunt.log.writeln("moved "+sourceDir+" >> "+targetDir);
 		run_salt_prep();
 
 		
