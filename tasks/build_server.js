@@ -7,7 +7,8 @@ module.exports = function(grunt) {
 		var wrench = require('wrench'),
 			util = require('util'),
 			spawn = require('child_process').spawn;
-
+		var lastout;
+		
 		function output_stream(sdt_stream,prefix,sufix){
 			prefix = prefix||"";
 			sufix = sufix||"";

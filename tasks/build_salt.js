@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 		var wrench = require('wrench'),
 			util = require('util');
 		var merge = require('deepmerge')
-
+		var lastout;
 
 		wrench.mkdirSyncRecursive("server/salt", 0777);
 		var sourceDir = 'tasks/jigs/salt';
