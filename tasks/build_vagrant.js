@@ -1,20 +1,15 @@
 module.exports = function(grunt) {
 	grunt.registerTask('build_vagrant', 'Setting up Vagrant and then building the server', function() {
-		function cmd_exec(cmd, args, cb_stdout, cb_end) {
-			var spawn = require('child_process').spawn,
-				child = spawn(cmd, args),
-				me = this;
-			me.exit = 0;  // Send a cb to set 1 when cmd exits
-			child.stdout.on('data', function (data) { cb_stdout(me, data) });
-			child.stdout.on('end', function () { cb_end(me) });
-		}
+
 		
 		var nunjucks = require('nunjucks');
 		var fs = require('fs');
 		var extend = require('extend');
 		var wrench = require('wrench'),
-			util = require('util');
+			util = require('util'),
+			spawn = require('child_process').spawn;
 		var ip,_ip="10.255.255.2";
+		var lastout;
 		/*come back to this.
 		function ip_inuse(_ip){
 			var Ping = require('ping-wrapper');
@@ -36,6 +31,40 @@ module.exports = function(grunt) {
 				break;
 			}
 		}*/
+		
+		function output_stream(sdt_stream,prefix,sufix){
+			prefix = prefix||"";
+			sufix = sufix||"";
+			var out = sdt_stream.toString().trim();
+			if( out!='\n' && out!=null && out!="" && lastout!=out){
+				lastout=out;
+				util.print(prefix+out+sufix);
+			}
+		}
+		
+		
+		function normalize_vagrant_plugins(plugins){
+			var item = plugins[0].toString();
+			plugins.shift();
+			
+			spawn = require('child_process').spawn;
+			var ls = spawn('vagrant', ['plugin','install',item]);
+			var lastout;
+			ls.stdout.on('data', function (data) {
+				output_stream(data);
+			});
+			ls.stderr.on('data', function (data) {
+				output_stream(data,'\rstderr: ');
+			});
+			ls.on('exit', function (code) {
+				grunt.log.writeln("\rinstalled "+item);
+				if(plugins.length>0){
+					normalize_vagrant_plugins(plugins);
+				}
+			});
+		}
+		normalize_vagrant_plugins(['vagrant-vbguest','vagrant-hosts','vagrant-hostsupdater']);
+		
 		
 		
 		var default_vagrant = {
@@ -88,26 +117,7 @@ module.exports = function(grunt) {
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		});
-
-		
-		
-		//fs.createReadStream(sourceFile).pipe(fs.createWriteStream(targetFile));
-		/*
-		var t;
-		var foo = new cmd_exec('vagrant', ['up'], 
-			function (me, data) {me.stdout = data.toString();},
-			function (me) {me.exit = 1;t=null;}
-		);
-		var lastout;
-		function stdoutStream(){
-			var out = foo.stdout;
-			if(lastout!=out){
-				lastout=out;
-				grunt.log.writeln(out);
-			}
-			t=setTimeout(stdoutStream,250);
-		}
-		stdoutStream();*/
+		//normalize_vagrant_env();
 		
 		grunt.task.current.async();
 	});

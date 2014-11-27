@@ -8,7 +8,15 @@ module.exports = function(grunt) {
 			util = require('util'),
 			spawn = require('child_process').spawn;
 
-
+		function output_stream(sdt_stream,prefix,sufix){
+			prefix = prefix||"";
+			sufix = sufix||"";
+			var out = sdt_stream.toString().trim();
+			if( out!='\n' && out!=null && out!="" && lastout!=out){
+				lastout=out;
+				util.print(prefix+out+sufix);
+			}
+		}
 
 
 		function run_env(env_obj){
@@ -21,22 +29,13 @@ module.exports = function(grunt) {
 				});
 			var lastout;
 			ls.stdout.on('data', function (data) {
-				var out = data.toString().trim();
-				if( out!='\n' && out!=null && out!="" && lastout!=out){
-					lastout=out;
-					console.log(out);
-				}
+				output_stream(data);
 			});
 			ls.stderr.on('data', function (data) {
-				var out = data.toString().trim();
-				if( out!='\n' && out!=null && out!="" && lastout!=out){
-					lastout=out;
-					console.log('stderr: ' + out);
-				}
+				output_stream(data,'stderr: ');
 			});
 			ls.on('exit', function (code) {
-				console.log('child process exited with code ' + code);
-				grunt.log.writeln("<<<<<<<< finished sever "+current_env);
+				output_stream(data,'','<<<<<<<< finished sever "+current_env'+current_env);
 				if(env_obj.length>0){
 					run_env(env_obj);
 				}
@@ -56,18 +55,10 @@ module.exports = function(grunt) {
 				grunt.log.writeln("after spawning call");
 				var lastout;
 				ls.stdout.on('data', function (data) {
-					var out = data.toString().trim();
-					if( out!='\n' && out!=null && out!="" && lastout!=out){
-						lastout=out;
-						console.log(out);
-					}
+					output_stream(data);
 				});
 				ls.stderr.on('data', function (data) {
-					var out = data.toString().trim();
-					if( out!='\n' && out!=null && out!="" && lastout!=out){
-						lastout=out;
-						console.log('stderr: ' + out);
-					}
+					output_stream(data,'stderr: ');
 				});
 				ls.on('exit', function (code) {
 					console.log('child process exited with code ' + code);
