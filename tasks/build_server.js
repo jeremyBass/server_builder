@@ -62,7 +62,7 @@ module.exports = function(grunt) {
 					output_stream(data,'\rstderr: ');
 				});
 				ls.on('exit', function (code) {
-					output_stream('child process exited with code ' + code);
+					output_stream('child process exited with code ' + code,'\r','\r');
 					wrench.mkdirSyncRecursive('/etc/salt/minion.d/', 0777);
 					var sourceDir = 'server/salt/deploy_minions/';
 					var targetDir = '/etc/salt/minion.d/';
@@ -77,7 +77,7 @@ module.exports = function(grunt) {
 						for (var key in servers) {
 							var server = servers[key];
 							for (var app_key in server.apps) {
-								var app = servers.apps[app_key];
+								var app = server.apps[app_key];
 								grunt.log.writeln("add salt env "+app.install_dir);
 								env_obj.push(app.install_dir);
 							}
