@@ -36,7 +36,7 @@ module.exports = function(grunt) {
 				output_stream(data,'\rstderr: ');
 			});
 			ls.on('exit', function (code) {
-				output_stream(data,'','<<<<<<<< finished sever "+current_env'+current_env+'\r');
+				output_stream(code,'','<<<<<<<< finished sever "+current_env'+current_env+'\r');
 				if(env_obj.length>0){
 					run_env(env_obj);
 				}
@@ -77,8 +77,9 @@ module.exports = function(grunt) {
 						for (var key in servers) {
 							var server = servers[key];
 							for (var app_key in server.apps) {
-								grunt.log.writeln("add salt env "+app_key);
-								env_obj.push(app_key);
+								var app = servers.apps[app_key];
+								grunt.log.writeln("add salt env "+app.install_dir);
+								env_obj.push(app.install_dir);
 							}
 						}
 						run_env(env_obj);
