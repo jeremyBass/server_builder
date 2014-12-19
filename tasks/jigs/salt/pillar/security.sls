@@ -1,4 +1,4 @@
 fail2ban:
-  email: dev.hotseat@wsu.edu
+  email: web.support@wsu.edu
 mysql:
   pwd: sdislkeoweg
