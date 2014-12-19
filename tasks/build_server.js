@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
 	grunt.registerTask('build_server', 'Building the server', function() {
-		var done = grunt.task.current.async();//this.async();
+		//var done = this.async();
 		var nunjucks = require('nunjucks');
 		var fs = require('fs');
 		var extend = require('extend');
@@ -100,6 +100,7 @@ module.exports = function(grunt) {
 		
 			
 		
-		done();
+		//done();
+		grunt.task.current.async();
 	});
 };

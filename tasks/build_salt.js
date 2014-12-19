@@ -4,7 +4,7 @@
 */
 module.exports = function(grunt) {
 	grunt.registerTask('build_salt', 'Setting up the salt provisioner', function() {
-		var done = grunt.task.current.async();//this.async();
+		//var done = this.async();
 		var nunjucks = require('nunjucks');
 		var fs = require('fs');
 		var extend = require('extend');
@@ -89,6 +89,7 @@ module.exports = function(grunt) {
 
 		}
 
-		done();
+		//done();
+		grunt.task.current.async();
 	});
 };
