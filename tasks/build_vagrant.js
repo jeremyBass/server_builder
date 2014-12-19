@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
 	grunt.registerTask('build_vagrant', 'Setting up Vagrant and then building the server', function() {
-		var done = this.async();
+		var done = grunt.task.current.async();//this.async();
 		var nunjucks = require('nunjucks');
 		var fs = require('fs');
 		var extend = require('extend');
