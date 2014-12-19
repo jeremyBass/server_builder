@@ -98,7 +98,7 @@ module.exports = function(grunt) {
 		var sourceFile = 'tasks/jigs/vagrant/Vagrantfile';
 		var tmpFile = 'tasks/jigs/vagrant/Vagrantfile.tmp';
 		var targetFile = 'Vagrantfile';
-		var content = fs.readFileSync(sourceFile,'utf8')
+		var content = fs.readFileSync(sourceFile,'utf8');
 
 		grunt.log.writeln("read file");
 		grunt.log.writeln("renderString of file");
