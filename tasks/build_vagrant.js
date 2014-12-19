@@ -1,7 +1,6 @@
 module.exports = function(grunt) {
 	grunt.registerTask('build_vagrant', 'Setting up Vagrant and then building the server', function() {
-
-		
+		var done = this.async();
 		var nunjucks = require('nunjucks');
 		var fs = require('fs');
 		var extend = require('extend');
@@ -119,6 +118,6 @@ module.exports = function(grunt) {
 		});
 		//normalize_vagrant_env();
 		
-		grunt.task.current.async();
+		done();
 	});
 };
