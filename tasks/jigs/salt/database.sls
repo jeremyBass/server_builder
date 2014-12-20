@@ -18,7 +18,7 @@
 mysql56-community-repo:
   pkgrepo.managed:
     - humanname: MySQL 5.6 Community Server
-    - baseurl: http://repo.mysql.com/yum/mysql-5.6-community/el/5//$basearch/
+    - baseurl: http://repo.mysql.com/yum/mysql-5.6-community/el/5/$basearch/
     - gpgcheck: 0
     - require_in:
       - pkg: mysql
