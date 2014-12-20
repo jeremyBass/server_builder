@@ -94,11 +94,25 @@ Vagrant.configure("2") do |config|
 							v.customize ["modifyvm", :id, "--vram", {{ vagrant.vram }}]
 						{% endif -%}
 						{% if vagrant.cores>1 -%}
-							v.customize ["modifyvm", :id, "--cpus", {{ vagrant.cores }} ]
+							v.cpus = {{ vagrant.cores }}
 						{% endif -%}
-						{% if vagrant.host_64bit|lower == "true" -%}
+						{% if vagrant.ioapic|lower == "true" -%}
 							v.customize ["modifyvm", :id, "--ioapic", "on"]
+						{% else -%}
+							v.customize ["modifyvm", :id, "--ioapic", "off"]
 						{% endif -%}
+						{% if vagrant.acpi|lower == "true" -%}
+							v.customize ["modifyvm", :id, "--acpi", "on"]
+						{% else -%}
+							v.customize ["modifyvm", :id, "--acpi", "off"]
+						{% endif -%}
+						{% if vagrant.largepages|lower == "true" -%}
+							v.customize ["modifyvm", :id, "--largepages", "on"]
+						{% else -%}
+							v.customize ["modifyvm", :id, "--largepages", "off"]
+						{% endif -%}
+						
+						
 					end
 
 				# Set networking options

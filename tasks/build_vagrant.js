@@ -76,7 +76,9 @@ module.exports = function(grunt) {
 			"memory": "1024",
 			"vram": "8",
 			"cores": "1",
-			"host_64bit": "false",
+			"ioapic": "false",
+			"acpi":"false",
+			"largepages":"false",
 			"verbose_output": "true",
 			"gui":"false"
 		};
