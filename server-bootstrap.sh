@@ -16,6 +16,7 @@ npm install -g grunt-cli
 [ -d /srv/builder ] || mkdir -p /srv/builder
 
 gitploy init 2>&1 | grep -qi "already initialized" && echo ""
+gitploy ls 2>&1 | grep -qi "serverbase" && gitploy up serverbase
 gitploy ls 2>&1 | grep -qi "serverbase" || gitploy add -p /srv/builder serverbase https://github.com/jeremyBass/server_builder.git
 
 
