@@ -28,8 +28,8 @@ mysql:
   pkg.installed:
     - pkgs:
       - mysql
-      - mysql-libs
-      - mysql-server
+      - mysql-community-libs
+      - mysql-community-server
 #      - MySQL-python
 
 # Set MySQL to run in levels 2345.
