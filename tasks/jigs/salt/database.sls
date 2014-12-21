@@ -31,6 +31,7 @@ mysql:
       - mysql-community-libs
       - mysql-community-server
       - mysql-connector-python
+      - MySQL-python
 
 # Set MySQL to run in levels 2345.
 mysqld-init:
