@@ -60,7 +60,7 @@ php-fpm:
       - php-gd
       - php-mbstring
       - php-ldap
-      - php-pecl-zendopcache
+      - php-opcache
       - php-pecl-memcached
       - php-pecl-oauth
     - require:
