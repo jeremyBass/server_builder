@@ -78,7 +78,9 @@ module.exports = function(grunt) {
 			"cores": "1",
 			"ioapic": "false",
 			"acpi":"false",
-			"largepages":"false",
+			"largepages":"true",
+			"hwvirtex":"true",
+			"nestedpaging":"true",
 			"verbose_output": "true",
 			"gui":"false"
 		};

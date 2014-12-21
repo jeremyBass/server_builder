@@ -106,14 +106,28 @@ Vagrant.configure("2") do |config|
 						{% else -%}
 							v.customize ["modifyvm", :id, "--acpi", "off"]
 						{% endif -%}
+
+						v.customize ["modifyvm", :id, "--biosbootmenu", "disabled"]
+						v.customize ["modifyvm", :id, "--bioslogofadeout", "on"]
+						v.customize ["modifyvm", :id, "--bioslogofadein", "on"]
+						v.customize ["modifyvm", :id, "--bioslogodisplaytime", "5000"]
+						v.customize ["modifyvm", :id, "--bioslogoimagepath", Dir.pwd + "/.vagrant/includes/splash.bmp"]
+						{% if vagrant.hwvirtex|lower == "true" -%}
+							v.customize ["modifyvm", :id, "--hwvirtex", "on"]
+						{% if vagrant.nestedpaging|lower == "true" -%}
+							v.customize ["modifyvm", :id, "--nestedpaging", "on"]
 						{% if vagrant.largepages|lower == "true" -%}
 							v.customize ["modifyvm", :id, "--largepages", "on"]
 						{% else -%}
 							v.customize ["modifyvm", :id, "--largepages", "off"]
 						{% endif -%}
-						
-						
-					end
+						{% else -%}
+							v.customize ["modifyvm", :id, "--nestedpaging", "off"]
+						{% endif -%}
+						{% else -%}
+							v.customize ["modifyvm", :id, "--hwvirtex", "off"]
+						{% endif -%}
+				end
 
 				# Set networking options
 				################################################################   
