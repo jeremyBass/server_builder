@@ -30,7 +30,7 @@ mysql:
       - mysql
       - mysql-libs
       - mysql-server
-      - MySQL-python
+#      - MySQL-python
 
 # Set MySQL to run in levels 2345.
 mysqld-init:
@@ -46,8 +46,8 @@ mysqld-init:
     - user: root
     - group: root
     - mode: 664
-    - require:
-      - pkg: mysql
+#    - require:
+#      - pkg: mysql
 
 mysqld:
   cmd.run:
