@@ -14,9 +14,7 @@ fi
 
 rpm -qa | grep -qw epel-release || yum install -y epel-release
 rpm -qa | grep -qw nodejs || yum install -y nodejs
-rpm -qa | grep -qw npm || yum install -y npm
-
-if ! rpm -qa | grep -qw glibc-npm; then
+if ! rpm -qa | grep -qw npm; then
     yum install -y npm
     npm install -g grunt-cli
 fi
