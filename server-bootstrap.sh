@@ -10,6 +10,8 @@ cd /
 if ! -h /usr/sbin/gitploy; then
     curl  https://raw.githubusercontent.com/jeremyBass/gitploy/master/gitploy | sudo sh -s -- install
     [ -h /usr/sbin/gitploy ] || echoerr "gitploy failed install"
+else
+    gitploy gitploy_update
 fi
 
 rpm -qa | grep -qw epel-release || yum install -y epel-release
