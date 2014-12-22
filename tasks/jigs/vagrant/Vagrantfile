@@ -42,6 +42,18 @@
 				@ssh=true
 			end
 		end
+		@up=false
+		ARGV.each do |arg|        
+			if arg.include?'up'
+				@up=true
+			end
+		end
+		@halt=false
+		ARGV.each do |arg|        
+			if arg.include?'halt'
+				@halt=true
+			end
+		end
 		#load 'includes/vagrant_loadconfig.rb'
 
 
@@ -72,7 +84,7 @@ Vagrant.configure("2") do |config|
 				{% endif -%}
 
 
-				if !@destroying && !@ssh
+				if !@destroying && !@ssh && !@halt
 					{% for appname,app in apps -%}
 					{% if vagrant.hostname -%}
 						{% set install_dir = app.install_dir -%}
