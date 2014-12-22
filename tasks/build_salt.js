@@ -10,8 +10,10 @@ module.exports = function(grunt) {
 		var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util');
-		var merge = require('deepmerge')
+		var merge = require('deepmerge');
 		var lastout;
+		var glob = require("glob");
+
 
 		wrench.mkdirSyncRecursive("server/salt", 0777);
 		var sourceDir = 'tasks/jigs/salt';
@@ -68,9 +70,67 @@ module.exports = function(grunt) {
 				}
 			});
 			server.salt.env=_env;
-			/*_env.forEach(function(entry) {
-				grunt.log.writeln("env has "+entry);
-			});*/
+			
+
+			
+			var remote_pillars = typeof(server.remote.salt)!=="undefined"?server.remote.salt.pillars:[];
+			var vagrant_pillars = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.pillars:[];
+			var app_pillars = [];
+			for (var app_key in server.apps) {
+				var app = server.apps[app_key];
+				if(typeof(app["salt"])!=="undefined"){
+					if(typeof(app["salt"]["pillars"])!=="undefined"){
+						app_pillars = merge(app_pillars,app.salt.pillars);
+					}
+				}
+			}
+			var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
+			var _pillars = [];
+			pillars.forEach(function(entry) {
+				//grunt.log.writeln("looking at env "+entry);
+				if(entry.indexOf('-') == 0){
+					var _entry = entry.substring(1);
+					//grunt.log.writeln("checking for "+_entry);
+					var exc = _pillars.indexOf(_entry);
+					//grunt.log.writeln(_entry+" has index at "+exc);
+					if( exc > -1){
+						_pillars.splice(exc, 1);
+					}
+				}else{
+					if(_pillars.indexOf(entry) == -1){
+						_pillars.push(entry);
+					}
+				}
+			});
+			server.salt.pillars=_pillars;
+			
+			
+			
+			for (var app_key in server.apps) {
+				var app = server.apps[app_key];
+
+				// options is optional
+				glob("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls", options, function (er, files) {
+					for (var file in files) {
+						grunt.log.writeln("extenting server salt for "+key);
+						grunt.log.writeln("minion "+server.salt.minion);
+						var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+file;
+						var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+file;
+						var content = fs.readFileSync(sourceFile,'utf8')
+
+						grunt.log.writeln("read file");
+						grunt.log.writeln("renderString of file");
+						var tmpl = new nunjucks.Template(content);
+						grunt.log.writeln("compile");
+						var res = tmpl.render(server.salt);
+						grunt.log.writeln("renderd");
+						fs.writeFile(targetFile, res, function(err){
+							grunt.log.writeln("wrote to file");
+						});
+					}
+				})
+			}
+			
 			grunt.log.writeln("extenting server salt for "+key);
 			grunt.log.writeln("minion "+server.salt.minion);
 			var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
@@ -86,6 +146,8 @@ module.exports = function(grunt) {
 			fs.writeFile(targetFile, res, function(err){
 				grunt.log.writeln("wrote to file");
 			});
+			
+
 
 		}
 
