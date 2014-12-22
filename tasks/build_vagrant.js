@@ -41,24 +41,53 @@ module.exports = function(grunt) {
 			}
 		}
 		
-		
+		var plugins="";
+		function check_vagrant_plugins(plugin,callback){
+			if(plugins==""){
+				spawn = require('child_process').spawn;
+				var command = spawn('vagrant', ['plugin','list']);
+				var lastout;
+				var result = '';
+				command.stdout.on('data', function (data) {
+					result += data.toString();
+				});
+				command.on('exit', function (code) {
+					plugins=result;
+					var patt = new RegExp((plugin.split('-').join('\-'))+" ");
+					callback(patt.test(plugins));
+				});
+			}else{
+				var patt = new RegExp((plugin.split('-').join('\-'))+" ");
+				callback(patt.test(plugins));
+			}
+		}
+		function next_plugin(plugins){
+			if(plugins.length>0){
+				normalize_vagrant_plugins(plugins);
+			}
+		}
 		function normalize_vagrant_plugins(plugins){
-			var item = plugins[0].toString();
+			var plugin = plugins[0].toString();
 			plugins.shift();
-			
-			spawn = require('child_process').spawn;
-			var ls = spawn('vagrant', ['plugin','install',item]);
-			var lastout;
-			ls.stdout.on('data', function (data) {
-				output_stream(data);
-			});
-			ls.stderr.on('data', function (data) {
-				output_stream(data,'\rstderr: ');
-			});
-			ls.on('exit', function (code) {
-				grunt.log.writeln("\rinstalled "+item);
-				if(plugins.length>0){
-					normalize_vagrant_plugins(plugins);
+			check_vagrant_plugins(plugin,function(resulting){
+				if(resulting==false){
+					grunt.log.writeln("\r"+plugin+" is NOT installed");
+					spawn = require('child_process').spawn;
+					var ls = spawn('vagrant', ['plugin','install',plugin]);
+					var lastout;
+					ls.stdout.on('data', function (data) {
+						output_stream(data);
+					});
+					ls.stderr.on('data', function (data) {
+						output_stream(data,'\rstderr: ');
+					});
+					ls.on('exit', function (code) {
+						grunt.log.writeln("\rinstalled "+plugin);
+						next_plugin(plugins);
+					});
+				}else{
+					grunt.log.writeln("\r"+plugin+" already installed");
+					next_plugin(plugins);
 				}
 			});
 		}
