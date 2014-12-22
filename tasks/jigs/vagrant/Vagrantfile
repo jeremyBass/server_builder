@@ -61,7 +61,9 @@
 # Start Vagrant
 ################################################################   
 Vagrant.configure("2") do |config|
-	load '.vagrant/includes/vagrant_env.rb'
+	if !@destroying && !@ssh && !@halt
+		load '.vagrant/includes/vagrant_env.rb'
+	end
 	$rootDir=Dir.pwd
  	#config.ssh.pty = true 
 		{% for name,server in servers -%}
