@@ -78,44 +78,36 @@ module.exports = function(grunt) {
 			var app_pillars = [];
 			for (var app_key in server.apps) {
 				var app = server.apps[app_key];
-				if(typeof(app["salt"])!=="undefined"){
-					if(typeof(app["salt"]["pillars"])!=="undefined"){
-						app_pillars = merge(app_pillars,app.salt.pillars);
+				if(typeof(app["remote"]["salt"])!=="undefined"){
+					if(typeof(app["remote"]["salt"]["pillars"])!=="undefined"){
+						app_pillars = merge(app_pillars,app.remote.salt.pillars);
+					}
+				}
+				if(typeof(app["vagrant"]["salt"])!=="undefined"){
+					if(typeof(app["vagrant"]["salt"]["pillars"])!=="undefined"){
+						app_pillars = merge(app_pillars,app.vagrant.salt.pillars);
 					}
 				}
 			}
+			console.log("app_pillars: %j", app_pillars);
 			var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
-			var _pillars = [];
-			pillars.forEach(function(entry) {
-				//grunt.log.writeln("looking at env "+entry);
-				if(entry.indexOf('-') == 0){
-					var _entry = entry.substring(1);
-					//grunt.log.writeln("checking for "+_entry);
-					var exc = _pillars.indexOf(_entry);
-					//grunt.log.writeln(_entry+" has index at "+exc);
-					if( exc > -1){
-						_pillars.splice(exc, 1);
-					}
-				}else{
-					if(_pillars.indexOf(entry) == -1){
-						_pillars.push(entry);
-					}
-				}
-			});
-			server.salt.pillars=_pillars;
-			
-			
+			server.salt.pillars=pillars;
+			console.log("_pillars: %j", pillars);
 			
 			for (var app_key in server.apps) {
 				var app = server.apps[app_key];
 
 				// options is optional
-				glob("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls", options, function (er, files) {
+				glob("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls", {}, function (er, files) {
+					
+					
 					for (var file in files) {
+						var item = files[file].split('/').pop();
+						grunt.log.writeln(item+"\r");
 						grunt.log.writeln("extenting server salt for "+key);
 						grunt.log.writeln("minion "+server.salt.minion);
-						var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+file;
-						var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+file;
+						var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
+						var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
 						var content = fs.readFileSync(sourceFile,'utf8')
 
 						grunt.log.writeln("read file");
@@ -146,8 +138,6 @@ module.exports = function(grunt) {
 			fs.writeFile(targetFile, res, function(err){
 				grunt.log.writeln("wrote to file");
 			});
-			
-
 
 		}
 
