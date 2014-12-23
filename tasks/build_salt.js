@@ -101,10 +101,10 @@ module.exports = function(grunt) {
 					}
 				}
 			}
-			console.log("app_pillars: %j", app_pillars);
+			//console.log("app_pillars: %j", app_pillars);
 			var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
 			server.salt.pillars=pillars;
-			console.log("_pillars: %j", pillars);
+			//console.log("_pillars: %j", pillars);
 			
 			for (var app_key in server.apps) {
 				var app = server.apps[app_key];
@@ -115,21 +115,19 @@ module.exports = function(grunt) {
 					
 					for (var file in files) {
 						var item = files[file].split('/').pop();
-						grunt.log.writeln(item+"\r");
-						grunt.log.writeln("extenting server salt for "+key);
-						grunt.log.writeln("minion "+server.salt.minion);
+						//grunt.log.writeln(item+"\r");
 						var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
 						var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
 						var content = fs.readFileSync(sourceFile,'utf8')
 
-						grunt.log.writeln("read file");
-						grunt.log.writeln("renderString of file");
+						//grunt.log.writeln("read file");
+						//grunt.log.writeln("renderString of file");
 						var tmpl = new nunjucks.Template(content,nenv);
-						grunt.log.writeln("compile");
+						//grunt.log.writeln("compile");
 						var res = tmpl.render(server.salt);
-						grunt.log.writeln("renderd");
+						grunt.log.writeln("renderd pillar ---"+item+"--- for "+app.install_dir);
 						fs.writeFile(targetFile, res, function(err){
-							grunt.log.writeln("wrote to file");
+							//grunt.log.writeln("wrote to file");
 						});
 					}
 				})
@@ -141,14 +139,14 @@ module.exports = function(grunt) {
 			var targetFile = 'server/salt/deploy_minions/'+ server.salt.minion +'.conf';
 			var content = fs.readFileSync(sourceFile,'utf8')
 
-			grunt.log.writeln("read file");
-			grunt.log.writeln("renderString of file");
+			//grunt.log.writeln("read file");
+			//grunt.log.writeln("renderString of file");
 			var tmpl = new nunjucks.Template(content);
-			grunt.log.writeln("compile");
+			//grunt.log.writeln("compile");
 			var res = tmpl.render(server);
 			grunt.log.writeln("renderd");
 			fs.writeFile(targetFile, res, function(err){
-				grunt.log.writeln("wrote to file");
+				//grunt.log.writeln("wrote to file");
 			});
 
 		}
