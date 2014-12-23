@@ -115,8 +115,10 @@ Vagrant.configure("2") do |config|
 					else
 						puts "updating repo that was already present"
 						Dir.chdir "server/app/{{ install_dir }}"
-						puts "git pull --quiet origin {% if app.branch %}{{ app.branch }} {% endif %}"
-						puts `git pull --quiet origin {% if app.branch %}{{ app.branch }} {% endif %}`
+						puts "git fetchgit pull"
+						puts "git reset --hard origin/{% if app.branch %}{{ app.branch }}{% else %}master{% endif %}"
+						puts `git fetchgit pull`
+						puts `git reset --hard origin/{% if app.branch %}{{ app.branch }}{% else %}master{% endif %}`
 						Dir.chdir "/"
 					end
 					{% endfor -%}
