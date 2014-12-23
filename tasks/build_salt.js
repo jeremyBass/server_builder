@@ -15,6 +15,17 @@ module.exports = function(grunt) {
 		var glob = require("glob");
 
 
+		var env = new nunjucks.Environment();
+		env.addFilter("leadingzero", function(int, zerocount) {
+			var base="";
+			for (i = 0; i < zerocount; i++) { 
+				base += "0";
+			}
+			var charLength=(base.length - (int+"").length);
+			return (base.substring(0, charLength))+int+"";
+		});
+		
+		
 		wrench.mkdirSyncRecursive("server/salt", 0777);
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = 'server/salt';
