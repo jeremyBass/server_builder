@@ -91,7 +91,7 @@ module.exports = function(grunt) {
 				}
 			});
 		}
-		normalize_vagrant_plugins(['vagrant-vbguest','vagrant-hosts','vagrant-hostsupdater']);
+		normalize_vagrant_plugins(['vagrant-vbguest','vagrant-hosts','vagrant-hostsupdater','vagrant-triggers']);
 		
 		
 		
