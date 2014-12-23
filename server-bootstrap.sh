@@ -7,7 +7,7 @@ if [ $SERVER_TYPE = "VAGRANT" ]; then
 fi
 
 cd /
-if ! -h /usr/sbin/gitploy; then
+if [ ! -h /usr/sbin/gitploy ]; then
     curl  https://raw.githubusercontent.com/jeremyBass/gitploy/master/gitploy | sudo sh -s -- install
     [ -h /usr/sbin/gitploy ] || echoerr "gitploy failed install"
 else
