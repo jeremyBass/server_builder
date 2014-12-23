@@ -15,10 +15,11 @@ module.exports = function(grunt) {
 		var glob = require("glob");
 
 
-		var env = new nunjucks.Environment();
-		env.addFilter("leadingzero", function(int, zerocount) {
+		var nenv = new nunjucks.Environment();
+		nenv.addFilter("leadingzero", function(int, zerocount) {
 			var base="";
-			for (i = 0; i < zerocount; i++) { 
+			var count = zerocount||(int+"").length;
+			for (i = 0; i < count; i++) { 
 				base += "0";
 			}
 			var charLength=(base.length - (int+"").length);
@@ -123,7 +124,7 @@ module.exports = function(grunt) {
 
 						grunt.log.writeln("read file");
 						grunt.log.writeln("renderString of file");
-						var tmpl = new nunjucks.Template(content);
+						var tmpl = new nunjucks.Template(content,nenv);
 						grunt.log.writeln("compile");
 						var res = tmpl.render(server.salt);
 						grunt.log.writeln("renderd");
