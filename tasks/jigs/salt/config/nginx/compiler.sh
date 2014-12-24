@@ -39,6 +39,7 @@ ini(){
 	sed -i 's|string\[\] = "Server: nginx"|string[] = "Server: ${nginxServername}"|' ngx_http_header_filter_module.c
 	sed -i 's|string\[\] = "Server: " NGINX_VER|string[] = "Server: ${nginxServername}"|' ngx_http_header_filter_module.c
 
+{% if nginx['msVersion'] not "false" %}
 	cd /src/nginx/
 	# Fetch modsecurity
 	wget -N -O modsecurity-${msVersion}.tar.gz https://github.com/SpiderLabs/ModSecurity/releases/download/v${msVersion}/modsecurity-${msVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
@@ -46,19 +47,24 @@ ini(){
 	cd modsecurity-${msVersion}
 	./configure --enable-standalone-module
 	make && make install  2>/var/log/nginx-${nginxVersion}_compile.log
+{% endif %}
 
 	cd /src/nginx
 
+{% if nginx['opensslVersion'] not "false" -%}
 	# Fetch openssl
 	wget -N http://www.openssl.org/source/openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
 	tar -xzf openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
+{% endif -%}
 
+{% if nginx['npsVersion'] not "false" -%}
 	#get page speed
 	wget https://github.com/pagespeed/ngx_pagespeed/archive/v${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
 	unzip v${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
 	cd ngx_pagespeed-${npsVersion}-beta/
 	wget https://dl.google.com/dl/page-speed/psol/${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
 	tar -xzvf ${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log # expands to psol/
+{% endif -%}
 
 	#mkdir /tmp/nginx-modules
 	#cd /tmp/nginx-modules
@@ -82,6 +88,12 @@ ini(){
 --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
 --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
 --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+{% if nginx['npsVersion'] not "false" -%}
+--add-module=/src/nginx/ngx_pagespeed-${npsVersion}-beta \
+{% endif -%}
+{% if nginx['msVersion'] not "false" -%}
+--add-module=/src/nginx/modsecurity-${msVersion}/nginx/modsecurity \
+{% endif -%}
 --with-http_auth_request_module \
 --with-http_sub_module \
 --with-http_mp4_module \
@@ -92,19 +104,19 @@ ini(){
 --with-http_gzip_static_module \
 --with-http_stub_status_module \
 --with-http_sub_module \
+{% if nginx['opensslVersion'] not "false" -%}
 --with-http_spdy_module \
 --with-http_ssl_module \
 --with-openssl=/src/nginx/openssl-${opensslVersion} \
 --with-sha1=/usr/include/openssl \
 --with-md5=/usr/include/openssl \
+{% endif -%}
 --with-pcre \
 --with-ipv6 \
 --with-file-aio \
 --with-http_realip_module \
 --without-http_scgi_module \
---without-http_uwsgi_module \
---add-module=/src/nginx/ngx_pagespeed-${npsVersion}-beta \
---add-module=/src/nginx/modsecurity-${msVersion}/nginx/modsecurity
+--without-http_uwsgi_module
 	make && make install  2>/var/log/nginx-${nginxVersion}_compile.log
 }
 
