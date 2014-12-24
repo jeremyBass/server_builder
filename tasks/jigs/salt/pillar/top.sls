@@ -1,4 +1,5 @@
 base:
   '*':
     - web
+    - nginx
     - security

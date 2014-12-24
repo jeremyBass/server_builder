@@ -1,6 +1,6 @@
 # set up data first
 ###########################################################
-{%- set nginx_version = pillar['nginx']['version'] -%} 
+{%- set nginx = pillar['nginx'] -%} 
 {% set vars = {'isLocal': False} %}
 {% if vars.update({'ip': salt['cmd.run']('ifconfig eth1 | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
@@ -264,6 +264,11 @@ nginx-compile-script:
     - user: root
     - group: root
     - mode: 755
+    - template: jinja
+    - context:
+      nginx: {{ nginx }}
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
   cmd.run: #insure it's going to run on windows hosts.. note it's files as folders the git messes up
     - name: dos2unix /src/compiler.sh
     - require:
@@ -272,11 +277,11 @@ nginx-compile-script:
 # Run compiler
 nginx-compile:
   cmd.run:
-    - name: /src/compiler.sh {{ nginx_version }}
+    - name: /src/compiler.sh
     - cwd: /
     - user: root
     - stateful: True
-    - unless: nginx -v 2>&1 | grep -qi "{{ nginx_version }}"
+    - unless: nginx -v 2>&1 | grep -qi "{{ nginx.nginxVersion }}"
     - require:
       - pkg: nginx-compiler-base
 

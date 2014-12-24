@@ -9,10 +9,10 @@ name="nginx-compile"
 #    exit
 #fi
 
-nginxVersion="$1"
-opensslVersion="1.0.1j"
-npsVersion=1.8.31.4
-msVersion=2.8.0
+nginxVersion="{{ nginx.nginxVersion }}"
+opensslVersion="{{ nginx.opensslVersion }}"
+npsVersion="{{ nginx.npsVersion }}"
+msVersion="{{ nginx.msVersion }}"
 
 touch /var/log/failed_nginx_compile.log
 touch /var/log/nginx-${nginxVersion}_compile.log
