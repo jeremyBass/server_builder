@@ -124,12 +124,10 @@ LOGOUTPUT=$(ini)
 if [ $(nginx -v 2>&1 | grep -qi "$nginx_version") ]; then
 	resulting="Just finished installing nginx $nginxVersion"
 	echo "result=True changed=True comment='$resulting'"
-	exit 0
 	#echo "{'name': 'nginx-compile', 'changes': {}, 'result': True, 'comment': ''}"
 else
 	resulting="Failed installing nginx $nginxVersion, check /failed_nginx_compile for details"
 	echo $LOGOUTPUT >> /failed_nginx_compile
 	echo "result=False changed=False comment='$resulting'"
-	exit 1
 	#echo "{'name': 'nginx-compile', 'changes': {}, 'result': False, 'comment': ''}"
 fi
