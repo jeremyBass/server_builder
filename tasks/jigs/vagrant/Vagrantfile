@@ -88,7 +88,7 @@ Vagrant.configure("2") do |config|
 			config.vm.define "{{ hostname }}" do |vmConfig|
 				#vmConfig.ssh.port = 22
 				#vmConfig.ssh.password = "vagrant"
-				#vmConfig.ssh.forward_agent = true
+				vmConfig.ssh.forward_agent = true
 			# Box choice
 			################################################################
 				vmConfig.vm.box_download_insecure = true
