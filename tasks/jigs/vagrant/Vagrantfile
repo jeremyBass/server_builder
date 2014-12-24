@@ -86,7 +86,9 @@ Vagrant.configure("2") do |config|
 			{% set apps = server.apps -%}
 			{% set hostname = vagrant.hostname | replace("-", "") | replace("_", "") -%}
 			config.vm.define "{{ hostname }}" do |vmConfig|
-
+				#vmConfig.ssh.port = 22
+				#vmConfig.ssh.password = "vagrant"
+				#vmConfig.ssh.forward_agent = true
 			# Box choice
 			################################################################
 				vmConfig.vm.box_download_insecure = true
@@ -214,7 +216,7 @@ Vagrant.configure("2") do |config|
 							{% set install_dir = appname -%}
 						{% endif -%}
 							$db_bak_script=""
-							$db_bak_script="sudo -s && mkdir -p /var/app/{{ install_dir }}/DB_BAK/ && mysqldump wsumage_networks > /var/app/{{ install_dir }}/DB_BAK/{{ install_dir }}-{{ appname }}.sql  3>&1 1>/dev/null 2>&3 | exit 0"
+							$db_bak_script="sudo mkdir -p /var/app/{{ install_dir }}/DB_BAK/ && sudo mysqldump wsumage_networks > /var/app/{{ install_dir }}/DB_BAK/{{ install_dir }}-{{ appname }}.sql 2>/dev/null 2>&1 | exit 0"
 							config.trigger.before :destroy, :option => "value" do
 								info "Dumping the database before destroying the VM for app '{{ install_dir }}'"
 								run "vagrant ssh -c '#{$db_bak_script}'"
