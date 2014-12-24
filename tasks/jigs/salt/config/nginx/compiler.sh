@@ -13,7 +13,6 @@ nginxVersion="{{ nginx['nginxVersion'] }}"
 opensslVersion="{{ nginx['opensslVersion'] }}"
 npsVersion="{{ nginx['npsVersion'] }}"
 msVersion="{{ nginx['msVersion'] }}"
-nginxServername="{{ nginx['nginxServername'] }}"
 
 touch /var/log/failed_nginx_compile.log
 touch /var/log/nginx-${nginxVersion}_compile.log
@@ -36,8 +35,8 @@ ini(){
 	#/src/nginx/src/http/ngx_http_header_filter_module.c > src/http/ngx_http_header_filter_module.c.main.bak
 	# hidding the tech helps hide which attack to use
 	cp ngx_http_header_filter_module.c{,.bak}
-	sed -i 's|string\[\] = "Server: nginx"|string[] = "Server: ${nginxServername}"|' ngx_http_header_filter_module.c
-	sed -i 's|string\[\] = "Server: " NGINX_VER|string[] = "Server: ${nginxServername}"|' ngx_http_header_filter_module.c
+	sed -i 's|string\[\] = "Server: nginx"|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
+	sed -i 's|string\[\] = "Server: " NGINX_VER|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
 
 {% if nginx['msVersion'] not "false" %}
 	cd /src/nginx/
