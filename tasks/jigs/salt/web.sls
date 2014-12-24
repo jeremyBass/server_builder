@@ -182,6 +182,7 @@ nginx-compiler-base:
     - require_in:
       - cmd: nginx-compile
 
+{% if 'ssl' in grains.get('roles') %}
 # Provide the ssl directory for nginx
 /etc/nginx/ssl:
   file.directory:
@@ -191,6 +192,7 @@ nginx-compiler-base:
     - makedirs: true
     - require_in:
       - cmd: nginx-compile
+{% endif %}
 
 # Provide the proxy directory for nginx
 /var/lib/nginx:
