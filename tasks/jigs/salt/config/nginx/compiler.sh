@@ -38,7 +38,7 @@ ini(){
 	sed -i 's|string\[\] = "Server: nginx"|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
 	sed -i 's|string\[\] = "Server: " NGINX_VER|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
 
-{% if nginx['msVersion'] not "false" %}
+{% if nginx['msVersion'] != "false" %}
 	cd /src/nginx/
 	# Fetch modsecurity
 	wget -N -O modsecurity-${msVersion}.tar.gz https://github.com/SpiderLabs/ModSecurity/releases/download/v${msVersion}/modsecurity-${msVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
@@ -50,13 +50,13 @@ ini(){
 
 	cd /src/nginx
 
-{% if nginx['opensslVersion'] not "false" -%}
+{% if nginx['opensslVersion'] != "false" -%}
 	# Fetch openssl
 	wget -N http://www.openssl.org/source/openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
 	tar -xzf openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
 {% endif -%}
 
-{% if nginx['npsVersion'] not "false" -%}
+{% if nginx['npsVersion']  != "false" -%}
 	#get page speed
 	wget https://github.com/pagespeed/ngx_pagespeed/archive/v${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
 	unzip v${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
@@ -87,10 +87,10 @@ ini(){
 --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
 --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
 --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-{% if nginx['npsVersion'] not "false" -%}
+{% if nginx['npsVersion']  != "false" -%}
 --add-module=/src/nginx/ngx_pagespeed-${npsVersion}-beta \
 {% endif -%}
-{% if nginx['msVersion'] not "false" -%}
+{% if nginx['msVersion']  != "false" -%}
 --add-module=/src/nginx/modsecurity-${msVersion}/nginx/modsecurity \
 {% endif -%}
 --with-http_auth_request_module \
@@ -103,7 +103,7 @@ ini(){
 --with-http_gzip_static_module \
 --with-http_stub_status_module \
 --with-http_sub_module \
-{% if nginx['opensslVersion'] not "false" -%}
+{% if nginx['opensslVersion']  != "false" -%}
 --with-http_spdy_module \
 --with-http_ssl_module \
 --with-openssl=/src/nginx/openssl-${opensslVersion} \
