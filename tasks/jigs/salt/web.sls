@@ -222,6 +222,7 @@ nginx-compiler-base:
     - require_in:
       - cmd: nginx-compile
 
+{% if nginx['npsVersion'] %}
 # Provide the pagespeed cache directory for nginx
 /var/ngx_pagespeed_cache:
   file.directory:
@@ -230,6 +231,7 @@ nginx-compiler-base:
     - mode: 755
     - require_in:
       - cmd: nginx-compile
+{% endif %}
 
 # Adds the service file.
 /etc/init.d/nginx:
@@ -327,7 +329,7 @@ nginx-reboot-auto:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
 
-
+{% if nginx['msVersion'] %}
 /etc/nginx/modsecurity.conf:
   file.managed:
     - source: salt://config/nginx/modsecurity.conf
@@ -340,6 +342,7 @@ nginx-reboot-auto:
     - context:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
+{% endif %}
 
 /etc/nginx/sites-enabled/default:
   file.managed:
