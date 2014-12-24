@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 				output_stream(data);
 			});
 			ls.stderr.on('data', function (data) {
-				output_stream(data,'\rstderr: ');
+				output_stream(data,'\r');
 			});
 			ls.on('exit', function (code) {
 				output_stream(code,'','<<<<<<<< finished sever "+current_env'+current_env+'\r');
