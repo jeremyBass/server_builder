@@ -44,7 +44,7 @@ dos2unix:
     - name: dos2unix
 
 git:
-  pkg.installed:
+  pkg.latest:
     - name: git
 
 patch:
