@@ -217,7 +217,7 @@ Vagrant.configure("2") do |config|
 						{% endif -%}
 
 								{
-									[:destroy, :halt, :suspend ] => "sudo mkdir -p /var/app/db_bak/{{ install_dir }}/ && sudo mysqldump wsumage_networks > /var/app/db_bak/{{ install_dir }}/{{ install_dir }}-{{ appname }}.sql 2>/dev/null 2>&1 | exit 0"
+									[:destroy, :halt, :suspend ] => "sudo mkdir -p /var/app/db_bak/{{ install_dir }}/ && sudo mysqldump wsumage_networks > /var/app/db_bak/{{ install_dir }}/current--{{ install_dir }}-{{ appname }}.sql 2>/dev/null 2>&1 | exit 0"
 								}.each do |command, trigger|
 									config.trigger.before command, :stdout => true do
 										confirm = nil
@@ -234,7 +234,7 @@ Vagrant.configure("2") do |config|
 								end
 							
 								{
-									[:up, :reload, :resume] => "sudo mysql -u root wsumage_networks < current--{{ install_dir }}-{{ appname }}.sql"
+									[:up, :reload, :resume] => "sudo mysql -u root wsumage_networks < /var/app/db_bak/{{ install_dir }}/current--{{ install_dir }}-{{ appname }}.sql"
 								}.each do |command, trigger|
 									config.trigger.after command, :stdout => true do
 										if File.exist?("server/app/db_bak/{{ install_dir }}/current--{{ install_dir }}-{{ appname }}.sql")
