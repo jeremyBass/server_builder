@@ -234,7 +234,7 @@ Vagrant.configure("2") do |config|
 								end
 							
 								{
-									[:up, :reload, :resume] => "echo \"would have loaded\""
+									[:up, :reload, :resume] => "sudo mysql -u root wsumage_networks < current--{{ install_dir }}-{{ appname }}.sql"
 								}.each do |command, trigger|
 									config.trigger.after command, :stdout => true do
 										if File.exist?("server/app/db_bak/{{ install_dir }}/current--{{ install_dir }}-{{ appname }}.sql")
@@ -244,7 +244,7 @@ Vagrant.configure("2") do |config|
 											end
 											if confirm.upcase == "Y"
 												info "would be loading the "
-												run  "vboxmanage #{trigger}"
+												run "vagrant ssh -c '#{trigger}'"
 											else
 												info "skipped load the backup"
 											end
