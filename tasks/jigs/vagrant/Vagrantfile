@@ -216,11 +216,49 @@ Vagrant.configure("2") do |config|
 							{% set install_dir = appname -%}
 						{% endif -%}
 							$db_bak_script=""
-							$db_bak_script="sudo mkdir -p /var/app/DB_BAK/{{ install_dir }}/ && sudo mysqldump wsumage_networks > /var/app/DB_BAK/{{ install_dir }}/{{ install_dir }}-{{ appname }}.sql 2>/dev/null 2>&1 | exit 0"
+							$db_bak_script=""
 							config.trigger.before :destroy, :option => "value" do
 								info "Dumping the database before destroying the VM for app '{{ install_dir }}'"
 								run "vagrant ssh -c '#{$db_bak_script}'"
 							end
+							
+								{
+									[:destroy, :halt, :suspend ] => "sudo mkdir -p /var/db_bak/app/{{ install_dir }}/ && sudo mysqldump wsumage_networks > /var/db_bak/app/{{ install_dir }}/{{ install_dir }}-{{ appname }}.sql 2>/dev/null 2>&1 | exit 0"
+								}.each do |command, trigger|
+									config.trigger.before command, :stdout => true do
+										confirm = nil
+										until ["Y", "y", "N", "n"].include?(confirm)
+											confirm = ask "Back up the database? (Y/N) "
+										end
+										if confirm.upcase == "Y"
+											info "Dumping the database before #{command}ing the VM for app 'stores'"
+											run "vagrant ssh -c '#{trigger}'"
+										else
+											info "skipped making the backup"
+										end
+									end
+								end
+							
+								{
+									[:up, :reload, :resume] => "echo \"would have loaded\""
+								}.each do |command, trigger|
+									config.trigger.after command, :stdout => true do
+										if !File.exist?("server/db_bak/app/{{ install_dir }}/current--{{ install_dir }}-{{ appname }}.sql")
+											confirm = nil
+											until ["Y", "y", "N", "n"].include?(confirm)
+												confirm = ask "Would you like to reload the backup? (Y/N) "
+											end
+											if confirm.upcase == "Y"
+												info "would be loading the "
+												run  "vboxmanage #{trigger}"
+											else
+												info "skipped load the backup"
+											end
+										else
+											puts "no backup dbs to load"
+										end
+									end
+								end
 						{% endfor -%}
 						
 				
