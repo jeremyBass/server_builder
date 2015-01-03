@@ -21,6 +21,9 @@ fi
 # Add the keys to the server so you can get to github safely without
 # need for a prompt which salt will not handle correctly
 #-----------------------------------------------------------------------
+touch ~/.ssh/known_hosts
+ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
+ssh-keyscan -H 192.30.252.130 >> ~/.ssh/known_hosts
 ssh-keyscan -H 192.30.252.131 >> ~/.ssh/known_hosts
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
