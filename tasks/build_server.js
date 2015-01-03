@@ -25,7 +25,7 @@ module.exports = function(grunt) {
 			env_obj.shift();
 			grunt.log.writeln("run salt env="+current_env);
 			spawn = require('child_process').spawn;
-			var ls = spawn('salt-call', ['--local','--log-level='+(log||'error'),'--config-dir=/etc/salt','state.highstate','env='+current_env],{
+			var ls = spawn('salt-call', ['--local','--log-level='+(log||'info'),'--config-dir=/etc/salt','state.highstate','env='+current_env],{
 					cwd:'/'
 				});
 			var lastout;
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
 								grunt.log.writeln("add salt env "+app.install_dir);
 								env_obj.push(app.install_dir);
 							}
-							log = server.remote.salt.log||server.remote.salt.log||"";
+							log = server.remote.salt.log_level||server.remote.salt.log_level||"info";
 						}
 						run_env(env_obj,log);
 					});
