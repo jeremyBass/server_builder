@@ -17,6 +17,13 @@ if ! rpm -qa | grep -qw npm; then
     npm install -g grunt-cli
 fi
 
+#-----------------------------------------------------------------------
+# Add the keys to the server so you can get to github safely without
+# need for a prompt which salt will not handle correctly
+#-----------------------------------------------------------------------
+ssh-keyscan -H 192.30.252.131 >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
 [ -d /srv/builder ] || mkdir -p /srv/builder
 
 gitploy init 2>&1 | grep -qi "already initialized" && echo ""
