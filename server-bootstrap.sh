@@ -2,6 +2,16 @@
 echo "Server type is: ${SERVER_TYPE}"
 mkdir -p /srv/builder
 
+#-----------------------------------------------------------------------
+# Add the keys to the server so you can get to github safely without
+# need for a prompt which salt will not handle correctly
+#-----------------------------------------------------------------------
+touch ~/.ssh/known_hosts
+ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
+ssh-keyscan -H 192.30.252.130 >> ~/.ssh/known_hosts
+ssh-keyscan -H 192.30.252.131 >> ~/.ssh/known_hosts
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
 cd /
 if [ ! -h /usr/sbin/gitploy ]; then
     curl  https://raw.githubusercontent.com/jeremyBass/gitploy/master/gitploy | sudo sh -s -- install
@@ -17,15 +27,7 @@ if ! rpm -qa | grep -qw npm; then
     npm install -g grunt-cli
 fi
 
-#-----------------------------------------------------------------------
-# Add the keys to the server so you can get to github safely without
-# need for a prompt which salt will not handle correctly
-#-----------------------------------------------------------------------
-touch ~/.ssh/known_hosts
-ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
-ssh-keyscan -H 192.30.252.130 >> ~/.ssh/known_hosts
-ssh-keyscan -H 192.30.252.131 >> ~/.ssh/known_hosts
-ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
 
 [ -d /srv/builder ] || mkdir -p /srv/builder
 
