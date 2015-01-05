@@ -9,6 +9,7 @@ mkdir -p /srv/builder
 [ -d ~/.ssh ] || mkdir -p ~/.ssh
 touch ~/.ssh/known_hosts
 ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
+ssh-keyscan -H 192.30.252.129 >> ~/.ssh/known_hosts
 ssh-keyscan -H 192.30.252.130 >> ~/.ssh/known_hosts
 ssh-keyscan -H 192.30.252.131 >> ~/.ssh/known_hosts
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts
