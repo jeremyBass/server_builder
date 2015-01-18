@@ -87,18 +87,18 @@ module.exports = function(grunt) {
 				spawn = require('child_process').spawn;
 				var gitArg = [];
 				if( fs.exists('/var/app/'+_app_op.install_dir+'/.git/') ){
-					gitArg.push("up");
+					gitArg.push(" up ");
 				}
 				if(_app_op.install_dir){
-					gitArg.push("-p");
-					gitArg.push("/var/app/"+_app_op.install_dir+"/");
+					gitArg.push(" -p ");
+					gitArg.push("/var/app/"+_app_op.install_dir+"/ ");
 				}
 				if(_app_op.branch){
-					gitArg.push("-b ");
+					gitArg.push(" -b ");
 					gitArg.push(_app_op.branch);
 				}
 				if(_app_op.tag){
-					gitArg.push("-t ");
+					gitArg.push(" -t ");
 					gitArg.push(_app_op.tag);
 				}
 				if(_app_op.install_dir){ // tracked name
@@ -110,7 +110,7 @@ module.exports = function(grunt) {
 				
 				grunt.log.writeln("gitploy "+_app_op.install_dir);
 				console.log("gitArg: %j \r", gitArg);
-				console.log("cwd: %s \r", 'gitploy'+gitArg.join(' '));
+				console.log("cwd: %s \r", 'gitploy '+gitArg.join(' '));
 				var ls = spawn('gitploy', gitArg,{
 						cwd:'/'
 					});
