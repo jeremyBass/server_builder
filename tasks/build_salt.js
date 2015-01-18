@@ -50,7 +50,7 @@ module.exports = function(grunt) {
 			
 		};
 		var config_file = 'server_project.conf';
-		if( fs.exists('/server_project.conf') ){
+		if( fs.existsSync('/server_project.conf') ){
 			config_file = '/server_project.conf';
 			grunt.log.writeln("using from root :: "+config_file);
 		}

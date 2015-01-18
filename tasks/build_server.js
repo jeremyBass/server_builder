@@ -74,12 +74,14 @@ module.exports = function(grunt) {
 
 						var env_obj = ['base'];
 						
-						var config_file = 'server_project.conf';
-						if( fs.exists('/server_project.conf') ){
-							config_file = '/server_project.conf';
-						}
-						serverobj = grunt.file.readJSON(config_file);
-						var servers = serverobj.servers;
+		var config_file = 'server_project.conf';
+		if( fs.existsSync('/server_project.conf') ){
+			config_file = '/server_project.conf';
+			grunt.log.writeln("using from root :: "+config_file);
+		}
+		serverobj = grunt.file.readJSON(config_file);
+		var servers = serverobj.servers;
+						
 						var log = "error";
 						for (var key in servers) {
 							var server = servers[key];
