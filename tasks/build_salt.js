@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 			var out = sdt_stream.toString().trim();
 			if( out!='\n' && out!=null && out!="" && lastout!=out){
 				lastout=out;
-				out=out.split('\r\r').join('\r');
+				out=out.split('\n\n').join('\n');
 				util.print(prefix+out+sufix);
 			}
 		}
@@ -115,8 +115,8 @@ module.exports = function(grunt) {
 				}
 				
 				grunt.log.writeln("gitploy "+_app_op.install_dir);
-				console.log("gitArg: %j \r", gitArg);
-				console.log("cwd: %s \r", 'gitploy '+gitArg.join(' '));
+				console.log("gitArg: %j \n", gitArg);
+				console.log("cwd: %s \n", 'gitploy '+gitArg.join(' '));
 				/*var ls = spawn('gitploy', gitArg,{
 						cwd:'/'
 					});*/
@@ -126,13 +126,13 @@ module.exports = function(grunt) {
 				
 				var lastout;
 				ls.stdout.on('data', function (data) {
-					output_stream(data,'\r');
+					output_stream(data,'\n');
 				});
 				ls.stderr.on('data', function (data) {
-					output_stream(data,'\r');
+					output_stream(data,'\n');
 				});
 				ls.on('exit', function (code) {
-					output_stream(code,'','<<<<<<<< finished sever '+_app_op.install_dir+'\r');
+					output_stream(code,'\n','<<<<<<<< finished sever '+_app_op.install_dir+'\n');
 					if(app_obj.length>0){
 						load_apps(app_obj,callback);
 					}else{
