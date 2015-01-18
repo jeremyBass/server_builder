@@ -106,6 +106,7 @@ module.exports = function(grunt) {
 				}
 				
 				grunt.log.writeln("gitploy "+_app_op.install_dir);
+				console.log("gitArg: %j", gitArg);
 				var ls = spawn('gitploy', gitArg,{
 						cwd:'/'
 					});
