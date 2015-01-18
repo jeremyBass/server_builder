@@ -72,7 +72,12 @@ module.exports = function(grunt) {
 						grunt.log.writeln(sourceDir+" >> "+targetDir);
 
 						var env_obj = ['base'];
-						serverobj = grunt.file.readJSON('server_project.conf');
+						
+						var config_file = 'server_project.conf';
+						if( fs.exists('/server_project.conf') ){
+							config_file = '/server_project.conf';
+						}
+						serverobj = grunt.file.readJSON(config_file);
 						var servers = serverobj.servers;
 						var log = "error";
 						for (var key in servers) {
