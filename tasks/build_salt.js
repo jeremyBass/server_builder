@@ -14,6 +14,15 @@ module.exports = function(grunt) {
 		var lastout;
 		var glob = require("glob");
 
+		function output_stream(sdt_stream,prefix,sufix){
+			prefix = prefix||"";
+			sufix = sufix||"";
+			var out = sdt_stream.toString().trim();
+			if( out!='\n' && out!=null && out!="" && lastout!=out){
+				lastout=out;
+				util.print(prefix+out+sufix);
+			}
+		}
 
 		var nenv = new nunjucks.Environment();
 		nenv.addFilter("leadingzero", function(int, zerocount) {
