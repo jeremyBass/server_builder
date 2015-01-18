@@ -20,6 +20,7 @@ module.exports = function(grunt) {
 			var out = sdt_stream.toString().trim();
 			if( out!='\n' && out!=null && out!="" && lastout!=out){
 				lastout=out;
+				out=out.split('\r\r').join('\r');
 				util.print(prefix+out+sufix);
 			}
 		}

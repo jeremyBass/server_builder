@@ -15,6 +15,7 @@ module.exports = function(grunt) {
 			var out = sdt_stream.toString().trim();
 			if( out!='\n' && out!=null && out!="" && lastout!=out){
 				lastout=out;
+				out=out.split('\r\r').join('\r');
 				util.print(prefix+out+sufix);
 			}
 		}
@@ -30,13 +31,13 @@ module.exports = function(grunt) {
 				});
 			var lastout;
 			ls.stdout.on('data', function (data) {
-				output_stream(data);
+				output_stream(data,'\r');
 			});
 			ls.stderr.on('data', function (data) {
 				output_stream(data,'\r');
 			});
 			ls.on('exit', function (code) {
-				output_stream(code,'','<<<<<<<< finished sever "+current_env'+current_env+'\r');
+				output_stream(code,'\r\r\r','<<<<<<<< finished sever "+current_env'+current_env+'\r');
 				if(env_obj.length>0){
 					run_env(env_obj);
 				}
