@@ -48,22 +48,26 @@ module.exports = function(grunt) {
 			var servers = serverobj.servers;
 			if(app_obj==false){
 				grunt.log.writeln("needed app_obj ");
-				for (var app_key in server.apps) {
-					var app = server.apps[app_key];
-					var app_op={};
-					if(app.repo){
-						app_op["repo"]=app.repo;
+				for (var key in servers) {
+					grunt.log.writeln("adding "+key+" to app_obj");
+					var server = servers[key];
+					for (var app_key in server.apps) {
+						var app = server.apps[app_key];
+						var app_op={};
+						if(app.repo){
+							app_op["repo"]=app.repo;
+						}
+						if(app.branch){
+							app_op["branch"]=app.branch;
+						}
+						if(app.tag){
+							app_op["tag"]=app.tag;
+						}
+						if(app.install_dir){
+							app_op["install_dir"]=app.install_dir;
+						}
+						app_obj.push(app_op);
 					}
-					if(app.branch){
-						app_op["branch"]=app.branch;
-					}
-					if(app.tag){
-						app_op["tag"]=app.tag;
-					}
-					if(app.install_dir){
-						app_op["install_dir"]=app.install_dir;
-					}
-					app_obj.push(app_op);
 				}
 			}
 			if(app_obj.length>0){
