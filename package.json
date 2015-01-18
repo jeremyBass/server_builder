@@ -17,6 +17,7 @@
 		"grunt": "~0.4.5",
 		"wrench":"~1.5.8",
 		"nunjucks":"~1.1.0",
-		"shelljs":"~0.3.0"
+		"shelljs":"~0.3.0",
+		"spawn-command":"~0.0.2-1"
 	}
 }

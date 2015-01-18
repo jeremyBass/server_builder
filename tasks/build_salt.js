@@ -87,7 +87,7 @@ module.exports = function(grunt) {
 				var _app_op = app_obj[0];
 				app_obj.shift();
 
-				spawn = require('child_process').spawn;
+				var spawn = require('child_process').spawn;
 				var gitArg = [];
 				if( fs.exists('/var/app/'+_app_op.install_dir+'/.git/') ){
 					gitArg.push(" up ");
@@ -120,6 +120,10 @@ module.exports = function(grunt) {
 				var ls = spawn('gitploy', gitArg,{
 						cwd:'/'
 					});
+				
+				var spawnCommand = require('spawn-command'),
+				var ls = spawnCommand('cd / && gitploy '+gitArg.join(' '));
+				
 				var lastout;
 				ls.stdout.on('data', function (data) {
 					output_stream(data,'\r');
