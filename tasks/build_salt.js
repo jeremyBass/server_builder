@@ -136,6 +136,7 @@ module.exports = function(grunt) {
 					if(app_obj.length>0){
 						load_apps(app_obj,callback);
 					}else{
+						grunt.log.writeln("Finished app downloads");
 						if(typeof callback === "function"){
 							callback(); //we just finished the last one exit out
 						}
@@ -257,7 +258,7 @@ module.exports = function(grunt) {
 
 			}
 		}
-		load_apps(false,start_salt_production());
+		load_apps(false,start_salt_production);
 		
 		//done();
 		grunt.task.current.async();
