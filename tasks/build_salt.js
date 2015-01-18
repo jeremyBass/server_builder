@@ -115,13 +115,13 @@ module.exports = function(grunt) {
 					});
 				var lastout;
 				ls.stdout.on('data', function (data) {
-					output_stream(data);
+					output_stream(data,'\r');
 				});
 				ls.stderr.on('data', function (data) {
 					output_stream(data,'\r');
 				});
 				ls.on('exit', function (code) {
-					output_stream(code,'','<<<<<<<< finished sever '+_app_op.install_dir+'\n');
+					output_stream(code,'','<<<<<<<< finished sever '+_app_op.install_dir+'\r');
 					if(app_obj.length>0){
 						load_apps(app_obj,callback);
 					}else{
