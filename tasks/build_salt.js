@@ -91,7 +91,7 @@ module.exports = function(grunt) {
 				}
 				if(_app_op.install_dir){
 					gitArg.push(" -p ");
-					gitArg.push("/var/app/"+_app_op.install_dir+"/ ");
+					gitArg.push('" /var/app/'+_app_op.install_dir+'/" ');
 				}
 				if(_app_op.branch){
 					gitArg.push(" -b ");
