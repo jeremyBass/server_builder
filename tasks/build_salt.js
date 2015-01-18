@@ -47,6 +47,7 @@ module.exports = function(grunt) {
 			var serverobj = grunt.file.readJSON('server_project.conf');
 			var servers = serverobj.servers;
 			if(app_obj==false){
+				grunt.log.writeln("needed app_obj ");
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
 					var app_op={};
@@ -112,6 +113,7 @@ module.exports = function(grunt) {
 					}
 				});
 			}else{
+				grunt.log.writeln("failed to load app_obj and started exit -- no apps loaded");
 				if(typeof callback === "function"){
 					callback(); //the was an empty box this step was called with, exit out
 				}
