@@ -121,7 +121,7 @@ module.exports = function(grunt) {
 					output_stream(data,'\r');
 				});
 				ls.on('exit', function (code) {
-					output_stream(code,'','<<<<<<<< finished sever "+current_env'+_app_op.install_dir+'\r');
+					output_stream(code,'','<<<<<<<< finished sever '+_app_op.install_dir+'\n');
 					if(app_obj.length>0){
 						load_apps(app_obj,callback);
 					}else{
