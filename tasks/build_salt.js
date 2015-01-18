@@ -41,116 +41,189 @@ module.exports = function(grunt) {
 		};
 		serverobj = grunt.file.readJSON('server_project.conf');
 		var servers = serverobj.servers;
-		//set up the vagrant object so that we can just define the server if we want to
-		//the vagrant needs some defaults, and so it's vagrant default then remote then 
-		//vagrant opptions
-		for (var key in servers) {
-			grunt.log.writeln("found server salt "+key);
-			var server = servers[key];
-			server.salt={};
-			
-			var remote_env = typeof(server.remote.salt)!=="undefined"?server.remote.salt.env:[];
-			var vagrant_env = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.env:[];
-			var app_env = [];
-			for (var app_key in server.apps) {
-				var app = server.apps[app_key];
-				if(typeof(app["salt"])!=="undefined"){
-					if(typeof(app["salt"]["env"])!=="undefined"){
-						app_env = merge(app_env,app.salt.env);
+		
+
+		function load_apps(app_obj,callback){
+			if(app_obj==false){
+				for (var app_key in server.apps) {
+					var app = server.apps[app_key];
+					var app_op={};
+					if(app.repo){
+						app_op["repo"]=app.repo;
 					}
+					if(app.branch){
+						app_op["branch"]=app.branch;
+					}
+					if(app.tag){
+						app_op["tag"]=app.tag;
+					}
+					if(app.install_dir){
+						app_op["install_dir"]=app.install_dir;
+					}
+					app_obj[]=app_op;
 				}
 			}
+			if(app_obj.length>0){
+				var _app_op = app_obj[0];
+				app_obj.shift();
 
-			server.salt = extend(default_salt,server.remote.salt,server.vagrant.salt||{});
-
-			var env = merge(merge(remote_env, vagrant_env),app_env);
-			var _env = [];
-			env.forEach(function(entry) {
-				//grunt.log.writeln("looking at env "+entry);
-				if(entry.indexOf('-') == 0){
-					var _entry = entry.substring(1);
-					//grunt.log.writeln("checking for "+_entry);
-					var exc = _env.indexOf(_entry);
-					//grunt.log.writeln(_entry+" has index at "+exc);
-					if( exc > -1){
-						_env.splice(exc, 1);
-					}
-				}else{
-					if(_env.indexOf(entry) == -1){
-						_env.push(entry);
-					}
-				}
-			});
-			server.salt.env=_env;
-			
-
-			
-			var remote_pillars = typeof(server.remote.salt)!=="undefined"?server.remote.salt.pillars:[];
-			var vagrant_pillars = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.pillars:[];
-			var app_pillars = [];
-			for (var app_key in server.apps) {
-				var app = server.apps[app_key];
-				if(typeof(app["remote"]["salt"])!=="undefined"){
-					if(typeof(app["remote"]["salt"]["pillars"])!=="undefined"){
-						app_pillars = merge(app_pillars,app.remote.salt.pillars);
-					}
-				}
-				if(typeof(app["vagrant"]["salt"])!=="undefined"){
-					if(typeof(app["vagrant"]["salt"]["pillars"])!=="undefined"){
-						app_pillars = merge(app_pillars,app.vagrant.salt.pillars);
-					}
-				}
-			}
-			//console.log("app_pillars: %j", app_pillars);
-			var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
-			server.salt.pillars=pillars;
-			//console.log("_pillars: %j", pillars);
-			
-			for (var app_key in server.apps) {
-				var app = server.apps[app_key];
-
-				// options is optional
-				glob("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls", {}, function (er, files) {
+				spawn = require('child_process').spawn;
+				var gitArg = [];
 					
-					
-					for (var file in files) {
-						var item = files[file].split('/').pop();
-						//grunt.log.writeln(item+"\r");
-						var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
-						var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
-						var content = fs.readFileSync(sourceFile,'utf8')
-
-						//grunt.log.writeln("read file");
-						//grunt.log.writeln("renderString of file");
-						var tmpl = new nunjucks.Template(content,nenv);
-						//grunt.log.writeln("compile");
-						var res = tmpl.render(server.salt);
-						grunt.log.writeln("renderd pillar ---"+item+"--- for "+app.install_dir);
-						fs.writeFile(targetFile, res, function(err){
-							//grunt.log.writeln("wrote to file");
-						});
+					if(_app_op.install_dir){
+						gitArg[]="-p /var/app/"+_app_op.install_dir+"/";
 					}
-				})
+					if(_app_op.branch){
+						gitArg[]="-b "+_app_op.branch;
+					}
+					if(_app_op.tag){
+						gitArg[]="-t "+_app_op.tag;
+					}
+					if(_app_op.install_dir){ // tracked name
+						gitArg[]=_app_op.install_dir;
+					}
+					if(_app_op.repo){
+						gitArg[]=_app_op.repo;
+					}
+				
+				grunt.log.writeln("gitploy "+_app_op.install_dir);
+				var ls = spawn('gitploy', gitArg,{
+						cwd:'/'
+					});
+				var lastout;
+				ls.stdout.on('data', function (data) {
+					output_stream(data);
+				});
+				ls.stderr.on('data', function (data) {
+					output_stream(data,'\r');
+				});
+				ls.on('exit', function (code) {
+					output_stream(code,'','<<<<<<<< finished sever "+current_env'+_app_op.install_dir+'\r');
+					if(app_obj.length>0){
+						load_apps(app_obj,callback);
+					}else{
+						if(typeof callback === "function"){
+							callback(); //we just finished the last one exit out
+						}
+					}
+				});
+			}else{
+				if(typeof callback === "function"){
+					callback(); //the was an empty box this step was called with, exit out
+				}
 			}
-			
-			grunt.log.writeln("extenting server salt for "+key);
-			grunt.log.writeln("minion "+server.salt.minion);
-			var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
-			var targetFile = 'server/salt/deploy_minions/'+ server.salt.minion +'.conf';
-			var content = fs.readFileSync(sourceFile,'utf8')
-
-			//grunt.log.writeln("read file");
-			//grunt.log.writeln("renderString of file");
-			var tmpl = new nunjucks.Template(content);
-			//grunt.log.writeln("compile");
-			var res = tmpl.render(server);
-			grunt.log.writeln("renderd");
-			fs.writeFile(targetFile, res, function(err){
-				//grunt.log.writeln("wrote to file");
-			});
-
 		}
 
+		function start_salt_production(){
+			//set up the vagrant object so that we can just define the server if we want to
+			//the vagrant needs some defaults, and so it's vagrant default then remote then 
+			//vagrant opptions
+			for (var key in servers) {
+				grunt.log.writeln("found server salt "+key);
+				var server = servers[key];
+				server.salt={};
+
+				var remote_env = typeof(server.remote.salt)!=="undefined"?server.remote.salt.env:[];
+				var vagrant_env = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.env:[];
+				var app_env = [];
+				for (var app_key in server.apps) {
+					var app = server.apps[app_key];
+					if(typeof(app["salt"])!=="undefined"){
+						if(typeof(app["salt"]["env"])!=="undefined"){
+							app_env = merge(app_env,app.salt.env);
+						}
+					}
+				}
+
+				server.salt = extend(default_salt,server.remote.salt,server.vagrant.salt||{});
+
+				var env = merge(merge(remote_env, vagrant_env),app_env);
+				var _env = [];
+				env.forEach(function(entry) {
+					//grunt.log.writeln("looking at env "+entry);
+					if(entry.indexOf('-') == 0){
+						var _entry = entry.substring(1);
+						//grunt.log.writeln("checking for "+_entry);
+						var exc = _env.indexOf(_entry);
+						//grunt.log.writeln(_entry+" has index at "+exc);
+						if( exc > -1){
+							_env.splice(exc, 1);
+						}
+					}else{
+						if(_env.indexOf(entry) == -1){
+							_env.push(entry);
+						}
+					}
+				});
+				server.salt.env=_env;
+
+
+
+				var remote_pillars = typeof(server.remote.salt)!=="undefined"?server.remote.salt.pillars:[];
+				var vagrant_pillars = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.pillars:[];
+				var app_pillars = [];
+				for (var app_key in server.apps) {
+					var app = server.apps[app_key];
+					if(typeof(app["remote"]["salt"])!=="undefined"){
+						if(typeof(app["remote"]["salt"]["pillars"])!=="undefined"){
+							app_pillars = merge(app_pillars,app.remote.salt.pillars);
+						}
+					}
+					if(typeof(app["vagrant"]["salt"])!=="undefined"){
+						if(typeof(app["vagrant"]["salt"]["pillars"])!=="undefined"){
+							app_pillars = merge(app_pillars,app.vagrant.salt.pillars);
+						}
+					}
+				}
+				//console.log("app_pillars: %j", app_pillars);
+				var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
+				server.salt.pillars=pillars;
+				//console.log("_pillars: %j", pillars);
+
+				for (var app_key in server.apps) {
+					var app = server.apps[app_key];
+					// options is optional
+					glob("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls", {}, function (er, files) {
+						for (var file in files) {
+							var item = files[file].split('/').pop();
+							//grunt.log.writeln(item+"\r");
+							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
+							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
+							var content = fs.readFileSync(sourceFile,'utf8')
+
+							//grunt.log.writeln("read file");
+							//grunt.log.writeln("renderString of file");
+							var tmpl = new nunjucks.Template(content,nenv);
+							//grunt.log.writeln("compile");
+							var res = tmpl.render(server.salt);
+							grunt.log.writeln("renderd pillar ---"+item+"--- for "+app.install_dir);
+							fs.writeFile(targetFile, res, function(err){
+								//grunt.log.writeln("wrote to file");
+							});
+						}
+					})
+				}
+
+				grunt.log.writeln("extenting server salt for "+key);
+				grunt.log.writeln("minion "+server.salt.minion);
+				var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
+				var targetFile = 'server/salt/deploy_minions/'+ server.salt.minion +'.conf';
+				var content = fs.readFileSync(sourceFile,'utf8')
+
+				//grunt.log.writeln("read file");
+				//grunt.log.writeln("renderString of file");
+				var tmpl = new nunjucks.Template(content);
+				//grunt.log.writeln("compile");
+				var res = tmpl.render(server);
+				grunt.log.writeln("renderd");
+				fs.writeFile(targetFile, res, function(err){
+					//grunt.log.writeln("wrote to file");
+				});
+
+			}
+		}
+		load_apps(false,start_salt_production());
+		
 		//done();
 		grunt.task.current.async();
 	});
