@@ -47,6 +47,7 @@ module.exports = function(grunt) {
 			var serverobj = grunt.file.readJSON('server_project.conf');
 			var servers = serverobj.servers;
 			if(app_obj==false){
+				app_obj=[];
 				grunt.log.writeln("needed app_obj ");
 				for (var key in servers) {
 					grunt.log.writeln("adding "+key+" to app_obj");
