@@ -122,7 +122,7 @@ module.exports = function(grunt) {
 					});*/
 				
 				var spawnCommand = require('spawn-command'),
-				var ls = spawnCommand('cd / && gitploy '+gitArg.join(' '));
+				    ls = spawnCommand('cd / && gitploy '+gitArg.join(' '));
 				
 				var lastout;
 				ls.stdout.on('data', function (data) {
