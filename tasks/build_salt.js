@@ -90,22 +90,25 @@ module.exports = function(grunt) {
 					gitArg.push(" up ");
 				}
 				if(_app_op.install_dir){
-					gitArg.push(" -p ");
-					gitArg.push('" /var/app/'+_app_op.install_dir+'/" ');
+					/*gitArg.push(" -p ");
+					gitArg.push("/var/app/"+_app_op.install_dir+"/ ");*/
+					gitArg.push(" -p /var/app/" + _app_op.install_dir + "/ ");
 				}
 				if(_app_op.branch){
-					gitArg.push(" -b ");
-					gitArg.push(_app_op.branch);
+					/*gitArg.push(" -b ");
+					gitArg.push(_app_op.branch);*/
+					gitArg.push(" -b " + _app_op.branch + " ");
 				}
 				if(_app_op.tag){
-					gitArg.push(" -t ");
-					gitArg.push(_app_op.tag);
+					/*gitArg.push(" -t ");
+					gitArg.push(_app_op.tag);*/
+					gitArg.push(" -t " + _app_op.tag + " ");
 				}
 				if(_app_op.install_dir){ // tracked name
-					gitArg.push(_app_op.install_dir);
+					gitArg.push(" " + _app_op.install_dir + " ");
 				}
 				if(_app_op.repo){
-					gitArg.push(_app_op.repo);
+					gitArg.push(" " + _app_op.repo);
 				}
 				
 				grunt.log.writeln("gitploy "+_app_op.install_dir);
