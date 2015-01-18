@@ -69,22 +69,24 @@ module.exports = function(grunt) {
 
 				spawn = require('child_process').spawn;
 				var gitArg = [];
-					
-					if(_app_op.install_dir){
-						gitArg[]="-p /var/app/"+_app_op.install_dir+"/";
-					}
-					if(_app_op.branch){
-						gitArg[]="-b "+_app_op.branch;
-					}
-					if(_app_op.tag){
-						gitArg[]="-t "+_app_op.tag;
-					}
-					if(_app_op.install_dir){ // tracked name
-						gitArg[]=_app_op.install_dir;
-					}
-					if(_app_op.repo){
-						gitArg[]=_app_op.repo;
-					}
+				if( fs.exists('/var/app/'+_app_op.install_dir+'/.git/') ){
+					gitArg[]= "up";
+				}
+				if(_app_op.install_dir){
+					gitArg[]="-p /var/app/"+_app_op.install_dir+"/";
+				}
+				if(_app_op.branch){
+					gitArg[]="-b "+_app_op.branch;
+				}
+				if(_app_op.tag){
+					gitArg[]="-t "+_app_op.tag;
+				}
+				if(_app_op.install_dir){ // tracked name
+					gitArg[]=_app_op.install_dir;
+				}
+				if(_app_op.repo){
+					gitArg[]=_app_op.repo;
+				}
 				
 				grunt.log.writeln("gitploy "+_app_op.install_dir);
 				var ls = spawn('gitploy', gitArg,{
