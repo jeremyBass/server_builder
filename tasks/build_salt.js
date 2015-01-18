@@ -44,6 +44,8 @@ module.exports = function(grunt) {
 		
 
 		function load_apps(app_obj,callback){
+			var serverobj = grunt.file.readJSON('server_project.conf');
+			var servers = serverobj.servers;
 			if(app_obj==false){
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
@@ -117,6 +119,8 @@ module.exports = function(grunt) {
 		}
 
 		function start_salt_production(){
+			var serverobj = grunt.file.readJSON('server_project.conf');
+			var servers = serverobj.servers;
 			//set up the vagrant object so that we can just define the server if we want to
 			//the vagrant needs some defaults, and so it's vagrant default then remote then 
 			//vagrant opptions
