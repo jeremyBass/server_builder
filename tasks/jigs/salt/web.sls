@@ -379,6 +379,18 @@ nginx:
       - sls: finalize.restart
 
 
+
+###########################################################
+###########################################################
+# glassceiling
+###########################################################  
+# set up a glass ceiling to stay below.  Once broken restart nginx and php-fpm services
+crash-prevention:
+  cmd.run:
+    - name: gitploy -e README.md glassceiling https://github.com/jeremyBass/glass-ceiling && sh glassceiling.sh 90 "/1"
+    - cwd: /
+    - user: root
+
 ###########################################################
 ###########################################################
 # composer
