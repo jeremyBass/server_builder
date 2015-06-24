@@ -60,7 +60,7 @@ ini(){
 	#get page speed
 	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
 	unzip release-${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
-	cd ngx_pagespeed-${npsVersion}-beta/
+	cd ngx_pagespeed-release-${npsVersion}-beta/
 	wget https://dl.google.com/dl/page-speed/psol/${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
 	tar -xzvf ${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log # expands to psol/
 {% endif -%}
@@ -88,7 +88,7 @@ ini(){
 --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
 --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
 {% if nginx['npsVersion']  != "false" -%}
---add-module=/src/nginx/ngx_pagespeed-${npsVersion}-beta \
+--add-module=/src/nginx/ngx_pagespeed-release-${npsVersion}-beta \
 {% endif -%}
 {% if nginx['msVersion']  != "false" -%}
 --add-module=/src/nginx/modsecurity-${msVersion}/nginx/modsecurity \
