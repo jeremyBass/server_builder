@@ -58,8 +58,8 @@ ini(){
 
 {% if nginx['npsVersion']  != "false" -%}
 	#get page speed
-	wget https://github.com/pagespeed/ngx_pagespeed/archive/v${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
-	unzip v${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
+	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
+	unzip release-${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
 	cd ngx_pagespeed-${npsVersion}-beta/
 	wget https://dl.google.com/dl/page-speed/psol/${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
 	tar -xzvf ${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log # expands to psol/
