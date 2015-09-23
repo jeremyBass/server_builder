@@ -72,6 +72,22 @@ incrond-reboot-auto:
     - require:
       - pkg: incron
 
+
+###########################################################
+###########################################################
+# Add editors 
+###########################################################
+/etc/incron.allow:
+  file.managed:
+    - source: salt://config/incron/incron.allow
+    - makedirs: true
+    - user: root
+    - group: root
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+
 ###########################################################
 ###########################################################
 # general updates to items 

@@ -1,0 +1,5 @@
+root
+{% if vars.isLocal %}
+vagrant
+{%- endif %}
+www-data
