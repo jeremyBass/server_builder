@@ -104,7 +104,7 @@ ini(){
 --with-http_stub_status_module \
 --with-http_sub_module \
 {% if nginx['opensslVersion']  != "false" -%}
---with-http_spdy_module \
+--with-http_v2_module \
 --with-http_ssl_module \
 --with-openssl=/src/nginx/openssl-${opensslVersion} \
 --with-sha1=/usr/include/openssl \
