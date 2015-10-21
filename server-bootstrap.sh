@@ -6,6 +6,7 @@ mkdir -p /srv/builder
 # Add the keys to the server so you can get to github safely without
 # need for a prompt which salt will not handle correctly
 #-----------------------------------------------------------------------
+yum install -y openssh-clients
 [ -d ~/.ssh ] || mkdir -p ~/.ssh
 touch ~/.ssh/known_hosts
 ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
