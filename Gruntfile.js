@@ -53,6 +53,7 @@ module.exports = function(grunt) {
 			var fs = require('fs');
 			fs.appendFile('/node-serverbuilder-log.txt', content.split('\n\n').join('\n') +'\n', 'utf8', function (err) {
 				if( err ){
+					stdout( err );
 					throw err;
 				}
 				if( "function" === typeof content ){
@@ -68,6 +69,7 @@ module.exports = function(grunt) {
 		}
 	};
 
+	
 	grunt.fileExist = function( filepath ){
 		fs.open( corePath.resolve( filepath ) , 'r', function(err, fd) {
 			if( err ){
