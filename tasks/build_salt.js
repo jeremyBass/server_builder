@@ -98,7 +98,7 @@ module.exports = function(grunt) {
 
 				var spawn = require('child_process').spawn;
 				var gitArg = [];
-				if( grunt.fileExist('/var/app/'+_app_op.install_dir+'/.git/config'){ //fs.exists('/var/app/'+_app_op.install_dir+'/.git/'config) ){
+				if( grunt.fileExist('/var/app/'+_app_op.install_dir+'/.git/config') ){ //fs.exists('/var/app/'+_app_op.install_dir+'/.git/'config) ){
 					console.log('/var/app/'+_app_op.install_dir+'/.git/config !! existed !!' );
 					gitArg.push(" up ");
 				}else{
