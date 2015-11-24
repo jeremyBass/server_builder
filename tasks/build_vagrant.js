@@ -70,7 +70,7 @@ module.exports = function(grunt) {
 			var plugin = plugins[0].toString();
 			plugins.shift();
 			check_vagrant_plugins(plugin,function(resulting){
-				if(resulting==false){
+				if( false === resulting ){
 					grunt.log.writeln("\r"+plugin+" is NOT installed");
 					spawn = require('child_process').spawn;
 					var ls = spawn('vagrant', ['plugin','install',plugin]);

@@ -174,13 +174,13 @@ module.exports = function(grunt) {
 				var server = servers[key];
 				server.salt={};
 
-				var remote_env = typeof(server.remote.salt)!=="undefined"?server.remote.salt.env:[];
-				var vagrant_env = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.env:[];
+				var remote_env  = "undefined" !== typeof server.remote.salt ? server.remote.salt.env : [ ];
+				var vagrant_env = "undefined" !== typeof server.vagrant.salt ? server.vagrant.salt.env : [ ];
 				var app_env = [];
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
-					if(typeof(app["salt"])!=="undefined"){
-						if(typeof(app["salt"]["env"])!=="undefined"){
+					if( "undefined" !== typeof app["salt"] ){
+						if( "undefined" !== typeof app["salt"]["env"] ){
 							app_env = merge(app_env,app.salt.env);
 						}
 					}
@@ -210,18 +210,18 @@ module.exports = function(grunt) {
 
 
 
-				var remote_pillars = typeof(server.remote.salt)!=="undefined"?server.remote.salt.pillars:[];
-				var vagrant_pillars = typeof(server.vagrant.salt)!=="undefined"?server.vagrant.salt.pillars:[];
-				var app_pillars = [];
+				var remote_pillars  = "undefined" !== typeof server.remote.salt ? server.remote.salt.pillars : [ ];
+				var vagrant_pillars = "undefined" !== typeof server.vagrant.salt ? server.vagrant.salt.pillars : [ ];
+				var app_pillars     = [];
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
-					if(typeof(app["remote"]["salt"])!=="undefined"){
-						if(typeof(app["remote"]["salt"]["pillars"])!=="undefined"){
+					if( "undefined" !== typeof(app["remote"]["salt"]) ){
+						if( "undefined" !== typeof(app["remote"]["salt"]["pillars"]) ){
 							app_pillars = merge(app_pillars,app.remote.salt.pillars);
 						}
 					}
-					if(typeof(app["vagrant"]["salt"])!=="undefined"){
-						if(typeof(app["vagrant"]["salt"]["pillars"])!=="undefined"){
+					if( "undefined" !== typeof(app["vagrant"]["salt"]) ){
+						if( "undefined" !== typeof(app["vagrant"]["salt"]["pillars"]) ){
 							app_pillars = merge(app_pillars,app.vagrant.salt.pillars);
 						}
 					}
@@ -234,7 +234,7 @@ module.exports = function(grunt) {
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
 					// options is optional
-					glob("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls", {}, function (er, files) {
+					glob( "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls" , {}, function (er, files) {
 						for (var file in files) {
 							var item = files[file].split('/').pop();
 							//grunt.log.writeln(item+"\r");

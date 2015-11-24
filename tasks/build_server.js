@@ -45,7 +45,7 @@ module.exports = function(grunt) {
 		}
 
 		function run_salt_prep(){
-			if (!fs.existsSync('/srv/salt/boot/bootstrap-salt.sh')) {
+			if ( !fs.existsSync('/srv/salt/boot/bootstrap-salt.sh') ) {
 				grunt.log.writeln('/srv/salt/boot/bootstrap-salt.sh missing');
 			}else{
 				grunt.log.writeln('/srv/salt/boot/bootstrap-salt.sh existed');
@@ -74,14 +74,14 @@ module.exports = function(grunt) {
 
 						var env_obj = ['base'];
 						
-		var config_file = 'server_project.conf';
-		if( fs.existsSync('/server_project.conf') ){
-			config_file = '/server_project.conf';
-			grunt.log.writeln("using from root :: "+config_file);
-		}
-		serverobj = grunt.file.readJSON(config_file);
-		var servers = serverobj.servers;
-						
+						var config_file = 'server_project.conf';
+						if( fs.existsSync('/server_project.conf') ){
+							config_file = '/server_project.conf';
+							grunt.log.writeln("using from root :: "+config_file);
+						}
+						serverobj = grunt.file.readJSON(config_file);
+						var servers = serverobj.servers;
+
 						var log = "error";
 						for (var key in servers) {
 							var server = servers[key];
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
 						run_env(env_obj,log);
 					});
 				});
-				}
+			}
 			grunt.log.writeln("finished run_salt_prep()");
 		}
 
@@ -107,9 +107,6 @@ module.exports = function(grunt) {
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{ forceDelete: true });
 		grunt.log.writeln("moved "+sourceDir+" >> "+targetDir);
 		run_salt_prep();
-		
-			
-		
 		//done();
 		grunt.task.current.async();
 	});
