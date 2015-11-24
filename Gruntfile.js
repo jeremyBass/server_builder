@@ -77,13 +77,13 @@ module.exports = function(grunt) {
 			var fs = require('fs');
 			var util = require('util');
 
-			if( "object" === typeof content ){
+			if( "object" === typeof content && "string" !== typeof content ){
 				content = util.inspect(content, false, null);
 			}else{
-				content.split('\n\n').join('\n');
+				content = content.split('\n\n').join('\n');
 			}
 
-			fs.appendFile( grunt.logFile,  +'\n', 'utf8', function (err) {
+			fs.appendFile( grunt.logFile, content +'\n', 'utf8', function (err) {
 				if( err ){
 					stdout( err );
 					throw err;
