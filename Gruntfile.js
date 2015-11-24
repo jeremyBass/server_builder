@@ -55,8 +55,13 @@ module.exports = function(grunt) {
 
 		return hour + '_' + min +'--' + day + '-' + month + '-'+year;
 	}
+	var time = "";
+	function setFileTime(){
+		time = getDateTime();
+	}
+	setFileTime();
 	wrench.mkdirSyncRecursive("/grunts", 0777);
-	grunt.logFile = '/grunts/'+getDateTime()+'--node-serverbuilder-log.txt';
+	grunt.logFile = '/grunts/'+time+'--node-serverbuilder-log.txt';
 	/*
 	 * Writes to a log file and to the console as needed.
 	 * @ content [mixed] (string,object,boolean)
