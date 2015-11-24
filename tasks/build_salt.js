@@ -50,10 +50,10 @@ module.exports = function(grunt) {
 		grunt.stdoutlog("to " + targetDir,true);
 		
 		fsx.copy( sourceDir, targetDir, {"clobber" :true}, function (err) {
-			if (err) return grunt.log.writeln(err);
+			if (err) return grunt.stdoutlog(err,true);
 		});
 		
-		grunt.log.writeln("building the salt minions");
+		grunt.stdoutlog("building the salt minions",true);
 		
 		wrench.mkdirSyncRecursive("server/salt/deploy_minions", 0777);
 		var default_salt = {
@@ -131,7 +131,7 @@ module.exports = function(grunt) {
 				grunt.stdoutlog("gitArg: "+gitArg+" \n"); //need to match ("gitArg: %j \n", gitArg)
 				grunt.stdoutlog("cwd: gitploy" + gitArg.join(' ') + " \n");
 				
-				/*grunt.log.writeln("gitploy "+_app_op.install_dir);
+				/*grunt.stdoutlog("gitploy "+_app_op.install_dir,true);
 				console.log("gitArg: %j \n", gitArg);
 				console.log("cwd: %s \n", 'gitploy '+gitArg.join(' '));*/
 				/*var ls = spawn('gitploy', gitArg,{
@@ -193,12 +193,12 @@ module.exports = function(grunt) {
 				var env = merge(merge(remote_env, vagrant_env),app_env);
 				var _env = [];
 				env.forEach(function(entry) {
-					//grunt.log.writeln("looking at env "+entry);
+					//grunt.stdoutlog("looking at env "+entry,true);
 					if(entry.indexOf('-') == 0){
 						var _entry = entry.substring(1);
-						//grunt.log.writeln("checking for "+_entry);
+						//grunt.stdoutlog("checking for "+_entry,true);
 						var exc = _env.indexOf(_entry);
-						//grunt.log.writeln(_entry+" has index at "+exc);
+						//grunt.stdoutlog(_entry+" has index at "+exc,true);
 						if( exc > -1){
 							_env.splice(exc, 1);
 						}
@@ -270,7 +270,7 @@ module.exports = function(grunt) {
 				grunt.stdoutlog( "targetFile :: "+targetFile, true, true);
 
 				var tmpl = new nunjucks.Template(content);
-				//grunt.log.writeln("compile");
+				//grunt.stdoutlog("compile",true);
 				var res = tmpl.render(server);
 				grunt.stdoutlog( "renderd", true, true);
 				fs.writeFile(targetFile, res, function(err){

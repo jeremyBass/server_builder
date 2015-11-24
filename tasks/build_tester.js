@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 			var out = foo.stdout;
 			if(lastout!=out){
 				lastout=out;
-				grunt.log.writeln(out);
+				grunt.stdoutlog(out,true);
 			}
 			t=setTimeout(stdoutStream,250);
 		}
@@ -27,17 +27,17 @@ module.exports = function(grunt) {
 		
 		/*
 		require('shelljs/global');
-		grunt.log.writeln("test 1");
+		grunt.stdoutlog("test 1",true);
 		var child = exec('DIR *.*', {async:true});
 		child.stdout.on('data', function(data) {
-			grunt.log.writeln("test 1.2");
+			grunt.stdoutlog("test 1.2",true);
 			exec('DIR *.*', function(code, output) {
 			  console.log('Exit code:', code);
 			  console.log('Program output:', output);
 			});
 		});
 
-		grunt.log.writeln("test 2");
+		grunt.stdoutlog("test 2",true);
 		exec('DIR *.*', function(code, output) {
 		  console.log('Exit code:', code);
 		  console.log('Program output:', output);

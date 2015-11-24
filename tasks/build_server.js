@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 		function run_env(env_obj,log){
 			var current_env = env_obj[0];
 			env_obj.shift();
-			grunt.log.writeln("run salt env="+current_env);
+			grunt.stdoutlog("run salt env="+current_env,true);
 			spawn = require('child_process').spawn;
 			var ls = spawn('salt-call', ['--local','--log-level='+(log||'info'),'--config-dir=/etc/salt','state.highstate','env='+current_env],{
 					cwd:'/'
@@ -46,15 +46,15 @@ module.exports = function(grunt) {
 
 		function run_salt_prep(){
 			if ( !fs.existsSync('/srv/salt/boot/bootstrap-salt.sh') ) {
-				grunt.log.writeln('/srv/salt/boot/bootstrap-salt.sh missing');
+				grunt.stdoutlog('/srv/salt/boot/bootstrap-salt.sh missing',true);
 			}else{
-				grunt.log.writeln('/srv/salt/boot/bootstrap-salt.sh existed');
-				grunt.log.writeln("run salt env base");
+				grunt.stdoutlog('/srv/salt/boot/bootstrap-salt.sh existed',true);
+				grunt.stdoutlog("run salt env base",true);
 				spawn = require('child_process').spawn;
 				var ls = spawn('sh', ['bootstrap-salt.sh','-K','stable'],{
 					cwd:'/srv/salt/boot/'
 				});
-				grunt.log.writeln("after spawning call");
+				grunt.stdoutlog("after spawning call",true);
 				var lastout;
 				ls.stdout.on('data', function (data) {
 					output_stream(data);
@@ -70,14 +70,14 @@ module.exports = function(grunt) {
 					wrench.copyDirRecursive(sourceDir,targetDir,{
 						forceDelete: true
 					},function(){
-						grunt.log.writeln(sourceDir+" >> "+targetDir);
+						grunt.stdoutlog(sourceDir+" >> "+targetDir,true);
 
 						var env_obj = ['base'];
 						
 						var config_file = 'server_project.conf';
 						if( fs.existsSync('/server_project.conf') ){
 							config_file = '/server_project.conf';
-							grunt.log.writeln("using from root :: "+config_file);
+							grunt.stdoutlog("using from root :: "+config_file,true);
 						}
 						serverobj = grunt.file.readJSON(config_file);
 						var servers = serverobj.servers;
@@ -87,7 +87,7 @@ module.exports = function(grunt) {
 							var server = servers[key];
 							for (var app_key in server.apps) {
 								var app = server.apps[app_key];
-								grunt.log.writeln("add salt env "+app.install_dir);
+								grunt.stdoutlog("add salt env "+app.install_dir,true);
 								env_obj.push(app.install_dir);
 							}
 							log = server.remote.salt.log_level||server.remote.salt.log_level||"info";
@@ -96,16 +96,16 @@ module.exports = function(grunt) {
 					});
 				});
 			}
-			grunt.log.writeln("finished run_salt_prep()");
+			grunt.stdoutlog("finished run_salt_prep()",true);
 		}
 
 
 		wrench.mkdirSyncRecursive("/srv/salt", 0777);
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = '/srv/salt';
-		grunt.log.writeln("about to move "+sourceDir+" >> "+targetDir);
+		grunt.stdoutlog("about to move "+sourceDir+" >> "+targetDir,true);
 		wrench.copyDirSyncRecursive(sourceDir,targetDir,{ forceDelete: true });
-		grunt.log.writeln("moved "+sourceDir+" >> "+targetDir);
+		grunt.stdoutlog("moved "+sourceDir+" >> "+targetDir,true);
 		run_salt_prep();
 		//done();
 		grunt.task.current.async();
