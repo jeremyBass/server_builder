@@ -52,10 +52,10 @@ module.exports = function(grunt) {
 		var day  = date.getDate();
 		day = (day < 10 ? "0" : "") + day;
 
-		return year + "-" + month + "-" + day + "--" + hour + "_" + min;
+		return hour + '_' + min +'--' + day + '-' + month + '-'+year;
 	}
 	wrench.mkdirSyncRecursive("/grunts", 0777);
-	grunt.logFile = '/grunts/node-serverbuilder-log--'+getDateTime()+'.txt';
+	grunt.logFile = '/grunts/'+getDateTime()+'--node-serverbuilder-log.txt';
 	/*
 	 * Writes to a log file and to the console as needed.
 	 * @ content [mixed] (string,object,boolean)
