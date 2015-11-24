@@ -246,12 +246,14 @@ module.exports = function(grunt) {
 					glob( "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls" , {}, function (er, files) {
 						for (var file in files) {
 							var item = files[file].split('/').pop();
-							
+
 							grunt.stdoutlog( item+" -item for\r", true, true);
 							grunt.stdoutlog( app.install_dir+" -item for\r",true,true);
 
 							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
 							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
+							grunt.stdoutlog( "trying to get ---"+item+"--- for "+sourceFile, true, true );
+							grunt.stdoutlog( "to  "+targetFile, true, true );
 							
 							var content = fs.readFileSync(sourceFile,'utf8');
 
