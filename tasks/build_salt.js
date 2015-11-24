@@ -98,11 +98,11 @@ module.exports = function(grunt) {
 
 				var spawn = require('child_process').spawn;
 				var gitArg = [];
-				if( fs.exists('/var/app/'+_app_op.install_dir+'/.git/') ){
-					console.log('/var/app/'+_app_op.install_dir+'/.git/ !! existed !!' );
+				if( grunt.fileExist('/var/app/'+_app_op.install_dir+'/.git/config'){ //fs.exists('/var/app/'+_app_op.install_dir+'/.git/'config) ){
+					console.log('/var/app/'+_app_op.install_dir+'/.git/config !! existed !!' );
 					gitArg.push(" up ");
 				}else{
-					console.log('/var/app/'+_app_op.install_dir+'/.git/ !! DID NOT exist :/ ' );
+					console.log('/var/app/'+_app_op.install_dir+'/.git/config !! DID NOT exist :/ ' );
 				}
 				if(_app_op.install_dir){
 					/*gitArg.push(" -p ");

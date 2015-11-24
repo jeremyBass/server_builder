@@ -15,8 +15,10 @@ module.exports = function(grunt) {
 	  return object;
 	}
 
-	var pkg,setbase,config;
-
+	var pkg,setbase,config,
+		path = require('path'),
+		fs = require('fs');
+	
 	pkg = grunt.file.readJSON('package.json');
 	setbase = grunt.option('setbase') || pkg.build_location+'/'+pkg.build_version+'/';
 
@@ -60,6 +62,14 @@ module.exports = function(grunt) {
 		}
 	};
 
+	grunt.fileExist = function( filepath ){
+		fs.open( path.reslove( filepath ) , 'r', function(err, fd) {
+			if( err ){
+				return false;
+			}
+		}
+	};
+	
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
 	
