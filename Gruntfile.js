@@ -74,7 +74,7 @@ module.exports = function(grunt) {
 		};
 		var bakeIt = function( content, callback ){
 			var fs = require('fs');
-			fs.appendFile(grunt.logFile, content.split('\n\n').join('\n') +'\n', 'utf8', function (err) {
+			fs.appendFile( grunt.logFile, content.split('\n\n').join('\n') +'\n', 'utf8', function (err) {
 				if( err ){
 					stdout( err );
 					throw err;
