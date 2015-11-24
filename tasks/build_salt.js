@@ -49,16 +49,16 @@ module.exports = function(grunt) {
 
 		grunt.stdoutlog("copy " + sourceDir,true);
 		grunt.stdoutlog("to " + targetDir,true);
-		
+
 		fsx.copy( sourceDir, targetDir, {"clobber" :true}, function (err) {
 			if (err) return grunt.stdoutlog(err,true);
 		});
-		
+
 		grunt.stdoutlog("building the salt minions",true);
-		
+
 		wrench.mkdirSyncRecursive("server/salt/deploy_minions", 0777);
 		var default_salt = {
-			
+
 		};
 		var config_file = 'server_project.conf';
 		if( fs.existsSync('/server_project.conf') ){
@@ -109,18 +109,12 @@ module.exports = function(grunt) {
 					grunt.stdoutlog('/var/app/'+_app_op.install_dir+'/.git/config !! DID NOT exist :/ ',true);
 				}
 				if(_app_op.install_dir){
-					/*gitArg.push(" -p ");
-					gitArg.push("/var/app/"+_app_op.install_dir+"/ ");*/
 					gitArg.push(" -p /var/app/" + _app_op.install_dir + "/ ");
 				}
 				if(_app_op.branch){
-					/*gitArg.push(" -b ");
-					gitArg.push(_app_op.branch);*/
 					gitArg.push(" -b " + _app_op.branch + " ");
 				}
 				if(_app_op.tag){
-					/*gitArg.push(" -t ");
-					gitArg.push(_app_op.tag);*/
 					gitArg.push(" -t " + _app_op.tag + " ");
 				}
 				if(_app_op.install_dir){ // tracked name
@@ -132,17 +126,17 @@ module.exports = function(grunt) {
 				grunt.stdoutlog("gitploy "+_app_op.install_dir);
 				grunt.stdoutlog("gitArg: "+gitArg+" \n"); //need to match ("gitArg: %j \n", gitArg)
 				grunt.stdoutlog("cwd: gitploy" + gitArg.join(' ') + " \n");
-				
+
 				/*grunt.stdoutlog("gitploy "+_app_op.install_dir,true);
 				console.log("gitArg: %j \n", gitArg);
 				console.log("cwd: %s \n", 'gitploy '+gitArg.join(' '));*/
 				/*var ls = spawn('gitploy', gitArg,{
 					cwd:'/'
 				});*/
-				
+
 				var spawnCommand = require('spawn-command'),
 				    ls = spawnCommand('cd / && gitploy '+gitArg.join(' '));
-				
+
 				var lastout;
 				ls.stdout.on('data', function (data) {
 					output_stream(data,'\n');
@@ -289,7 +283,7 @@ module.exports = function(grunt) {
 			}
 		}
 		load_apps(false,start_salt_production);
-		
+
 		//done();
 		grunt.task.current.async();
 	});
