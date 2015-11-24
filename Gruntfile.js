@@ -77,7 +77,7 @@ module.exports = function(grunt) {
 			var fs = require('fs');
 			var util = require('util');
 
-			if( "object" === typeof content && "string" !== typeof content ){
+			if( "string" !== typeof content ){
 				content = util.inspect(content, false, null);
 			}else{
 				content = content.split('\n\n').join('\n');
