@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 	}
 
 	var pkg,setbase,config,
-		path = require('path'),
+		corePath = require('path'),
 		fs = require('fs');
 	
 	pkg = grunt.file.readJSON('package.json');
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
 		};
 		var bakeIt = function( content, callback ){
 			var fs = require('fs');
-			fs.appendFile('/node-serverbuilder-log.txt', content.split('\n\n').join('\n') +'\n', encoding='utf8', function (err) {
+			fs.appendFile('/node-serverbuilder-log.txt', content.split('\n\n').join('\n') +'\n', 'utf8', function (err) {
 				if( err ){
 					throw err;
 				}
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
 	};
 
 	grunt.fileExist = function( filepath ){
-		fs.open( path.reslove( filepath ) , 'r', function(err, fd) {
+		fs.open( corePath.resolve( filepath ) , 'r', function(err, fd) {
 			if( err ){
 				return false;
 			}
