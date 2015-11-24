@@ -220,20 +220,24 @@ module.exports = function(grunt) {
 				var app_pillars     = [];
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
-					if( "undefined" !== typeof(app["remote"]["salt"]) ){
-						if( "undefined" !== typeof(app["remote"]["salt"]["pillars"]) ){
+					if( "undefined" !== typeof app["remote"]["salt"] ){
+						if( "undefined" !== typeof app["remote"]["salt"]["pillars"] ){
 							app_pillars = merge(app_pillars,app.remote.salt.pillars);
 						}
 					}
-					if( "undefined" !== typeof(app["vagrant"]["salt"]) ){
-						if( "undefined" !== typeof(app["vagrant"]["salt"]["pillars"]) ){
+					if( "undefined" !== typeof app["vagrant"]["salt"] ){
+						if( "undefined" !== typeof app["vagrant"]["salt"]["pillars"] ){
 							app_pillars = merge(app_pillars,app.vagrant.salt.pillars);
 						}
 					}
 				}
+				grunt.stdoutlog("app_pillars:", true, true);
+				grunt.stdoutlog(app_pillars, true, true);
 				//console.log("app_pillars: %j", app_pillars);
 				var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
 				server.salt.pillars=pillars;
+				grunt.stdoutlog("_pillars:", true, true);
+				grunt.stdoutlog(pillars, true, true);
 				//console.log("_pillars: %j", pillars);
 
 				for (var app_key in server.apps) {

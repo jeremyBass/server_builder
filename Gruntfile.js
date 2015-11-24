@@ -19,6 +19,7 @@ module.exports = function(grunt) {
 		corePath = require('path'),
 		fs = require('fs');
 	var wrench = require('wrench');
+	var util = require('util');
 	
 	pkg = grunt.file.readJSON('package.json');
 	setbase = grunt.option('setbase') || pkg.build_location+'/'+pkg.build_version+'/';
@@ -74,7 +75,15 @@ module.exports = function(grunt) {
 		};
 		var bakeIt = function( content, callback ){
 			var fs = require('fs');
-			fs.appendFile( grunt.logFile, content.split('\n\n').join('\n') +'\n', 'utf8', function (err) {
+			var util = require('util');
+
+			if( "object" === typeof content ){
+				content = util.inspect(content, false, null);
+			}else{
+				content.split('\n\n').join('\n');
+			}
+
+			fs.appendFile( grunt.logFile,  +'\n', 'utf8', function (err) {
 				if( err ){
 					stdout( err );
 					throw err;
