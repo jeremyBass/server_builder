@@ -6,7 +6,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('build_salt', 'Setting up the salt provisioner', function() {
 		//var done = this.async();
 		var nunjucks = require('nunjucks');
-		var fs = require('fs');
+		var path = require('path');
+		var fs = require('fs'),
+			fsx = require('fs-extra');
 		var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util');
@@ -38,11 +40,17 @@ module.exports = function(grunt) {
 		
 		
 		wrench.mkdirSyncRecursive("server/salt", 0777);
-		var sourceDir = 'tasks/jigs/salt';
-		var targetDir = 'server/salt';
-		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
+		var sourceDir = path.resolve('tasks/jigs/salt');
+		var targetDir = path.resolve('server/salt');
+		/*wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
+		});*/
+		grunt.log.writeln("copy " + sourceDir);
+		grunt.log.writeln("to " + targetDir);
+		fsx.copy( sourceDir, targetDir, {"clobber" :true}, function (err) {
+			if (err) return grunt.log.writeln(err);
 		});
+		
 		grunt.log.writeln("building the salt minions");
 		
 		wrench.mkdirSyncRecursive("server/salt/deploy_minions", 0777);
