@@ -35,10 +35,13 @@ module.exports = function(grunt) {
 
 	/*
 	 * Writes to a log file and to the console as needed.
-	 * @content mixed (string,object,boolean)
+	 * @ content [mixed] (string,object,boolean)
+	 * @ log_to_file [boolean] append to log file
+	 * @ file_only [boolean] don't send to stdout/stderr
 	 */
-	grunt.stdoutlog = function( content, logtofile ){
-		logtofile = logtofile || false;
+	grunt.stdoutlog = function( content, log_to_file, file_only ){
+		log_to_file = log_to_file || false;
+		file_only = file_only || false;
 		var stdout = function( content ){
 			if( "string" === typeof content ){
 				grunt.log.writeln( content );
@@ -48,16 +51,19 @@ module.exports = function(grunt) {
 		};
 		var bakeIt = function( content, callback ){
 			var fs = require('fs');
-			fs.appendFile('/log.txt', content.split('\n\n').join('\n') +'\n', encoding='utf8', function (err) {
+			fs.appendFile('/node-serverbuilder-log.txt', content.split('\n\n').join('\n') +'\n', encoding='utf8', function (err) {
 				if( err ){
 					throw err;
 				}
-				callback( content );
+				if( "function" === typeof content ){
+					callback( content );
+				}
 			});
 		};
-		if( true !== logtofile ){
-			bakeIt( content, stdout );
-		}else{
+		if( true === log_to_file || true === file_only ){
+			bakeIt( content, true !== file_only ? stdout : false );
+		}
+		if( true !== file_only ){
 			stdout( content );
 		}
 	};

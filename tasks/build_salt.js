@@ -242,6 +242,7 @@ module.exports = function(grunt) {
 							grunt.log.writeln(app.install_dir+" -item for\r");
 							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
 							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
+							
 							var content = fs.readFileSync(sourceFile,'utf8');
 
 							//grunt.log.writeln("read file");
@@ -251,6 +252,7 @@ module.exports = function(grunt) {
 							var res = tmpl.render(server.salt);
 							grunt.log.writeln("renderd pillar ---"+item+"--- for "+app.install_dir);
 							fs.writeFile(targetFile, res, function(err){
+								grunt.stdoutlog("wrote pillar :: "+targetFile,true,true);
 								//grunt.log.writeln("wrote to file");
 							});
 						}
