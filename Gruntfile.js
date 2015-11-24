@@ -71,6 +71,7 @@ module.exports = function(grunt) {
 	grunt.fileExist = function( filepath ){
 		fs.open( corePath.resolve( filepath ) , 'r', function(err, fd) {
 			if( err ){
+				grunt.log.writeln(err);
 				return false;
 			}
 		});

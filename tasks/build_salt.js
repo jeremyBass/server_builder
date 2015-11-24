@@ -45,8 +45,10 @@ module.exports = function(grunt) {
 		/*wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		});*/
-		grunt.log.writeln("copy " + sourceDir);
-		grunt.log.writeln("to " + targetDir);
+
+		grunt.stdoutlog("copy " + sourceDir,true);
+		grunt.stdoutlog("to " + targetDir,true);
+		
 		fsx.copy( sourceDir, targetDir, {"clobber" :true}, function (err) {
 			if (err) return grunt.log.writeln(err);
 		});
@@ -60,7 +62,7 @@ module.exports = function(grunt) {
 		var config_file = 'server_project.conf';
 		if( fs.existsSync('/server_project.conf') ){
 			config_file = '/server_project.conf';
-			grunt.log.writeln("using from root :: "+config_file);
+			grunt.stdoutlog("using from root :: "+config_file,true);
 		}
 		serverobj = grunt.file.readJSON(config_file);
 		var servers = serverobj.servers;
@@ -69,9 +71,9 @@ module.exports = function(grunt) {
 		function load_apps(app_obj,callback){
 			if(app_obj === false){
 				app_obj=[];
-				grunt.log.writeln("needed app_obj ");
+				grunt.stdoutlog("needed app_obj ",true);
 				for (var key in servers) {
-					grunt.log.writeln("adding "+key+" to app_obj");
+					grunt.stdoutlog("adding "+key+" to app_obj",true);
 					var server = servers[key];
 					for (var app_key in server.apps) {
 						var app = server.apps[app_key];
@@ -99,7 +101,7 @@ module.exports = function(grunt) {
 				var spawn = require('child_process').spawn;
 				var gitArg = [];
 				if( grunt.fileExist('/var/app/'+_app_op.install_dir+'/.git/config') ){ //fs.exists('/var/app/'+_app_op.install_dir+'/.git/'config) ){
-					console.log('/var/app/'+_app_op.install_dir+'/.git/config !! existed !!' );
+					grunt.stdoutlog('/var/app/'+_app_op.install_dir+'/.git/config !! existed !!',true);
 					gitArg.push(" up ");
 				}else{
 					grunt.stdoutlog('/var/app/'+_app_op.install_dir+'/.git/config !! DID NOT exist :/ ',true);
