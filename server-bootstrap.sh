@@ -36,7 +36,7 @@ fi
 
 gitploy init 2>&1 | grep -qi "already initialized" && echo ""
 gitploy ls 2>&1 | grep -qi "serverbase" && gitploy up serverbase
-gitploy ls 2>&1 | grep -qi "serverbase" || gitploy add -p /srv/builder serverbase https://github.com/jeremyBass/server_builder.git
+gitploy ls 2>&1 | grep -qi "serverbase" || gitploy add -p /srv/builder -b mage2 serverbase https://github.com/jeremyBass/server_builder.git
 
 if [[ $SERVER_TYPE = "VAGRANT" ]]; then
     cp /vagrant/server_project.conf /srv/builder/server_project.conf
