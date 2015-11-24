@@ -18,6 +18,7 @@ module.exports = function(grunt) {
 	var pkg,setbase,config,
 		corePath = require('path'),
 		fs = require('fs');
+	var wrench = require('wrench');
 	
 	pkg = grunt.file.readJSON('package.json');
 	setbase = grunt.option('setbase') || pkg.build_location+'/'+pkg.build_version+'/';
@@ -33,6 +34,28 @@ module.exports = function(grunt) {
 	grunt.util._.extend(config, loadConfig('./tasks/options/'));
 	grunt.initConfig(config);
 
+	function getDateTime() {
+		var date = new Date();
+
+		var hour = date.getHours();
+		hour = (hour < 10 ? "0" : "") + hour;
+
+		var min  = date.getMinutes();
+		min = (min < 10 ? "0" : "") + min;
+
+		
+		var year = date.getFullYear();
+
+		var month = date.getMonth() + 1;
+		month = (month < 10 ? "0" : "") + month;
+
+		var day  = date.getDate();
+		day = (day < 10 ? "0" : "") + day;
+
+		return year + "-" + month + "-" + day + "--" + hour + "_" + min;
+	}
+	wrench.mkdirSyncRecursive("/grunts", 0777);
+	grunt.logFile = '/grunts/node-serverbuilder-log--'+getDateTime()+'.txt';
 	/*
 	 * Writes to a log file and to the console as needed.
 	 * @ content [mixed] (string,object,boolean)
@@ -51,7 +74,7 @@ module.exports = function(grunt) {
 		};
 		var bakeIt = function( content, callback ){
 			var fs = require('fs');
-			fs.appendFile('/node-serverbuilder-log.txt', content.split('\n\n').join('\n') +'\n', 'utf8', function (err) {
+			fs.appendFile(grunt.logFile, content.split('\n\n').join('\n') +'\n', 'utf8', function (err) {
 				if( err ){
 					stdout( err );
 					throw err;
@@ -69,7 +92,6 @@ module.exports = function(grunt) {
 		}
 	};
 
-	
 	grunt.fileExist = function( filepath ){
 		fs.open( corePath.resolve( filepath ) , 'r', function(err, fd) {
 			if( err ){
@@ -78,6 +100,9 @@ module.exports = function(grunt) {
 			}
 		});
 	};
+	
+	// before anything else, reset the log file
+	grunt.reset_stdoutlog();
 	
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
