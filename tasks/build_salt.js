@@ -102,7 +102,7 @@ module.exports = function(grunt) {
 					console.log('/var/app/'+_app_op.install_dir+'/.git/config !! existed !!' );
 					gitArg.push(" up ");
 				}else{
-					console.log('/var/app/'+_app_op.install_dir+'/.git/config !! DID NOT exist :/ ' );
+					grunt.stdoutlog('/var/app/'+_app_op.install_dir+'/.git/config !! DID NOT exist :/ ',true);
 				}
 				if(_app_op.install_dir){
 					/*gitArg.push(" -p ");
@@ -151,14 +151,14 @@ module.exports = function(grunt) {
 					if(app_obj.length>0){
 						load_apps(app_obj,callback);
 					}else{
-						grunt.log.writeln("Finished app downloads");
+						grunt.stdoutlog("Finished app downloads",true);
 						if(typeof callback === "function"){
 							callback(); //we just finished the last one exit out
 						}
 					}
 				});
 			}else{
-				grunt.log.writeln("failed to load app_obj and started exit -- no apps loaded");
+				grunt.stdoutlog("failed to load app_obj and started exit -- no apps loaded",true);
 				if(typeof callback === "function"){
 					callback(); //the was an empty box this step was called with, exit out
 				}
@@ -170,7 +170,7 @@ module.exports = function(grunt) {
 			//the vagrant needs some defaults, and so it's vagrant default then remote then 
 			//vagrant opptions
 			for (var key in servers) {
-				grunt.log.writeln("found server salt "+key);
+				grunt.stdoutlog("found server salt "+key,true);
 				var server = servers[key];
 				server.salt={};
 
@@ -237,42 +237,42 @@ module.exports = function(grunt) {
 					glob( "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls" , {}, function (er, files) {
 						for (var file in files) {
 							var item = files[file].split('/').pop();
-							//grunt.log.writeln(item+"\r");
-							grunt.log.writeln(item+" -item for\r");
-							grunt.log.writeln(app.install_dir+" -item for\r");
+							
+							grunt.stdoutlog( item+" -item for\r", true, true);
+							grunt.stdoutlog( app.install_dir+" -item for\r",true,true);
+
 							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
 							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
 							
 							var content = fs.readFileSync(sourceFile,'utf8');
 
-							//grunt.log.writeln("read file");
-							//grunt.log.writeln("renderString of file");
+							grunt.stdoutlog( "renderString of file", true, true );
 							var tmpl = new nunjucks.Template(content,nenv);
-							//grunt.log.writeln("compile");
+							grunt.stdoutlog( "compile", true, true );
 							var res = tmpl.render(server.salt);
-							grunt.log.writeln("renderd pillar ---"+item+"--- for "+app.install_dir);
+							grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true );
 							fs.writeFile(targetFile, res, function(err){
-								grunt.stdoutlog("wrote pillar :: "+targetFile,true,true);
-								//grunt.log.writeln("wrote to file");
+								grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
 							});
 						}
 					})
 				}
+				grunt.stdoutlog( "extenting server salt for "+key, true);
+				grunt.stdoutlog( "minion "+server.salt.minion, true);
 
-				grunt.log.writeln("extenting server salt for "+key);
-				grunt.log.writeln("minion "+server.salt.minion);
 				var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
 				var targetFile = 'server/salt/deploy_minions/'+ server.salt.minion +'.conf';
 				var content = fs.readFileSync(sourceFile,'utf8')
 
-				//grunt.log.writeln("read file");
-				//grunt.log.writeln("renderString of file");
+				grunt.stdoutlog( "sourceFile :: "+sourceFile, true, true);
+				grunt.stdoutlog( "targetFile :: "+targetFile, true, true);
+
 				var tmpl = new nunjucks.Template(content);
 				//grunt.log.writeln("compile");
 				var res = tmpl.render(server);
-				grunt.log.writeln("renderd");
+				grunt.stdoutlog( "renderd", true, true);
 				fs.writeFile(targetFile, res, function(err){
-					//grunt.log.writeln("wrote to file");
+					grunt.stdoutlog( err ? err : "wrote to file", true, true);
 				});
 
 			}
