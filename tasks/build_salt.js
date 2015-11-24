@@ -232,9 +232,11 @@ module.exports = function(grunt) {
 						for (var file in files) {
 							var item = files[file].split('/').pop();
 							//grunt.log.writeln(item+"\r");
+							grunt.log.writeln(item+" -item for\r");
+							grunt.log.writeln(app.install_dir+" -item for\r");
 							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
 							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
-							var content = fs.readFileSync(sourceFile,'utf8')
+							var content = fs.readFileSync(sourceFile,'utf8');
 
 							//grunt.log.writeln("read file");
 							//grunt.log.writeln("renderString of file");
