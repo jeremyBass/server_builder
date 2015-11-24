@@ -70,6 +70,7 @@ module.exports = function(grunt) {
 		var servers = serverobj.servers;
 
 		function load_apps(app_obj,callback){
+			grunt.stdoutlog("start load_apps()",true);
 			if(app_obj === false){
 				app_obj=[];
 				grunt.stdoutlog("needed app_obj ",true);
@@ -155,14 +156,14 @@ module.exports = function(grunt) {
 						load_apps(app_obj,callback);
 					}else{
 						grunt.stdoutlog("Finished app downloads",true);
-						if(typeof callback === "function"){
+						if( "function" === typeof callback ){
 							callback(); //we just finished the last one exit out
 						}
 					}
 				});
 			}else{
 				grunt.stdoutlog("failed to load app_obj and started exit -- no apps loaded",true);
-				if(typeof callback === "function"){
+				if( "function" === typeof callback ){
 					callback(); //the was an empty box this step was called with, exit out
 				}
 			}
@@ -172,6 +173,7 @@ module.exports = function(grunt) {
 			//set up the vagrant object so that we can just define the server if we want to
 			//the vagrant needs some defaults, and so it's vagrant default then remote then 
 			//vagrant opptions
+			grunt.stdoutlog("start start_salt_production()",true);
 			for (var key in servers) {
 				grunt.stdoutlog("found server salt "+key,true);
 				var server = servers[key];
