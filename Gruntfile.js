@@ -73,7 +73,7 @@ module.exports = function(grunt) {
 			if( err ){
 				return false;
 			}
-		}
+		});
 	};
 	
 	require('load-grunt-tasks')(grunt);
