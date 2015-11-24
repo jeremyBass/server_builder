@@ -93,12 +93,16 @@ module.exports = function(grunt) {
 	};
 
 	grunt.fileExist = function( filepath ){
-		fs.open( corePath.resolve( filepath ) , 'r', function(err, fd) {
-			if( err ){
-				grunt.stdoutlog(err,true);
-				return false;
-			}
-		});
+		var file = corePath.resolve( filepath );
+		try {
+			grunt.stdoutlog("checking for :: "+file,true);
+			return fs.statSync( file ).isDirectory() || fs.statSync( file ).isFile();
+		}
+		catch (err) {
+			grunt.stdoutlog(err,true);
+			grunt.stdoutlog("failed check for :: "+file,true);
+			return false;
+		}
 	};
 
 	require('load-grunt-tasks')(grunt);
