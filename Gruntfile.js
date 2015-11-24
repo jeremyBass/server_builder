@@ -100,10 +100,7 @@ module.exports = function(grunt) {
 			}
 		});
 	};
-	
-	// before anything else, reset the log file
-	grunt.reset_stdoutlog();
-	
+
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
 	
