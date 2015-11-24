@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 			prefix = prefix||"";
 			sufix = sufix||"";
 			var out = sdt_stream.toString().trim();
-			if( '\n' !== out && null !== out= && "" !== out && lastout !== out){
+			if( '\n' !== out && null !== out && "" !== out && lastout !== out){
 				lastout = out;
 				out = out.split('\n\n').join('\n');
 				util.print( prefix + out + sufix );
