@@ -42,9 +42,14 @@ module.exports = function(grunt) {
 		wrench.mkdirSyncRecursive("server/salt", 0777);
 		var sourceDir = 'tasks/jigs/salt';
 		var targetDir = 'server/salt';
-		wrench.copyDirSyncRecursive(sourceDir,targetDir,{
+		/*wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
+		});*/
+		
+		fsx.copy( path.resolve(sourceDir), path.resolve(targetDir), {"clobber" :true}, function (err) {
+			if (err) return grunt.log.writeln(err);
 		});
+		
 		grunt.log.writeln("building the salt minions");
 		
 		wrench.mkdirSyncRecursive("server/salt/deploy_minions", 0777);
