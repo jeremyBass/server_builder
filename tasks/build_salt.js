@@ -20,21 +20,22 @@ module.exports = function(grunt) {
 			prefix = prefix||"";
 			sufix = sufix||"";
 			var out = sdt_stream.toString().trim();
-			if( out!='\n' && out!=null && out!="" && lastout!=out){
-				lastout=out;
-				out=out.split('\n\n').join('\n');
-				util.print(prefix+out+sufix);
+			if( '\n' !== out && null !== out= && "" !== out && lastout !== out){
+				lastout = out;
+				out = out.split('\n\n').join('\n');
+				util.print( prefix + out + sufix );
+				grunt.stdoutlog( "[output_stream] " + prefix + out + sufix ,true);
 			}
 		}
 
 		var nenv = new nunjucks.Environment();
 		nenv.addFilter("leadingzero", function(int, zerocount) {
 			var base="";
-			var count = zerocount||(int+"").length;
+			var count = zerocount||(int + "").length;
 			for (i = 0; i < count; i++) { 
 				base += "0";
 			}
-			var charLength=(base.length - (int+"").length);
+			var charLength=(base.length - (int + "").length);
 			return (base.substring(0, charLength))+int+"";
 		});
 		
@@ -62,11 +63,11 @@ module.exports = function(grunt) {
 		var config_file = 'server_project.conf';
 		if( fs.existsSync('/server_project.conf') ){
 			config_file = '/server_project.conf';
-			grunt.stdoutlog("using from root :: "+config_file,true);
 		}
+		grunt.stdoutlog("using from root :: "+config_file,true,true);
+
 		serverobj = grunt.file.readJSON(config_file);
 		var servers = serverobj.servers;
-		
 
 		function load_apps(app_obj,callback){
 			if(app_obj === false){
