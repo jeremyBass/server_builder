@@ -40,13 +40,14 @@ module.exports = function(grunt) {
 		
 		
 		wrench.mkdirSyncRecursive("server/salt", 0777);
-		var sourceDir = 'tasks/jigs/salt';
-		var targetDir = 'server/salt';
+		var sourceDir = path.resolve('tasks/jigs/salt');
+		var targetDir = path.resolve('server/salt');
 		/*wrench.copyDirSyncRecursive(sourceDir,targetDir,{
 			forceDelete: true
 		});*/
-		
-		fsx.copy( path.resolve(sourceDir), path.resolve(targetDir), {"clobber" :true}, function (err) {
+		grunt.log.writeln("copy " + sourceDir);
+		grunt.log.writeln("to " + targetDir);
+		fsx.copy( sourceDir, targetDir, {"clobber" :true}, function (err) {
 			if (err) return grunt.log.writeln(err);
 		});
 		
