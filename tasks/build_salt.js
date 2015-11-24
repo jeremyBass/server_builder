@@ -67,7 +67,7 @@ module.exports = function(grunt) {
 		
 
 		function load_apps(app_obj,callback){
-			if(app_obj==false){
+			if(app_obj === false){
 				app_obj=[];
 				grunt.log.writeln("needed app_obj ");
 				for (var key in servers) {
@@ -125,13 +125,16 @@ module.exports = function(grunt) {
 				if(_app_op.repo){
 					gitArg.push(" " + _app_op.repo);
 				}
+				grunt.stdoutlog("gitploy "+_app_op.install_dir);
+				grunt.stdoutlog("gitArg: "+gitArg+" \n"); //need to match ("gitArg: %j \n", gitArg)
+				grunt.stdoutlog("cwd: gitploy" + gitArg.join(' ') + " \n");
 				
-				grunt.log.writeln("gitploy "+_app_op.install_dir);
+				/*grunt.log.writeln("gitploy "+_app_op.install_dir);
 				console.log("gitArg: %j \n", gitArg);
-				console.log("cwd: %s \n", 'gitploy '+gitArg.join(' '));
+				console.log("cwd: %s \n", 'gitploy '+gitArg.join(' '));*/
 				/*var ls = spawn('gitploy', gitArg,{
-						cwd:'/'
-					});*/
+					cwd:'/'
+				});*/
 				
 				var spawnCommand = require('spawn-command'),
 				    ls = spawnCommand('cd / && gitploy '+gitArg.join(' '));
