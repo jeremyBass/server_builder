@@ -6,7 +6,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('build_salt', 'Setting up the salt provisioner', function() {
 		//var done = this.async();
 		var nunjucks = require('nunjucks');
-		var fs = require('fs');
+		var path = require('path');
+		var fs = require('fs'),
+			fsx = require('fs-extra');
 		var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util');
