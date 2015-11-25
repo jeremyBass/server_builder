@@ -239,7 +239,7 @@ module.exports = function(grunt) {
 					// options is optional
 					grunt.stdoutlog(app, true, true);
 					
-					fse.walk("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
+					fsx.walk("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
 					.on('data', function (_item) {
 						items.push(_item.path);
 						var item = _item.path.split('/').pop();
