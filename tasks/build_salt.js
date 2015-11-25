@@ -237,7 +237,39 @@ module.exports = function(grunt) {
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
 					// options is optional
-					grunt.stdoutlog(app, true );
+					grunt.stdoutlog(app, true, true);
+					
+					fse.walk("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
+					.on('data', function (_item) {
+						items.push(_item.path);
+						var item = _item.path.split('/').pop();
+
+						grunt.stdoutlog( item+" -item for\r", true, true);
+						grunt.stdoutlog( app.install_dir+" -item for\r",true, true);
+
+						var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
+						var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
+						grunt.stdoutlog( "trying to get ---"+item+"--- for "+sourceFile, true, true);
+						grunt.stdoutlog( "to  "+targetFile, true, true);
+
+						var content = fs.readFileSync(sourceFile,'utf8');
+
+						grunt.stdoutlog( "renderString of file", true, true);
+						var tmpl = new nunjucks.Template(content,nenv);
+						grunt.stdoutlog( "compile", true);
+						var res = tmpl.render(server.salt);
+						grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true, true );
+						fs.writeFile(targetFile, res, function(err){
+							grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
+						});
+					})
+					.on('end', function () {
+						grunt.stdoutlog(items, true, true );
+					});
+
+					
+					
+					/*
 					glob( "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls" , {}, function (er, files) {
 						for (var file in files) {
 							var item = files[file].split('/').pop();
@@ -261,7 +293,7 @@ module.exports = function(grunt) {
 								grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
 							});
 						}
-					})
+					})*/
 				}
 				grunt.stdoutlog( "extenting server salt for "+key, true);
 				grunt.stdoutlog( "minion "+server.salt.minion, true);
