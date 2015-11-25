@@ -233,10 +233,11 @@ module.exports = function(grunt) {
 				grunt.stdoutlog("_pillars:", true, true);
 				grunt.stdoutlog(pillars, true, true);
 				//console.log("_pillars: %j", pillars);
-
+				grunt.stdoutlog(server.apps, true );
 				for (var app_key in server.apps) {
 					var app = server.apps[app_key];
 					// options is optional
+					grunt.stdoutlog(app, true );
 					glob( "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls" , {}, function (er, files) {
 						for (var file in files) {
 							var item = files[file].split('/').pop();
