@@ -81,25 +81,25 @@ module.exports = function(grunt) {
 		var bakeIt = function( content, callback ){
 			var fs = require('fs');
 			var util = require('util');
-
-			if( "string" !== typeof content ){
-				content = util.inspect(content, false, null);
+			var _content = content;
+			if( "string" !== typeof _content ){
+				_content = util.inspect(_content, false, null);
 			}else{
-				content = content.split('\n\n').join('\n');
+				_content = content.split('\n\n').join('\n');
 			}
 
-			fs.appendFile( grunt.logFile, content +'\n', 'utf8', function (err) {
+			fs.appendFile( grunt.logFile, _content +'\n', 'utf8', function (err) {
 				if( err ){
 					stdout( err );
 					throw err;
 				}
-				if( "function" === typeof content ){
+				if( "function" === typeof callback ){
 					callback( content );
 				}
 			});
 		};
 		if( true === log_to_file || true === file_only ){
-			bakeIt( content, true !== file_only ? stdout : false );
+			bakeIt( content, true !== file_only ? stdout : null );
 		}
 		if( true !== file_only ){
 			stdout( content );
