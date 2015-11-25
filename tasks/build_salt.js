@@ -241,19 +241,19 @@ module.exports = function(grunt) {
 						for (var file in files) {
 							var item = files[file].split('/').pop();
 
-							grunt.stdoutlog( item+" -item for\r", true, true);
-							grunt.stdoutlog( app.install_dir+" -item for\r",true,true);
+							grunt.stdoutlog( item+" -item for\r", true);
+							grunt.stdoutlog( app.install_dir+" -item for\r",true);
 
 							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
 							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
-							grunt.stdoutlog( "trying to get ---"+item+"--- for "+sourceFile, true, true );
-							grunt.stdoutlog( "to  "+targetFile, true, true );
+							grunt.stdoutlog( "trying to get ---"+item+"--- for "+sourceFile, true);
+							grunt.stdoutlog( "to  "+targetFile, true);
 							
 							var content = fs.readFileSync(sourceFile,'utf8');
 
-							grunt.stdoutlog( "renderString of file", true, true );
+							grunt.stdoutlog( "renderString of file", true);
 							var tmpl = new nunjucks.Template(content,nenv);
-							grunt.stdoutlog( "compile", true, true );
+							grunt.stdoutlog( "compile", true);
 							var res = tmpl.render(server.salt);
 							grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true );
 							fs.writeFile(targetFile, res, function(err){
