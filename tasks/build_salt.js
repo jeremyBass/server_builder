@@ -238,7 +238,7 @@ module.exports = function(grunt) {
 					var app = server.apps[app_key];
 					// options is optional
 					grunt.stdoutlog(app, true, true);
-					
+					var items = [];
 					fsx.walk("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
 					.on('data', function (_item) {
 						items.push(_item.path);
