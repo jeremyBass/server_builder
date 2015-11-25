@@ -45,10 +45,9 @@ fi
 
 cd /srv/builder
 npm install
-grunt build_salt
-grunt build_server
 
-
+grunt build -salt
+grunt build -server
 
 #salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env=base
 #env=base
