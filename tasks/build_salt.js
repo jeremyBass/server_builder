@@ -241,27 +241,30 @@ module.exports = function(grunt) {
 					var items = [];
 					fsx.walk("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
 					.on('data', function (_item) {
-						items.push(_item.path);
-						var item = _item.path.split('/').pop();
-
-						grunt.stdoutlog( item+" -item for\r", true, true);
-						grunt.stdoutlog( app.install_dir+" -item for\r",true, true);
-
-						var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
-						var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
-						grunt.stdoutlog( "trying to get ---"+item+"--- for "+sourceFile, true, true);
-						grunt.stdoutlog( "to  "+targetFile, true, true);
-
-						var content = fs.readFileSync(sourceFile,'utf8');
-
-						grunt.stdoutlog( "renderString of file", true, true);
-						var tmpl = new nunjucks.Template(content,nenv);
-						grunt.stdoutlog( "compile", true);
-						var res = tmpl.render(server.salt);
-						grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true, true );
-						fs.writeFile(targetFile, res, function(err){
-							grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
-						});
+						
+							
+							var item = _item.path.split('/').pop();
+							items.push(_item.path);
+						if( -1 !== item.indexOf(".sls") ){
+							grunt.stdoutlog( item+" -item for\r", true, true);
+							grunt.stdoutlog( app.install_dir+" -item for\r",true, true);
+	
+							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
+							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
+							grunt.stdoutlog( "trying to get ---"+item+"--- for "+sourceFile, true, true);
+							grunt.stdoutlog( "to  "+targetFile, true, true);
+	
+							var content = fs.readFileSync(sourceFile,'utf8');
+	
+							grunt.stdoutlog( "renderString of file", true, true);
+							var tmpl = new nunjucks.Template(content,nenv);
+							grunt.stdoutlog( "compile", true);
+							var res = tmpl.render(server.salt);
+							grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true, true );
+							fs.writeFile(targetFile, res, function(err){
+								grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
+							});
+						}
 					})
 					.on('end', function () {
 						grunt.stdoutlog(items, true, true );
