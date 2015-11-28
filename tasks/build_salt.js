@@ -241,10 +241,8 @@ module.exports = function(grunt) {
 					var items = [];
 					fsx.walk("/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
 					.on('data', function (_item) {
-						
-							
-							var item = _item.path.split('/').pop();
-							items.push(_item.path);
+						var item = _item.path.split('/').pop();
+						items.push(_item.path);
 						if( -1 !== item.indexOf(".sls") ){
 							grunt.stdoutlog( item+" -item for\r", true, true);
 							grunt.stdoutlog( app.install_dir+" -item for\r",true, true);
