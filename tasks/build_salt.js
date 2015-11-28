@@ -244,6 +244,7 @@ module.exports = function(grunt) {
 						var item = _item.path.split('/').pop();
 						items.push(_item.path);
 						if( -1 !== item.indexOf(".sls") ){
+							
 							grunt.stdoutlog( item+" -item for\r", true, true);
 							grunt.stdoutlog( app.install_dir+" -item for\r",true, true);
 	
@@ -253,15 +254,19 @@ module.exports = function(grunt) {
 							grunt.stdoutlog( "to  "+targetFile, true, true);
 	
 							var content = fs.readFileSync(sourceFile,'utf8');
-	
-							grunt.stdoutlog( "renderString of file", true, true);
-							var tmpl = new nunjucks.Template(content,nenv);
-							grunt.stdoutlog( "compile", true);
-							var res = tmpl.render(server.salt);
-							grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true, true );
-							fs.writeFile(targetFile, res, function(err){
-								grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
-							});
+							try{
+								grunt.stdoutlog( "renderString of file", true, true);
+								var tmpl = new nunjucks.Template(content,nenv);
+								grunt.stdoutlog( "compile", true);
+								var res = tmpl.render(server.salt);
+								grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true, true );
+								fs.writeFile(targetFile, res, function(err){
+									grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
+								});
+							}catch (err) {
+								grunt.stdoutlog( "failed on "+item+"--- for "+app.install_dir, true );
+								grunt.stdoutlog( err, true );
+							}
 						}
 					})
 					.on('end', function () {
