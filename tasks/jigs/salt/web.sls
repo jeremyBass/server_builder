@@ -63,6 +63,7 @@ php-fpm:
       - php-opcache
       - php-pecl-memcached
       - php-pecl-oauth
+      - php-intl
     - require:
       - sls: serverbase
   service.running:
