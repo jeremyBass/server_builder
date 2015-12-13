@@ -1,5 +1,0 @@
-base:
-  '*':
-    - web
-    - nginx
-    - security

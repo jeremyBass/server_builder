@@ -1,0 +1,9 @@
+ {
+	"globals":{
+		"repo":{
+			"name":"server_builder",
+			"owner":"jeremyBass"
+		},
+		"google_analytics":"UA-XXXXXXXX-XX"
+	}
+}
