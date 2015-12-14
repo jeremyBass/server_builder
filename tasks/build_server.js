@@ -1,19 +1,20 @@
+/*jshint node: true*/
 module.exports = function(grunt) {
 	grunt.registerTask('build_server', 'Building the server', function() {
 		//var done = this.async();
-		var nunjucks = require('nunjucks');
+		//var nunjucks = require('nunjucks');
 		var fs = require('fs');
-		var extend = require('extend');
+		//var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util'),
 			spawn = require('child_process').spawn;
 		var lastout;
-		
+
 		function output_stream(sdt_stream,prefix,sufix){
 			prefix = prefix||"";
 			sufix = sufix||"";
 			var out = sdt_stream.toString().trim();
-			if( out!='\n' && out!=null && out!="" && lastout!=out){
+			if( '\n' !== out && null !== out && out!=="" && lastout!==out){
 				lastout=out;
 				out=out.split('\n\n').join('\n');
 				util.print(prefix+out+sufix);
@@ -29,7 +30,7 @@ module.exports = function(grunt) {
 			var ls = spawn('salt-call', ['--local','--log-level='+(log||'info'),'--config-dir=/etc/salt','state.highstate','env='+current_env],{
 					cwd:'/'
 				});
-			var lastout;
+			lastout="";
 			ls.stdout.on('data', function (data) {
 				output_stream(data,'\n');
 			});
@@ -55,7 +56,7 @@ module.exports = function(grunt) {
 					cwd:'/srv/salt/boot/'
 				});
 				grunt.stdoutlog("after spawning call",true);
-				var lastout;
+				lastout="";
 				ls.stdout.on('data', function (data) {
 					output_stream(data);
 				});
@@ -73,13 +74,13 @@ module.exports = function(grunt) {
 						grunt.stdoutlog(sourceDir+" >> "+targetDir,true);
 
 						var env_obj = ['base'];
-						
+
 						var config_file = 'server_project.conf';
 						if( fs.existsSync('/server_project.conf') ){
 							config_file = '/server_project.conf';
 							grunt.stdoutlog("using from root :: "+config_file,true);
 						}
-						serverobj = grunt.file.readJSON(config_file);
+						var serverobj = grunt.file.readJSON(config_file);
 						var servers = serverobj.servers;
 
 						var log = "error";
