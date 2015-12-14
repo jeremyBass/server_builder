@@ -8,7 +8,7 @@
 
 	<meta charset="utf-8">
 	
-	<title>Main default | Washington State University</title>
+	<title>Under The Hood | Washington State University</title>
 	
 	<!-- FAVICON -->
 	<link rel="shortcut icon" href="https://repo.wsu.edu/spine/1/favicon.ico" />
@@ -55,10 +55,27 @@
 					<article class="wrapper markdown-body">
 					
 
-<h1>server_builder</h1>
-<h2 id="repo_github_header">Repo : <a href="https://github.com/jeremyBass/server_builder">View On GitHub</a></h2>
-
-<p>This package will set up a server based on a configuration file.  The server provisioning will handle the server configuration as well as install apps that are configured to use this system.  The structure of the app is basic as well as templatable.</p>
+<h1 id="how-does-this-function">How does this function</h1>
+<p>The server builder works by using a combination of deployment and task applications to create a LEMP stack with the application layer installed.  The goal is to allow for one configuration to define the whole stack.  The project is set up so that we work backwards from one file that describes everything about the server stack and projects loaded on the server stack.  In order to make this happen we start by parting out the whole process into two sections.</p>
+<ol>
+<li>Set up the Server</li>
+<li>Set up the Applications</li>
+</ol>
+<p>This provides the line on where you create your application repository verse this repository.  The application repository would have many of the same parts as this server base, and extends the setup accordingly.  The <code>server_project.conf</code> file is a <code>JSON</code> object that describes a deployment for production, and variants for a local version of the production servers.  To create the local server, <code>Vagrant</code> is used with <code>VirturalBox</code>.  This needs to have a <code>Vagrant</code> file that describes the instance parameters and actions that will occur when it&#39;s brought up.  The server it&#39;s self is provisioned with <code>Salt</code> and versioned with <code>Gitploy</code> via <code>git</code>.  <code>Salt</code> uses <code>pillar</code> files to describe what will be done on the server.  This project takes 2 steps with <code>Salt</code> to first set up the server base that is meant to cover all the needs of most any application layer, and if needed, the collated needs from the application object defined in the <code>server_project.conf</code>  file versioned in.  This is the overview of what needs to happen.</p>
+<h2 id="process-steps">Process steps</h2>
+<h4 id="when-local">When local</h4>
+<ol>
+<li>Use Grunt to prepare the repo folder and anything needed to get the <code>Vagrant</code> setup ready based on the <code>server_project.conf</code> file</li>
+<li>As the box is brought up, the production steps are now run, with symlinks for the application folder on the box.  Otherwise just a <code>EVN</code> flag is set to denote the local server.  Everything else is run the same as the production process.</li>
+</ol>
+<h4 id="when-non-local">When non-local</h4>
+<ol>
+<li>a <code>bootstrap.sh</code> file is called, which provides an install of items needed on a server.</li>
+<li>It then creates the server object and from that id&#39;s any apps that need to be versioned in.</li>
+<li>Once that is done it calls for the salt pillar builder for both the server and apps loaded</li>
+<li>After the building of all the pillars based on the <code>server_project.conf</code> file it will run the salt states</li>
+</ol>
+<p>That is the broad stoke on all of the steps that happen in the build.  This basically simplifies the build by keeping one json config file that describes everything across all of the different technologies.  It uses <code>Grunt</code> on <code>node.js</code> to build all of the settings for both Vagrant and Salt producing the closest matching set of servers for a developer.</p>
 
 </article>
 				</div><!--/column-->
@@ -107,7 +124,7 @@
 				<nav id="spine-sitenav" class="spine-sitenav">
 					<ul>
 					<li>
-						<a href="site/under_the_hood.html" >Under The Hood</a>
+						<a href="site/under_the_hood.html" class="active" >Under The Hood</a>
 								<ul>
 							<li><a href="Overview">#how-does-this-function</a></li>
 							<li><a href="Local">#when-local</a></li>
