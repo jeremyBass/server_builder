@@ -5,5 +5,10 @@
 			"owner":"jeremyBass"
 		},
 		"google_analytics":"UA-XXXXXXXX-XX"
+	},
+	"pages": {
+		"index": {},
+		"server_project_conf": {},
+		"under_the_hood":{}
 	}
 }

@@ -9,9 +9,9 @@
 		"showstuff":true
 	},
 	"child_nav":{
-		"Overview":"#how-does-this-function",
-		"Local":"#when-local",
-		"Non Local":"#when-non-local"
+		"#how-does-this-function":"Overview",
+		"#when-local":"Local",
+		"#when-non-local":"Non Local"
 	}
 }
 #}
