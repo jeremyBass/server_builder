@@ -165,6 +165,7 @@ module.exports = function(grunt) {
 		}
 
 		var pillars = [];
+		var _used_app;
 		function build_pillars(_item) {
 			var item = _item.path.split('/').pop();
 			pillars.push(_item.path);
@@ -183,7 +184,7 @@ module.exports = function(grunt) {
 					grunt.stdoutlog( "renderString of file", true, true);
 					var tmpl = new nunjucks.Template(content,nenv);
 					grunt.stdoutlog( "compile", true);
-					var res = tmpl.render(server.salt);
+					var res = tmpl.render(_current_server.salt);
 					grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+_used_app.install_dir, true, true );
 					fs.writeFile(targetFile, res, function(err){
 						grunt.stdoutlog( err ? err : "wrote pillar :: "+targetFile, true );
@@ -195,7 +196,7 @@ module.exports = function(grunt) {
 			}
 		}
 
-
+		var _current_server;
 		function start_salt_production(){
 			//set up the vagrant object so that we can just define the server if we want to
 			//the vagrant needs some defaults, and so it's vagrant default then remote then
@@ -203,14 +204,14 @@ module.exports = function(grunt) {
 			grunt.stdoutlog("start start_salt_production()",true);
 			for (var key in servers) {
 				grunt.stdoutlog("found server salt "+key,true);
-				var server = servers[key];
-				server.salt={};
+				_current_server = servers[key];
+				_current_server.salt={};
 
-				var remote_env  = "undefined" !== typeof server.remote.salt ? server.remote.salt.env : [ ];
-				var vagrant_env = "undefined" !== typeof server.vagrant.salt ? server.vagrant.salt.env : [ ];
+				var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
+				var vagrant_env = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.env : [ ];
 				var app_env = [];
-				for (var app_key in server.apps) {
-					var app = server.apps[app_key];
+				for (var app_key in _current_server.apps) {
+					var app = _current_server.apps[app_key];
 					if( "undefined" !== typeof app.salt ){
 						if( "undefined" !== typeof app.salt.env ){
 							app_env = merge(app_env,app.salt.env);
@@ -218,7 +219,7 @@ module.exports = function(grunt) {
 					}
 				}
 
-				server.salt = extend(default_salt,server.remote.salt,server.vagrant.salt||{});
+				_current_server.salt = extend(default_salt,_current_server.remote.salt,_current_server.vagrant.salt||{});
 
 				var env = merge(merge(remote_env, vagrant_env),app_env);
 				var _env = [];
@@ -238,15 +239,15 @@ module.exports = function(grunt) {
 						}
 					}
 				});
-				server.salt.env=_env;
+				_current_server.salt.env=_env;
 
 
 
-				var remote_pillars  = "undefined" !== typeof server.remote.salt ? server.remote.salt.pillars : [ ];
-				var vagrant_pillars = "undefined" !== typeof server.vagrant.salt ? server.vagrant.salt.pillars : [ ];
+				var remote_pillars  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.pillars : [ ];
+				var vagrant_pillars = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.pillars : [ ];
 				var app_pillars     = [];
-				for ( app_key in server.apps ) {
-					var _app = server.apps[app_key];
+				for ( app_key in _current_server.apps ) {
+					var _app = _current_server.apps[app_key];
 					if( "undefined" !== typeof _app.remote.salt ){
 						if( "undefined" !== typeof _app.remote.salt.pillars ){
 							app_pillars = merge(app_pillars, _app.remote.salt.pillars);
@@ -262,13 +263,13 @@ module.exports = function(grunt) {
 				grunt.stdoutlog(app_pillars, true, true);
 				//console.log("app_pillars: %j", app_pillars);
 				var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
-				server.salt.pillars=pillars;
+				_current_server.salt.pillars=pillars;
 				grunt.stdoutlog("_pillars:", true, true);
 				grunt.stdoutlog(pillars, true, true);
 				//console.log("_pillars: %j", pillars);
-				grunt.stdoutlog(server.apps, true );
-				for ( app_key in server.apps ) {
-					var _used_app = server.apps[app_key];
+				grunt.stdoutlog(_current_server.apps, true );
+				for ( app_key in _current_server.apps ) {
+					_used_app = _current_server.apps[app_key];
 					// options is optional
 					grunt.stdoutlog(_used_app, true, true);
 					pillars = [];
@@ -305,10 +306,10 @@ module.exports = function(grunt) {
 					})*/
 				}
 				grunt.stdoutlog( "extenting server salt for "+key, true);
-				grunt.stdoutlog( "minion "+server.salt.minion, true);
+				grunt.stdoutlog( "minion "+_current_server.salt.minion, true);
 
 				var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
-				var targetFile = 'server/salt/deploy_minions/'+ server.salt.minion +'.conf';
+				var targetFile = 'server/salt/deploy_minions/'+ _current_server.salt.minion +'.conf';
 				var content = fs.readFileSync(sourceFile,'utf8');
 
 				grunt.stdoutlog( "sourceFile :: "+sourceFile, true, true);
@@ -316,7 +317,7 @@ module.exports = function(grunt) {
 
 				var tmpl = new nunjucks.Template(content);
 				//grunt.stdoutlog("compile",true);
-				var res = tmpl.render(server);
+				var res = tmpl.render(_current_server);
 				grunt.stdoutlog( "renderd", true, true);
 				fs.writeFile(targetFile, res, function(err){
 					grunt.stdoutlog( err ? err : "wrote to file", true, true);
