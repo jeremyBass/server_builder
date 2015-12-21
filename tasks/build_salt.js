@@ -10,12 +10,13 @@ module.exports = function(grunt) {
 		var path = require('path');
 		var fs = require('fs'),
 			fsx = require('fs-extra');
-		var extend = require('extend');
+		//var extend = require('extend');
 		var wrench = require('wrench'),
 			util = require('util');
 		var merge = require('deepmerge');
 		var lastout;
 		//var glob = require("glob");
+		//var default_salt = {};
 
 		function output_stream(sdt_stream,prefix,sufix){
 			prefix = prefix||"";
@@ -58,16 +59,8 @@ module.exports = function(grunt) {
 		grunt.stdoutlog("building the salt minions",true);
 
 		wrench.mkdirSyncRecursive("server/salt/deploy_minions", 0777);
-		var default_salt = {
 
-		};
-		var config_file = 'server_project.conf';
-		if( fs.existsSync('/server_project.conf') ){
-			config_file = '/server_project.conf';
-		}
-		grunt.stdoutlog("using from root :: "+config_file,true,true);
-
-		var serverobj = grunt.file.readJSON(config_file);
+		var serverobj = grunt.load_server_config();
 		var servers = serverobj.servers;
 
 		function load_apps(app_obj,callback){
@@ -195,41 +188,7 @@ module.exports = function(grunt) {
 				}
 			}
 		}
-		function create_env( _current_server ){
-			var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
-			var vagrant_env = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.env : [ ];
-			var app_env = [];
-			for (var app_key in _current_server.apps) {
-				var app = _current_server.apps[app_key];
-				if( "undefined" !== typeof app.salt ){
-					if( "undefined" !== typeof app.salt.env ){
-						app_env = merge(app_env,app.salt.env);
-					}
-				}
-			}
 
-			_current_server.salt = extend(default_salt,_current_server.remote.salt,_current_server.vagrant.salt||{});
-
-			var env = merge(merge(remote_env, vagrant_env),app_env);
-			var _env = [];
-			env.forEach(function(entry) {
-				//grunt.stdoutlog("looking at env "+entry,true);
-				if( 0 === entry.indexOf('-') ){
-					var _entry = entry.substring(1);
-					//grunt.stdoutlog("checking for "+_entry,true);
-					var exc = _env.indexOf(_entry);
-					//grunt.stdoutlog(_entry+" has index at "+exc,true);
-					if( exc > -1){
-						_env.splice(exc, 1);
-					}
-				}else{
-					if( -1 === _env.indexOf(entry) ){
-						_env.push(entry);
-					}
-				}
-			});
-			return _env;
-		}
 		var _current_server;
 		function start_salt_production(){
 			//set up the vagrant object so that we can just define the server if we want to
@@ -241,7 +200,7 @@ module.exports = function(grunt) {
 				_current_server = servers[key];
 				_current_server.salt={};
 
-				var env = create_env( _current_server );
+				var env = grunt.create_env( _current_server );
 				_current_server.salt.env = env;
 
 

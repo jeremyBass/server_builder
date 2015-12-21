@@ -1,3 +1,4 @@
+/*jslint node: true*/
 
 module.exports = function(grunt) {
 	//lets look for configs
@@ -20,8 +21,11 @@ module.exports = function(grunt) {
 		fs = require('fs');
 	var wrench = require('wrench');
 	var util = require('util');
-	
+	var extend = require('extend');
+
+	var merge = require('deepmerge');var default_salt = {};
 	pkg = grunt.file.readJSON('package.json');
+
 	setbase = grunt.option('setbase') || pkg.build_location+'/'+pkg.build_version+'/';
 
 	config = {
@@ -31,7 +35,7 @@ module.exports = function(grunt) {
 			build: 'build'
 		}
 	};
- 
+
 	grunt.util._.extend(config, loadConfig('./tasks/options/'));
 	grunt.initConfig(config);
 
@@ -44,7 +48,7 @@ module.exports = function(grunt) {
 		var min  = date.getMinutes();
 		min = (min < 10 ? "0" : "") + min;
 
-		
+
 		var year = date.getFullYear();
 
 		var month = date.getMonth() + 1;
@@ -119,9 +123,57 @@ module.exports = function(grunt) {
 		}
 	};
 
+	grunt.create_env = function( _current_server ){
+		var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
+		var vagrant_env = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.env : [ ];
+		var app_env = [];
+		for (var app_key in _current_server.apps) {
+			var app = _current_server.apps[app_key];
+			if( "undefined" !== typeof app.salt ){
+				if( "undefined" !== typeof app.salt.env ){
+					app_env = merge(app_env,app.salt.env);
+				}
+			}
+		}
+
+		_current_server.salt = extend(default_salt,_current_server.remote.salt,_current_server.vagrant.salt||{});
+
+		var env = merge(merge(remote_env, vagrant_env),app_env);
+		var _env = [];
+		env.forEach(function(entry) {
+			//grunt.stdoutlog("looking at env "+entry,true);
+			if( 0 === entry.indexOf('-') ){
+				var _entry = entry.substring(1);
+				//grunt.stdoutlog("checking for "+_entry,true);
+				var exc = _env.indexOf(_entry);
+				//grunt.stdoutlog(_entry+" has index at "+exc,true);
+				if( exc > -1){
+					_env.splice(exc, 1);
+				}
+			}else{
+				if( -1 === _env.indexOf(entry) ){
+					_env.push(entry);
+				}
+			}
+		});
+		return _env;
+	};
+
+	grunt.load_server_config = function( config_path ){
+		var config_file = config_path||'server_project.conf';
+		if( fs.existsSync('/server_project.conf') ){
+			config_file = '/server_project.conf';
+			grunt.stdoutlog("using from root :: "+config_file,true);
+		}
+		var serverobj = grunt.file.readJSON(config_file);
+		return serverobj;
+	};
+
+
+
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
-	
+
 	// Default task(s).
 	grunt.registerTask('default', ['jshint']);
 
