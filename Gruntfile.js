@@ -180,7 +180,17 @@ module.exports = function(grunt) {
 		}
 	};
 
-		/*
+	grunt.resolve_server_obj = function( server, type ){
+		var _pillars = {};
+		var _type = server[type];
+		if( "undefined" !== typeof _type.salt && "undefined" !== typeof _type.salt.pillars ){
+			_pillars = _type.salt.pillars;
+		}
+		return _pillars;
+	};
+
+
+	/*
 	 * Make sure that we have a place for the log file and that
 	 * it's been set for the task set running
 	 */
@@ -195,31 +205,31 @@ module.exports = function(grunt) {
 			grunt.log.writeln("found server "+key);
 			var server = servers[key];
 			server.evn = {
-				salt: extend( grunt.default_salt, server.remote.salt, server.vagrant.salt||{} )
+				salt: extend( true, grunt.default_salt, server.remote.salt, server.vagrant.salt||{} )
 			};
 
 			server.evn.salt.states = grunt.create_env(server);
-			server.vagrant = extend( grunt.default_vagrant, server.remote, server.vagrant||{} );
+			server.vagrant = extend( true, grunt.default_vagrant, server.remote, server.vagrant||{} );
 			grunt.log.writeln("extenting server "+key);
 
-			var remote_pillars  = "undefined" !== typeof server.evn.remote.salt ? server.evn.remote.salt.pillars : [ ];
-			var vagrant_pillars = "undefined" !== typeof server.evn.vagrant.salt ? server.evn.vagrant.salt.pillars : [ ];
+			var remote_pillars  = extend( true, grunt.resolve_server_obj(server,'remote') , {} );
+			var vagrant_pillars = extend( true, grunt.resolve_server_obj(server,'vagrant') , {} );
 			var app_pillars     = [];
 			for ( var app_key in server.apps ) {
 				var _app = server.apps[app_key];
 				if( "undefined" !== typeof _app.remote.salt ){
 					if( "undefined" !== typeof _app.remote.salt.pillars ){
-						app_pillars = merge(app_pillars, _app.remote.salt.pillars);
+						app_pillars = extend( true, app_pillars, _app.remote.salt.pillars );
 					}
 				}
 				if( "undefined" !== typeof _app.vagrant.salt ){
 					if( "undefined" !== typeof _app.vagrant.salt.pillars ){
-						app_pillars = merge(app_pillars,_app.vagrant.salt.pillars);
+						app_pillars = extend( true, app_pillars, _app.vagrant.salt.pillars );
 					}
 				}
 			}
 
-			var pillars = merge( merge( remote_pillars, vagrant_pillars ), app_pillars );
+			var pillars = extend( true, extend( true,  remote_pillars, vagrant_pillars ), app_pillars );
 			server.evn.salt.pillars = pillars;
 
 			servers[key] = server;
