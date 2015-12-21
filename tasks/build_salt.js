@@ -198,7 +198,7 @@ module.exports = function(grunt) {
 					pillars = [];
 					fsx.walk("/var/app/"+_used_app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
 					.on('data', build_pillars)
-					.on('end', grunt.stdoutlog(pillars, true, true ));
+					.on('end', function(){grunt.stdoutlog(pillars, true, true );});
 				}
 				grunt.stdoutlog( "extenting server salt for "+key, true);
 				grunt.stdoutlog( "minion "+_current_server.env.salt.minion, true);
