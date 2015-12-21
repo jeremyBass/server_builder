@@ -195,7 +195,41 @@ module.exports = function(grunt) {
 				}
 			}
 		}
+		function create_env( _current_server ){
+			var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
+			var vagrant_env = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.env : [ ];
+			var app_env = [];
+			for (var app_key in _current_server.apps) {
+				var app = _current_server.apps[app_key];
+				if( "undefined" !== typeof app.salt ){
+					if( "undefined" !== typeof app.salt.env ){
+						app_env = merge(app_env,app.salt.env);
+					}
+				}
+			}
 
+			_current_server.salt = extend(default_salt,_current_server.remote.salt,_current_server.vagrant.salt||{});
+
+			var env = merge(merge(remote_env, vagrant_env),app_env);
+			var _env = [];
+			env.forEach(function(entry) {
+				//grunt.stdoutlog("looking at env "+entry,true);
+				if( 0 === entry.indexOf('-') ){
+					var _entry = entry.substring(1);
+					//grunt.stdoutlog("checking for "+_entry,true);
+					var exc = _env.indexOf(_entry);
+					//grunt.stdoutlog(_entry+" has index at "+exc,true);
+					if( exc > -1){
+						_env.splice(exc, 1);
+					}
+				}else{
+					if( -1 === _env.indexOf(entry) ){
+						_env.push(entry);
+					}
+				}
+			});
+			return _env;
+		}
 		var _current_server;
 		function start_salt_production(){
 			//set up the vagrant object so that we can just define the server if we want to
@@ -207,46 +241,15 @@ module.exports = function(grunt) {
 				_current_server = servers[key];
 				_current_server.salt={};
 
-				var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
-				var vagrant_env = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.env : [ ];
-				var app_env = [];
-				for (var app_key in _current_server.apps) {
-					var app = _current_server.apps[app_key];
-					if( "undefined" !== typeof app.salt ){
-						if( "undefined" !== typeof app.salt.env ){
-							app_env = merge(app_env,app.salt.env);
-						}
-					}
-				}
-
-				_current_server.salt = extend(default_salt,_current_server.remote.salt,_current_server.vagrant.salt||{});
-
-				var env = merge(merge(remote_env, vagrant_env),app_env);
-				var _env = [];
-				env.forEach(function(entry) {
-					//grunt.stdoutlog("looking at env "+entry,true);
-					if( 0 === entry.indexOf('-') ){
-						var _entry = entry.substring(1);
-						//grunt.stdoutlog("checking for "+_entry,true);
-						var exc = _env.indexOf(_entry);
-						//grunt.stdoutlog(_entry+" has index at "+exc,true);
-						if( exc > -1){
-							_env.splice(exc, 1);
-						}
-					}else{
-						if( -1 === _env.indexOf(entry) ){
-							_env.push(entry);
-						}
-					}
-				});
-				_current_server.salt.env=_env;
+				var env = create_env( _current_server );
+				_current_server.salt.env = env;
 
 
 
 				var remote_pillars  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.pillars : [ ];
 				var vagrant_pillars = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.pillars : [ ];
 				var app_pillars     = [];
-				for ( app_key in _current_server.apps ) {
+				for ( var app_key in _current_server.apps ) {
 					var _app = _current_server.apps[app_key];
 					if( "undefined" !== typeof _app.remote.salt ){
 						if( "undefined" !== typeof _app.remote.salt.pillars ){

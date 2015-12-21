@@ -4,11 +4,14 @@ module.exports = function(grunt) {
 		//var done = this.async();
 		//var nunjucks = require('nunjucks');
 		var fs = require('fs');
-		//var extend = require('extend');
+		var extend = require('extend');
+
+		var merge = require('deepmerge');
 		var wrench = require('wrench'),
 			util = require('util'),
 			spawn = require('child_process').spawn;
 		var lastout;
+		var default_salt = {};
 
 		function output_stream(sdt_stream,prefix,sufix){
 			prefix = prefix||"";
@@ -44,7 +47,42 @@ module.exports = function(grunt) {
 				}
 			});
 		}
+		function create_env( _current_server ){
+			var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
+			var vagrant_env = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.env : [ ];
+			var app_env = [];
+			for (var app_key in _current_server.apps) {
+				var app = _current_server.apps[app_key];
+				if( "undefined" !== typeof app.salt ){
+					if( "undefined" !== typeof app.salt.env ){
+						app_env = merge(app_env,app.salt.env);
+					}
+				}
+			}
 
+			_current_server.salt = extend(default_salt,_current_server.remote.salt,_current_server.vagrant.salt||{});
+
+			var env = merge(merge(remote_env, vagrant_env),app_env);
+			var _env = [];
+			env.forEach(function(entry) {
+				//grunt.stdoutlog("looking at env "+entry,true);
+				if( 0 === entry.indexOf('-') ){
+					var _entry = entry.substring(1);
+					//grunt.stdoutlog("checking for "+_entry,true);
+					var exc = _env.indexOf(_entry);
+					//grunt.stdoutlog(_entry+" has index at "+exc,true);
+					if( exc > -1){
+						_env.splice(exc, 1);
+					}
+				}else{
+					if( -1 === _env.indexOf(entry) ){
+						_env.push(entry);
+					}
+				}
+			});
+			return _env;
+		}
+		var _current_server;
 		function run_salt_prep(){
 			if ( !fs.existsSync('/srv/salt/boot/bootstrap-salt.sh') ) {
 				grunt.stdoutlog('/srv/salt/boot/bootstrap-salt.sh missing',true);
@@ -73,7 +111,7 @@ module.exports = function(grunt) {
 					},function(){
 						grunt.stdoutlog(sourceDir+" >> "+targetDir,true);
 
-						var env_obj = ['base'];
+
 
 						var config_file = 'server_project.conf';
 						if( fs.existsSync('/server_project.conf') ){
@@ -85,15 +123,26 @@ module.exports = function(grunt) {
 
 						var log = "error";
 						for (var key in servers) {
-							var server = servers[key];
-							for (var app_key in server.apps) {
-								var app = server.apps[app_key];
-								grunt.stdoutlog("add salt env "+app.install_dir,true);
-								env_obj.push(app.install_dir);
+
+							_current_server = servers[key];
+							_current_server.salt={};
+							var env = create_env( _current_server );
+							_current_server.salt.env = env;
+							var env_obj = [];
+							if( "undefined" === typeof _current_server.salt.env.skip_state.base  ){
+								env_obj = ['base'];
 							}
-							log = server.remote.salt.log_level||server.remote.salt.log_level||"info";
+							for (var app_key in _current_server.apps) {
+								if( "undefined" !== typeof _current_server.salt.env.skip_state[app_key]  ){
+									var app = _current_server.apps[app_key];
+									grunt.stdoutlog("add salt env "+app.install_dir,true);
+									env_obj.push(app.install_dir);
+								}
+							}
+							log = _current_server.remote.salt.log_level||_current_server.remote.salt.log_level||"info";
+							run_env(env_obj,log);
 						}
-						run_env(env_obj,log);
+
 					});
 				});
 			}
