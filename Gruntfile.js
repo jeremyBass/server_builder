@@ -204,11 +204,11 @@ module.exports = function(grunt) {
 		for (var key in servers) {
 			grunt.log.writeln("found server "+key);
 			var server = servers[key];
-			server.evn = {
+			server.env = {
 				salt: extend( true, grunt.default_salt, server.remote.salt, server.vagrant.salt||{} )
 			};
 
-			server.evn.salt.states = grunt.create_env(server);
+			server.env.salt.states = grunt.create_env(server);
 			server.vagrant = extend( true, grunt.default_vagrant, server.remote, server.vagrant||{} );
 			grunt.log.writeln("extenting server "+key);
 
@@ -230,7 +230,7 @@ module.exports = function(grunt) {
 			}
 
 			var pillars = extend( true, extend( true,  remote_pillars, vagrant_pillars ), app_pillars );
-			server.evn.salt.pillars = pillars;
+			server.env.salt.pillars = pillars;
 
 			servers[key] = server;
 		}
