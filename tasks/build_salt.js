@@ -166,7 +166,7 @@ module.exports = function(grunt) {
 					grunt.stdoutlog( "renderString of file", true, true);
 					var tmpl = new nunjucks.Template(content,nenv);
 					grunt.stdoutlog( "compile", true);
-					var res = tmpl.render(_current_server.salt);
+					var res = tmpl.render(_current_server.env.salt);
 					grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+_used_app.install_dir, true, true );
 					fs.writeFile(targetFile, res, function(err){
 						grunt.stdoutlog( err ? err : "wrote pillar :: "+targetFile, true );
@@ -190,32 +190,6 @@ module.exports = function(grunt) {
 				_current_server = servers[key];
 				_current_server.salt={};
 
-				//var env = grunt.create_env( _current_server );
-				//_current_server.salt.env = env;
-
-
-
-				/*var remote_pillars  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.pillars : [ ];
-				var vagrant_pillars = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.pillars : [ ];
-				var app_pillars     = [];
-				for ( var app_key in _current_server.apps ) {
-					var _app = _current_server.apps[app_key];
-					if( "undefined" !== typeof _app.remote.salt ){
-						if( "undefined" !== typeof _app.remote.salt.pillars ){
-							app_pillars = merge(app_pillars, _app.remote.salt.pillars);
-						}
-					}
-					if( "undefined" !== typeof _app.vagrant.salt ){
-						if( "undefined" !== typeof _app.vagrant.salt.pillars ){
-							app_pillars = merge(app_pillars,_app.vagrant.salt.pillars);
-						}
-					}
-				}
-				grunt.stdoutlog("app_pillars:", true, true);
-				grunt.stdoutlog(app_pillars, true, true);
-				//console.log("app_pillars: %j", app_pillars);
-				var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
-				_current_server.salt.pillars=pillars;*/
 				grunt.stdoutlog("_pillars:", true, true);
 				grunt.stdoutlog(pillars, true, true);
 				//console.log("_pillars: %j", pillars);
@@ -228,47 +202,18 @@ module.exports = function(grunt) {
 					fsx.walk("/var/app/"+_used_app.install_dir+"/provision/salt/pillar/_pillar-jigs/")
 					.on('data', build_pillars)
 					.on('end', grunt.stdoutlog(pillars, true, true ));
-
-
-
-					/*
-					glob( "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/*.sls" , {}, function (er, files) {
-						for (var file in files) {
-							var item = files[file].split('/').pop();
-
-							grunt.stdoutlog( item+" -item for\r", true);
-							grunt.stdoutlog( app.install_dir+" -item for\r",true);
-
-							var sourceFile = "/var/app/"+app.install_dir+"/provision/salt/pillar/_pillar-jigs/"+item;
-							var targetFile = '/var/app/'+app.install_dir+'/provision/salt/pillar/'+item;
-							grunt.stdoutlog( "trying to get ---"+item+"--- for "+sourceFile, true);
-							grunt.stdoutlog( "to  "+targetFile, true);
-
-							var content = fs.readFileSync(sourceFile,'utf8');
-
-							grunt.stdoutlog( "renderString of file", true);
-							var tmpl = new nunjucks.Template(content,nenv);
-							grunt.stdoutlog( "compile", true);
-							var res = tmpl.render(server.salt);
-							grunt.stdoutlog( "renderd pillar ---"+item+"--- for "+app.install_dir, true );
-							fs.writeFile(targetFile, res, function(err){
-								grunt.stdoutlog( "wrote pillar :: "+targetFile, true );
-							});
-						}
-					})*/
 				}
 				grunt.stdoutlog( "extenting server salt for "+key, true);
-				grunt.stdoutlog( "minion "+_current_server.salt.minion, true);
+				grunt.stdoutlog( "minion "+_current_server.env.salt.minion, true);
 
 				var sourceFile = 'tasks/jigs/salt/minions/_template.conf';
-				var targetFile = 'server/salt/deploy_minions/'+ _current_server.salt.minion +'.conf';
+				var targetFile = 'server/salt/deploy_minions/'+ _current_server.env.salt.minion +'.conf';
 				var content = fs.readFileSync(sourceFile,'utf8');
 
 				grunt.stdoutlog( "sourceFile :: "+sourceFile, true, true);
 				grunt.stdoutlog( "targetFile :: "+targetFile, true, true);
 
 				var tmpl = new nunjucks.Template(content);
-				//grunt.stdoutlog("compile",true);
 				var res = tmpl.render(_current_server);
 				grunt.stdoutlog( "renderd", true, true);
 				fs.writeFile(targetFile, res, function(err){
