@@ -88,6 +88,8 @@ module.exports = function(grunt) {
 								}
 							}
 							log = _current_server.env.salt.log_level||"info";
+							grunt.stdoutlog("run_env on env_obj:", true, true);
+							grunt.stdoutlog(env_obj, true, true);
 							run_env(env_obj,log);
 						}
 
