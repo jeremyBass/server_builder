@@ -14,6 +14,9 @@ module.exports = function(grunt) {
 
 
 		function run_env(env_obj,log){
+			grunt.stdoutlog("on START >> env_obj:",true,true);
+			grunt.stdoutlog(env_obj,true,true);
+
 			var current_env = env_obj[0];
 			env_obj.shift();
 			grunt.stdoutlog("run salt env="+current_env,true);
@@ -29,6 +32,8 @@ module.exports = function(grunt) {
 				grunt.output_stream(data,'\n');
 			});
 			ls.on('exit', function (code) {
+				grunt.stdoutlog("on EXIT >> env_obj:",true,true);
+				grunt.stdoutlog(env_obj,true,true);
 				grunt.output_stream(code,'\n','<<<<<<<< finished sever "+current_env'+current_env+'\n');
 				if(env_obj.length>0){
 					run_env(env_obj);

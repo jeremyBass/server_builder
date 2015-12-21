@@ -190,11 +190,8 @@ module.exports = function(grunt) {
 				_current_server = servers[key];
 				_current_server.salt={};
 
-				grunt.stdoutlog("_pillars:", true, true);
-				grunt.stdoutlog(pillars, true, true);
-				//console.log("_pillars: %j", pillars);
 				grunt.stdoutlog(_current_server.apps, true );
-				for ( app_key in _current_server.apps ) {
+				for ( var app_key in _current_server.apps ) {
 					_used_app = _current_server.apps[app_key];
 					// options is optional
 					grunt.stdoutlog(_used_app, true, true);
