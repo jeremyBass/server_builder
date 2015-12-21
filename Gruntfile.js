@@ -202,8 +202,8 @@ module.exports = function(grunt) {
 			server.vagrant = extend( grunt.default_vagrant, server.remote, server.vagrant||{} );
 			grunt.log.writeln("extenting server "+key);
 
-			var remote_pillars  = "undefined" !== typeof server.remote.salt ? server.remote.salt.pillars : [ ];
-			var vagrant_pillars = "undefined" !== typeof server.vagrant.salt ? server.vagrant.salt.pillars : [ ];
+			var remote_pillars  = "undefined" !== typeof server.evn.remote.salt ? server.evn.remote.salt.pillars : [ ];
+			var vagrant_pillars = "undefined" !== typeof server.evn.vagrant.salt ? server.evn.vagrant.salt.pillars : [ ];
 			var app_pillars     = [];
 			for ( var app_key in server.apps ) {
 				var _app = server.apps[app_key];
