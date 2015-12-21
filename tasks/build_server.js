@@ -75,30 +75,31 @@ module.exports = function(grunt) {
 						var servers = serverobj.servers;
 
 						var log = "error";
-						var env_obj = [];
-						for (var key in servers) {
 
+						for (var key in servers) {
+							var env_obj = [];
 							_current_server = servers[key];
 							/*_current_server.salt={};
 							var env = grunt.create_env( _current_server );
 							_current_server.salt.env = env;*/
-
+							grunt.stdoutlog("skip_state <<<<<<<<<<<<<<<<<<<<<<<<<<<<<",true);
+							grunt.stdoutlog(_current_server.env.salt.skip_state,true);
 							if( "undefined" === typeof _current_server.env.salt.skip_state.base  ){
 								env_obj = ['base'];
 							}
 							for (var app_key in _current_server.apps) {
-								if( "undefined" !== typeof _current_server.env.salt.skip_state[app_key]  ){
+								if( "undefined" === typeof _current_server.env.salt.skip_state[app_key]  ){
 									var app = _current_server.apps[app_key];
 									grunt.stdoutlog("add salt env "+app.install_dir,true);
 									env_obj.push(app.install_dir);
 								}
 							}
 							log = _current_server.env.salt.log_level||"info";
-
+							grunt.stdoutlog("run_env on env_obj:", true, true);
+							grunt.stdoutlog(env_obj, true, true);
+							run_env(env_obj,log);
 						}
-						grunt.stdoutlog("run_env on env_obj:", true, true);
-						grunt.stdoutlog(env_obj, true, true);
-						run_env(env_obj,log);
+
 					});
 				});
 			}
