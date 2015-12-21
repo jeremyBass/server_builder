@@ -70,13 +70,14 @@ module.exports = function(grunt) {
 						var servers = serverobj.servers;
 
 						var log = "error";
+						var env_obj = [];
 						for (var key in servers) {
 
 							_current_server = servers[key];
 							/*_current_server.salt={};
 							var env = grunt.create_env( _current_server );
 							_current_server.salt.env = env;*/
-							var env_obj = [];
+
 							if( "undefined" === typeof _current_server.env.salt.skip_state.base  ){
 								env_obj = ['base'];
 							}
@@ -88,11 +89,11 @@ module.exports = function(grunt) {
 								}
 							}
 							log = _current_server.env.salt.log_level||"info";
-							grunt.stdoutlog("run_env on env_obj:", true, true);
-							grunt.stdoutlog(env_obj, true, true);
-							run_env(env_obj,log);
-						}
 
+						}
+						grunt.stdoutlog("run_env on env_obj:", true, true);
+						grunt.stdoutlog(env_obj, true, true);
+						run_env(env_obj,log);
 					});
 				});
 			}
