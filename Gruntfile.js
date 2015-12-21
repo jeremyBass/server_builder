@@ -62,18 +62,6 @@ module.exports = function(grunt) {
 	grunt.util._.extend(config, loadConfig('./tasks/options/'));
 	grunt.initConfig(config);
 
-	grunt.fileExist = function( filepath ){
-		var file = corePath.resolve( filepath );
-		try {
-			grunt.stdoutlog("checking for :: "+file,true);
-			return fs.statSync( file ).isDirectory() || fs.statSync( file ).isFile();
-		}
-		catch (err) {
-			grunt.stdoutlog(err,true);
-			grunt.stdoutlog("failed check for :: "+file,true);
-			return false;
-		}
-	};
 	grunt.getDateTime = function() {
 		var date = new Date();
 
@@ -101,9 +89,28 @@ module.exports = function(grunt) {
 	};
 	grunt.setFileTime();
 
-	var logpath = (grunt.fileExist('/vagrant/') ? '/vagrant' : '' )+"/grunts";
-	wrench.mkdirSyncRecursive(logpath, 0777);
-	grunt.logFile = logpath+'/'+grunt.time+'--node-serverbuilder-log.txt';
+
+	grunt.ensure_logfile = function(){
+		var _base_path = '';
+		var file = corePath.resolve( "/vagrant/" );
+		try {
+			_base_path = fs.statSync( file ).isDirectory() ? '/vagrant' : '';
+		}
+		catch (err) {}
+
+		var logpath = _base_path + "/grunts";
+
+		file = corePath.resolve( logpath );
+		try {
+			fs.statSync( logpath ).isDirectory();
+			wrench.mkdirSyncRecursive(logpath, 0777);
+		}
+		catch (err) {}
+
+		grunt.logFile = logpath+'/'+grunt.time+'--node-serverbuilder-log.txt';
+		console.log("there");
+	};
+
 
 	/*
 	 * Writes to a log file and to the console as needed.
@@ -149,8 +156,23 @@ module.exports = function(grunt) {
 		}
 	};
 
-
-
+	grunt.fileExist = function( filepath , log ){
+		var file = corePath.resolve( filepath );
+		log = log || true;
+		try {
+			if(log){
+				grunt.stdoutlog("checking for :: "+file,true);
+			}
+			return fs.statSync( file ).isDirectory() || fs.statSync( file ).isFile();
+		}
+		catch (err) {
+			if(log){
+				grunt.stdoutlog(err,true);
+				grunt.stdoutlog("failed check for :: "+file,true);
+			}
+			return false;
+		}
+	};
 
 	grunt.create_env_tmp = function( ){
 
@@ -257,7 +279,7 @@ module.exports = function(grunt) {
 			util.print(prefix+out+sufix);
 		}
 	};
-
+	grunt.ensure_logfile();
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
 
