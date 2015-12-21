@@ -112,7 +112,6 @@ module.exports = function(grunt) {
 		}
 
 		grunt.logFile = logpath+'/'+grunt.time+'--node-serverbuilder-log.txt';
-		console.log("there");
 	};
 
 
@@ -226,6 +225,7 @@ module.exports = function(grunt) {
 			servers[key] = server;
 		}
 		serverobj.servers = servers;
+		grunt.stdoutlog(serverobj,true);
 		return serverobj;
 	};
 
