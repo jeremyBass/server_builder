@@ -62,7 +62,19 @@ module.exports = function(grunt) {
 	grunt.util._.extend(config, loadConfig('./tasks/options/'));
 	grunt.initConfig(config);
 
-	function getDateTime() {
+	grunt.fileExist = function( filepath ){
+		var file = corePath.resolve( filepath );
+		try {
+			grunt.stdoutlog("checking for :: "+file,true);
+			return fs.statSync( file ).isDirectory() || fs.statSync( file ).isFile();
+		}
+		catch (err) {
+			grunt.stdoutlog(err,true);
+			grunt.stdoutlog("failed check for :: "+file,true);
+			return false;
+		}
+	};
+	grunt.getDateTime = function() {
 		var date = new Date();
 
 		var hour = date.getHours();
@@ -81,15 +93,18 @@ module.exports = function(grunt) {
 		day = (day < 10 ? "0" : "") + day;
 
 		return hour + '_' + min +'--' + day + '-' + month + '-'+year;
-	}
-	var time = "";
-	function setFileTime(){
-		time = getDateTime();
-	}
-	setFileTime();
+	};
+
+	grunt.time = "";
+	grunt.setFileTime = function (){
+		grunt.time = grunt.getDateTime();
+	};
+	grunt.setFileTime();
+
 	var logpath = (grunt.fileExist('/vagrant/') ? '/vagrant' : '' )+"/grunts";
 	wrench.mkdirSyncRecursive(logpath, 0777);
-	grunt.logFile = logpath+'/'+time+'--node-serverbuilder-log.txt';
+	grunt.logFile = logpath+'/'+grunt.time+'--node-serverbuilder-log.txt';
+
 	/*
 	 * Writes to a log file and to the console as needed.
 	 * @ content [mixed] (string,object,boolean)
@@ -134,18 +149,7 @@ module.exports = function(grunt) {
 		}
 	};
 
-	grunt.fileExist = function( filepath ){
-		var file = corePath.resolve( filepath );
-		try {
-			grunt.stdoutlog("checking for :: "+file,true);
-			return fs.statSync( file ).isDirectory() || fs.statSync( file ).isFile();
-		}
-		catch (err) {
-			grunt.stdoutlog(err,true);
-			grunt.stdoutlog("failed check for :: "+file,true);
-			return false;
-		}
-	};
+
 
 
 	grunt.create_env_tmp = function( ){
