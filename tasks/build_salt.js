@@ -11,24 +11,13 @@ module.exports = function(grunt) {
 		var fs = require('fs'),
 			fsx = require('fs-extra');
 		//var extend = require('extend');
-		var wrench = require('wrench'),
-			util = require('util');
+		var wrench = require('wrench');
+		//var wrench =  require('util');
 		var merge = require('deepmerge');
-		var lastout;
+
 		//var glob = require("glob");
 		//var default_salt = {};
 
-		function output_stream(sdt_stream,prefix,sufix){
-			prefix = prefix||"";
-			sufix = sufix||"";
-			var out = sdt_stream.toString().trim();
-			if( '\n' !== out && null !== out && "" !== out && lastout !== out){
-				lastout = out;
-				out = out.split('\n\n').join('\n');
-				util.print( prefix + out + sufix );
-				grunt.stdoutlog( "[output_stream] " + prefix + out + sufix ,true);
-			}
-		}
 
 		var nenv = new nunjucks.Environment();
 		nenv.addFilter("leadingzero", function(int, zerocount) {
@@ -60,7 +49,7 @@ module.exports = function(grunt) {
 
 		wrench.mkdirSyncRecursive("server/salt/deploy_minions", 0777);
 
-		var serverobj = grunt.load_server_config();
+		var serverobj = grunt.create_env_tmp();
 		var servers = serverobj.servers;
 
 		function load_apps(app_obj,callback){
@@ -131,15 +120,15 @@ module.exports = function(grunt) {
 				var spawnCommand = require('spawn-command'),
 				    ls = spawnCommand('cd / && gitploy '+gitArg.join(' '));
 
-				//var lastout;
+				grunt.lastout="";
 				ls.stdout.on('data', function (data) {
-					output_stream(data,'\n');
+					grunt.output_stream(data,'\n');
 				});
 				ls.stderr.on('data', function (data) {
-					output_stream(data,'\n');
+					grunt.output_stream(data,'\n');
 				});
 				ls.on('exit', function (code) {
-					output_stream(code,'\n','<<<<<<<< finished sever '+_app_op.install_dir+'\n');
+					grunt.output_stream(code,'\n','<<<<<<<< finished sever '+_app_op.install_dir+'\n');
 					if(app_obj.length>0){
 						load_apps(app_obj,callback);
 					}else{
@@ -195,17 +184,18 @@ module.exports = function(grunt) {
 			//the vagrant needs some defaults, and so it's vagrant default then remote then
 			//vagrant opptions
 			grunt.stdoutlog("start start_salt_production()",true);
+
 			for (var key in servers) {
 				grunt.stdoutlog("found server salt "+key,true);
 				_current_server = servers[key];
 				_current_server.salt={};
 
-				var env = grunt.create_env( _current_server );
-				_current_server.salt.env = env;
+				//var env = grunt.create_env( _current_server );
+				//_current_server.salt.env = env;
 
 
 
-				var remote_pillars  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.pillars : [ ];
+				/*var remote_pillars  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.pillars : [ ];
 				var vagrant_pillars = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.pillars : [ ];
 				var app_pillars     = [];
 				for ( var app_key in _current_server.apps ) {
@@ -225,7 +215,7 @@ module.exports = function(grunt) {
 				grunt.stdoutlog(app_pillars, true, true);
 				//console.log("app_pillars: %j", app_pillars);
 				var pillars = merge(merge(remote_pillars, vagrant_pillars),app_pillars);
-				_current_server.salt.pillars=pillars;
+				_current_server.salt.pillars=pillars;*/
 				grunt.stdoutlog("_pillars:", true, true);
 				grunt.stdoutlog(pillars, true, true);
 				//console.log("_pillars: %j", pillars);

@@ -23,7 +23,30 @@ module.exports = function(grunt) {
 	var util = require('util');
 	var extend = require('extend');
 
-	var merge = require('deepmerge');var default_salt = {};
+	var merge = require('deepmerge');
+	grunt.default_salt = {};
+	var ip,_ip="10.255.255.2";
+	grunt.default_vagrant = {
+		"ip": ip,
+		"branch": "master",
+		"owner": "washingtonstateuniversity",
+		"box": "hansode/centos-6.5-x86_64",
+		"box_url": false,
+		"hostname": "general_server",
+		"memory": "1024",
+		"vram": "8",
+		"cores": "1",
+		"ioapic": "false",
+		"acpi":"false",
+		"largepages":"true",
+		"hwvirtex":"true",
+		"nestedpaging":"true",
+		"verbose_output": "true",
+		"gui":"false"
+	};
+
+
+
 	pkg = grunt.file.readJSON('package.json');
 
 	setbase = grunt.option('setbase') || pkg.build_location+'/'+pkg.build_version+'/';
@@ -123,6 +146,54 @@ module.exports = function(grunt) {
 		}
 	};
 
+
+	grunt.create_env_tmp = function( ){
+
+		var serverobj = grunt.load_server_config();
+		var servers = serverobj.servers;
+		//set up the vagrant object so that we can just define the server if we want to
+		//the vagrant needs some defaults, and so it's vagrant default then remote then
+		//vagrant opptions
+		for (var key in servers) {
+			grunt.log.writeln("found server "+key);
+			var server = servers[key];
+			server.evn = {
+				salt: extend( grunt.default_salt, server.remote.salt, server.vagrant.salt||{} )
+			};
+
+			server.evn.salt.states = grunt.create_env(server);
+			server.vagrant = extend( grunt.default_vagrant, server.remote, server.vagrant||{} );
+			grunt.log.writeln("extenting server "+key);
+
+			var remote_pillars  = "undefined" !== typeof server.remote.salt ? server.remote.salt.pillars : [ ];
+			var vagrant_pillars = "undefined" !== typeof server.vagrant.salt ? server.vagrant.salt.pillars : [ ];
+			var app_pillars     = [];
+			for ( var app_key in server.apps ) {
+				var _app = server.apps[app_key];
+				if( "undefined" !== typeof _app.remote.salt ){
+					if( "undefined" !== typeof _app.remote.salt.pillars ){
+						app_pillars = merge(app_pillars, _app.remote.salt.pillars);
+					}
+				}
+				if( "undefined" !== typeof _app.vagrant.salt ){
+					if( "undefined" !== typeof _app.vagrant.salt.pillars ){
+						app_pillars = merge(app_pillars,_app.vagrant.salt.pillars);
+					}
+				}
+			}
+
+			var pillars = merge( merge( remote_pillars, vagrant_pillars ), app_pillars );
+			server.evn.salt.pillars = pillars;
+
+			servers[key] = server;
+		}
+		serverobj.servers = servers;
+		return serverobj;
+	};
+
+
+
+
 	grunt.create_env = function( _current_server ){
 		var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
 		var vagrant_env = "undefined" !== typeof _current_server.vagrant.salt ? _current_server.vagrant.salt.env : [ ];
@@ -136,7 +207,7 @@ module.exports = function(grunt) {
 			}
 		}
 
-		_current_server.salt = extend(default_salt,_current_server.remote.salt,_current_server.vagrant.salt||{});
+		//_current_server.salt = extend( grunt.default_salt, _current_server.remote.salt, _current_server.vagrant.salt||{} );
 
 		var env = merge(merge(remote_env, vagrant_env),app_env);
 		var _env = [];
@@ -169,7 +240,18 @@ module.exports = function(grunt) {
 		return serverobj;
 	};
 
+	grunt.lastout="";
 
+	grunt.output_stream = function(sdt_stream,prefix,sufix){
+		prefix = prefix||"";
+		sufix = sufix||"";
+		var out = sdt_stream.toString().trim();
+		if( '\n' !== out && null !== out && out!=="" && grunt.lastout!==out){
+			grunt.lastout=out;
+			out=out.split('\n\n').join('\n');
+			util.print(prefix+out+sufix);
+		}
+	};
 
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');

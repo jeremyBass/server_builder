@@ -8,20 +8,9 @@ module.exports = function(grunt) {
 
 		//var merge = require('deepmerge');
 		var wrench = require('wrench'),
-			util = require('util'),
+			//util = require('util'),
 			spawn = require('child_process').spawn;
-		var lastout;
 
-		function output_stream(sdt_stream,prefix,sufix){
-			prefix = prefix||"";
-			sufix = sufix||"";
-			var out = sdt_stream.toString().trim();
-			if( '\n' !== out && null !== out && out!=="" && lastout!==out){
-				lastout=out;
-				out=out.split('\n\n').join('\n');
-				util.print(prefix+out+sufix);
-			}
-		}
 
 
 		function run_env(env_obj,log){
@@ -32,15 +21,15 @@ module.exports = function(grunt) {
 			var ls = spawn('salt-call', ['--local','--log-level='+(log||'info'),'--config-dir=/etc/salt','state.highstate','env='+current_env],{
 					cwd:'/'
 				});
-			lastout="";
+			grunt.lastout="";
 			ls.stdout.on('data', function (data) {
-				output_stream(data,'\n');
+				grunt.output_stream(data,'\n');
 			});
 			ls.stderr.on('data', function (data) {
-				output_stream(data,'\n');
+				grunt.output_stream(data,'\n');
 			});
 			ls.on('exit', function (code) {
-				output_stream(code,'\n','<<<<<<<< finished sever "+current_env'+current_env+'\n');
+				grunt.output_stream(code,'\n','<<<<<<<< finished sever "+current_env'+current_env+'\n');
 				if(env_obj.length>0){
 					run_env(env_obj);
 				}
@@ -59,15 +48,15 @@ module.exports = function(grunt) {
 					cwd:'/srv/salt/boot/'
 				});
 				grunt.stdoutlog("after spawning call",true);
-				lastout="";
+				grunt.lastout="";
 				ls.stdout.on('data', function (data) {
-					output_stream(data);
+					grunt.output_stream(data);
 				});
 				ls.stderr.on('data', function (data) {
-					output_stream(data,'\nstderr: ');
+					grunt.output_stream(data,'\nstderr: ');
 				});
 				ls.on('exit', function (code) {
-					output_stream('child process exited with code ' + code,'\n','\n');
+					grunt.output_stream('child process exited with code ' + code,'\n','\n');
 					wrench.mkdirSyncRecursive('/etc/salt/minion.d/', 0777);
 					var sourceDir = 'server/salt/deploy_minions/';
 					var targetDir = '/etc/salt/minion.d/';
@@ -76,28 +65,29 @@ module.exports = function(grunt) {
 					},function(){
 						grunt.stdoutlog(sourceDir+" >> "+targetDir,true);
 
-						var serverobj = grunt.load_server_config();
+						var serverobj = grunt.create_env_tmp();
+						//var serverobj = grunt.load_server_config();
 						var servers = serverobj.servers;
 
 						var log = "error";
 						for (var key in servers) {
 
 							_current_server = servers[key];
-							_current_server.salt={};
+							/*_current_server.salt={};
 							var env = grunt.create_env( _current_server );
-							_current_server.salt.env = env;
+							_current_server.salt.env = env;*/
 							var env_obj = [];
-							if( "undefined" === typeof _current_server.salt.env.skip_state.base  ){
+							if( "undefined" === typeof _current_server.env.salt.skip_state.base  ){
 								env_obj = ['base'];
 							}
 							for (var app_key in _current_server.apps) {
-								if( "undefined" !== typeof _current_server.salt.env.skip_state[app_key]  ){
+								if( "undefined" !== typeof _current_server.env.salt.skip_state[app_key]  ){
 									var app = _current_server.apps[app_key];
 									grunt.stdoutlog("add salt env "+app.install_dir,true);
 									env_obj.push(app.install_dir);
 								}
 							}
-							log = _current_server.remote.salt.log_level||_current_server.remote.salt.log_level||"info";
+							log = _current_server.env.salt.log_level||"info";
 							run_env(env_obj,log);
 						}
 
