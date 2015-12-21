@@ -89,7 +89,10 @@ module.exports = function(grunt) {
 	};
 	grunt.setFileTime();
 
-
+	/*
+	 * Make sure that we have a place for the log file and that
+	 * it's been set for the task set running
+	 */
 	grunt.ensure_logfile = function(){
 		var _base_path = '';
 		var file = corePath.resolve( "/vagrant/" );
@@ -103,9 +106,10 @@ module.exports = function(grunt) {
 		file = corePath.resolve( logpath );
 		try {
 			fs.statSync( logpath ).isDirectory();
+		}
+		catch (err) {
 			wrench.mkdirSyncRecursive(logpath, 0777);
 		}
-		catch (err) {}
 
 		grunt.logFile = logpath+'/'+grunt.time+'--node-serverbuilder-log.txt';
 		console.log("there");
@@ -156,6 +160,9 @@ module.exports = function(grunt) {
 		}
 	};
 
+	/*
+	 * Check if file exists
+	 */
 	grunt.fileExist = function( filepath , log ){
 		var file = corePath.resolve( filepath );
 		log = log || true;
@@ -174,6 +181,10 @@ module.exports = function(grunt) {
 		}
 	};
 
+		/*
+	 * Make sure that we have a place for the log file and that
+	 * it's been set for the task set running
+	 */
 	grunt.create_env_tmp = function( ){
 
 		var serverobj = grunt.load_server_config();
@@ -217,9 +228,6 @@ module.exports = function(grunt) {
 		serverobj.servers = servers;
 		return serverobj;
 	};
-
-
-
 
 	grunt.create_env = function( _current_server ){
 		var remote_env  = "undefined" !== typeof _current_server.remote.salt ? _current_server.remote.salt.env : [ ];
@@ -268,18 +276,19 @@ module.exports = function(grunt) {
 	};
 
 	grunt.lastout="";
-
 	grunt.output_stream = function(sdt_stream,prefix,sufix){
-		prefix = prefix||"";
-		sufix = sufix||"";
+		prefix = prefix || "";
+		sufix = sufix || "";
 		var out = sdt_stream.toString().trim();
-		if( '\n' !== out && null !== out && out!=="" && grunt.lastout!==out){
-			grunt.lastout=out;
-			out=out.split('\n\n').join('\n');
-			util.print(prefix+out+sufix);
+		if( '\n' !== out && null !== out && "" !== out  && grunt.lastout !== out){
+			grunt.lastout = out;
+			out = out.split('\n\n').join('\n');
+			util.print( prefix+out + sufix );
 		}
 	};
+
 	grunt.ensure_logfile();
+
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
 
