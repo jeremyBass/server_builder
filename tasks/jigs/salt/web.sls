@@ -7,13 +7,6 @@
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
 {% set cpu_count = salt['grains.get']('num_cpus', '') %}
 
-
-
-
-
-
-
-
 ###########################################################
 ###########################################################
 # php-fpm
@@ -42,6 +35,7 @@ php-fpm:
       - php-mysqlnd
 {% endif %}
       - php-mcrypt
+      - php-mhash
       - php-imap
       - php-gd
       - php-mbstring
@@ -50,6 +44,11 @@ php-fpm:
       - php-pecl-memcached
       - php-pecl-oauth
       - php-intl
+      - php-bcmath
+      - php-xsl
+      - php-curl
+      - php-openssl
+      - php-simplexml
     - require:
       - sls: serverbase
   service.running:
@@ -61,7 +60,7 @@ php-fpm:
       - sls: finalize.restart
 
 ImageMagick:
-  pkg.installed:
+  pkg.latest:
     - pkgs:
       - php-pecl-imagick
       - ImageMagick
