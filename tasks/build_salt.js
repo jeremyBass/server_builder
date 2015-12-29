@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 		//var extend = require('extend');
 		var wrench = require('wrench');
 		//var wrench =  require('util');
-		var merge = require('deepmerge');
+		//var merge = require('deepmerge');
 
 		//var glob = require("glob");
 		//var default_salt = {};
