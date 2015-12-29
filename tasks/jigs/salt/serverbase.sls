@@ -29,16 +29,40 @@
       ip: {{ vars.ip }}
       saltenv: {{ saltenv }}
 
-
-
 ###########################################################
 ###########################################################
 # Server Utilities
 ###########################################################
+# Update base packages that are standard for these servers
+###########################################################
+glibc:
+  pkg.latest:
+    - name: glibc
+
+bash:
+  pkg.latest:
+    - name: bash
+
+wget:
+  pkg.latest:
+    - name: wget
+
 curl:
-  pkg.installed:
+  pkg.latest:
     - name: curl
-    
+
+yum:
+  pkg.latest:
+    - name: yum
+
+openssl:
+  pkg.latest:
+    - name: openssl
+
+postfix:
+  pkg.latest:
+    - name: postfix
+
 dos2unix:
   pkg.installed:
     - name: dos2unix
@@ -55,10 +79,6 @@ unzip:
   pkg.installed:
     - name: unzip
 
-wget:
-  pkg.installed:
-    - name: wget
-
 incron:
   pkg.installed:
     - name: incron
@@ -72,10 +92,9 @@ incrond-reboot-auto:
     - require:
       - pkg: incron
 
-
 ###########################################################
 ###########################################################
-# Add editors 
+# Add editors
 ###########################################################
 /etc/incron.allow:
   file.managed:
@@ -88,20 +107,10 @@ incrond-reboot-auto:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
 
-###########################################################
-###########################################################
-# general updates to items 
-###########################################################
-# Ensure that bash is at the latest version.
-bash:
-  pkg.latest:
-    - name: bash
-
-
 
 ###########################################################
 ###########################################################
-# Add editors 
+# Add editors
 ###########################################################
 nano:
   pkg.installed:
@@ -116,4 +125,4 @@ nano:
 #  pkg.installed:
 #    - name: monit
 #    #make configs and com back to apply them
-    
+

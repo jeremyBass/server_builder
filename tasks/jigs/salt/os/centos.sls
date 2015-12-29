@@ -8,7 +8,7 @@ mariadb-libs:
 
 ###########################################################
 ###########################################################
-# Remi Repository 
+# Remi Repository
 ###########################################################
 remi-rep:
   pkgrepo.managed:
@@ -24,15 +24,6 @@ centos-plus-repo:
     - gpgcheck: 0
     - comments:
         - '#http://mirror.centos.org/centos/$releasever/centosplus/$basearch/'
-
-
-
-
-# Ensure that postfix is at the latest revision.
-postfix:
-  pkg.latest:
-    - name: postfix
-
 
 ###########################################################
 ###########################################################
