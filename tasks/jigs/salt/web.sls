@@ -29,17 +29,17 @@
 
 
 
-###########################################################  
+###########################################################
 ###########################################################
 # php-fpm
 ###########################################################
 
-# Remi has a repository specifically setup for PHP 5.5. This continues
+# Remi has a repository specifically setup for PHP 5.6. This continues
 # to reply on the standard Remi repository for some packages.
-remi-php55-repo:
+remi-php56-repo:
   pkgrepo.managed:
-    - humanname: Remi PHP 5.5 Repository
-    - baseurl: http://rpms.famillecollet.com/enterprise/$releasever/php55/$basearch/
+    - humanname: Remi PHP 7 Repository
+    - baseurl: http://rpms.famillecollet.com/enterprise/$releasever/php70/$basearch/
     - gpgcheck: 0
     - require_in:
       - pkg: php-fpm
@@ -91,10 +91,10 @@ php-fpm-reboot-auto:
     - require:
       - pkg: php-fpm
 
-      
-#***************************************      
+
+#***************************************
 # php-fpm files & configs
-#***************************************    
+#***************************************
 /etc/php-fpm.d/www.conf:
   file.managed:
     - source: salt://config/php-fpm/www.conf
@@ -147,13 +147,13 @@ nginx-compiler-base:
       - autoconf
       - libtool
       - zlib-devel
-      - pcre-devel 
+      - pcre-devel
       - openssl-devel
       - libxml2
       - libxml2-devel
       - httpd-devel
       - curl
-      - libcurl-devel 
+      - libcurl-devel
 
 
 
@@ -282,7 +282,7 @@ nginx-compile-script:
     - name: dos2unix /src/compiler.sh
     - require:
       - pkg: dos2unix
-    
+
 # Run compiler
 nginx-compile:
   cmd.run:
@@ -303,10 +303,10 @@ nginx-reboot-auto:
     - require:
       - cmd: nginx-compile
 
-      
-#***************************************      
+
+#***************************************
 # nginx files & configs
-#***************************************         
+#***************************************
 /etc/nginx/nginx.conf:
   file.managed:
     - source: salt://config/nginx/nginx.conf
@@ -388,7 +388,7 @@ nginx:
 ###########################################################
 ###########################################################
 # glassceiling
-###########################################################  
+###########################################################
 # set up a glass ceiling to stay below.  Once broken restart nginx and php-fpm services
 crash-prevention-update:
   cmd.run:
@@ -408,14 +408,14 @@ crash-prevention:
 ###########################################################
 ###########################################################
 # composer
-###########################################################    
+###########################################################
 #get-composer:
 #  cmd.run:
 #    - name: 'CURL=`which curl`; $CURL -sS https://getcomposer.org/installer | php'
 #    - unless: test -f /usr/local/bin/composer
 #    - user: root
 #    - cwd: /root/
-# 
+#
 #install-composer:
 #  cmd.wait:
 #    - name: mv /root/composer.phar /usr/local/bin/composer
@@ -423,5 +423,5 @@ crash-prevention:
 #    - user: root
 #    - watch:
 #      - cmd: get-composer
-    
+
 
