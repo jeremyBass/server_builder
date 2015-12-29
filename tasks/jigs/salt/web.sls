@@ -10,22 +10,7 @@
 
 
 
-#/etc/hosts:
-#  file.managed:
-#    - source: salt://config/hosts
-#    - user: root
-#    - group: root
-#    - mode: 644
 
-
-#worth noting that there will be some changes as this just gets nuked it seems
-#a fix here http://totalcae.com/blog/2013/06/prevent-etcresolv-conf-from-being-blown-away-by-rhelcentos-after-customizing/
-#/etc/resolv.conf:
-#  file.managed:
-#    - source: salt://config/resolv.conf
-#    - user: root
-#    - group: root
-#    - mode: 644
 
 
 
