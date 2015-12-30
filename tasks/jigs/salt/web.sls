@@ -45,7 +45,6 @@ php-fpm:
       - php-intl
       - php-bcmath
       - php-xml
-      - php-pdo_dblib
     - php:
       - sls: serverbase
   service.running:
