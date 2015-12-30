@@ -31,17 +31,17 @@ ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
 cd /
 if [ ! -h /usr/sbin/gitploy ]; then
-    curl  https://raw.githubusercontent.com/jeremyBass/gitploy/master/gitploy | sudo sh -s -- install
-    [ -h /usr/sbin/gitploy ] || echoerr "gitploy failed install"
+	curl  https://raw.githubusercontent.com/jeremyBass/gitploy/master/gitploy | sudo sh -s -- install
+	[ -h /usr/sbin/gitploy ] || echoerr "gitploy failed install"
 else
-    gitploy update_gitploy
+	gitploy update_gitploy
 fi
 
 rpm -qa | grep -qw epel-release || yum install -y epel-release
 rpm -qa | grep -qw nodejs || yum install -y nodejs
 if ! rpm -qa | grep -qw npm; then
-    yum install -y npm
-    npm install -g grunt-cli
+	yum install -y npm
+	npm install -g grunt-cli
 fi
 
 
@@ -53,7 +53,7 @@ gitploy ls 2>&1 | grep -qi "serverbase" && gitploy up serverbase
 gitploy ls 2>&1 | grep -qi "serverbase" || gitploy add -p /srv/builder -b mage2 serverbase https://github.com/jeremyBass/server_builder.git
 
 if [[ $SERVER_TYPE = "VAGRANT" ]]; then
-    cp /vagrant/server_project.conf /srv/builder/server_project.conf
+	cp /vagrant/server_project.conf /srv/builder/server_project.conf
 fi
 
 
