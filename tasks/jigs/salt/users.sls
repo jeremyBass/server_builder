@@ -66,30 +66,4 @@ user-memcached:
 
 
 
-{% if vars.isLocal %}
-#this maybe can be removed?  Look in to this.
-group-vagrant:
-  group.present:
-    - name: vagrant
 
-user-vagrant:
-  user.present:
-    - name: vagrant
-    - groups:
-      - vagrant
-{% if 'web' in grains.get('roles') %}
-      - www-data
-{%- endif %}
-{% if 'database' in grains.get('roles') %}
-      - mysql
-{%- endif %}
-    - require:
-{% if 'web' in grains.get('roles') %}
-      - group: www-data
-{%- endif %}
-{% if 'database' in grains.get('roles') %}
-      - group: mysql
-    - require_in:
-      - pkg: mysql
-{%- endif %}
-{%- endif %}
