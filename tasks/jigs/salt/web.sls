@@ -12,9 +12,9 @@
 # php-fpm
 ###########################################################
 
-# Remi has a repository specifically setup for PHP 5.6. This continues
+# Remi has a repository specifically setup for PHP 7.0. This continues
 # to reply on the standard Remi repository for some packages.
-remi-php56-repo:
+remi-php70-repo:
   pkgrepo.managed:
     - humanname: Remi PHP 7 Repository
     - baseurl: http://rpms.famillecollet.com/enterprise/$releasever/php70/$basearch/
@@ -25,28 +25,28 @@ remi-php56-repo:
 php-fpm:
   pkg.latest:
     - pkgs:
-      - php70w-fpm
-      - php70w-cli
-      - php70w-common
-      - php70w-soap
-      - php70w-pear
-      - php70w-pdo
+      - php-fpm
+      - php-cli
+      - php-common
+      - php-soap
+      - php-pear
+      - php-pdo
 {% if 'database' in grains.get('roles') %}
-      - php70w-mysqlnd
+      - php-mysqlnd
 {% endif %}
-      - php70w-mcrypt
-      - php70w-imap
-      - php70w-gd
-      - php70w-mbstring
-      - php70w-ldap
-      - php70w-opcache
-      - php70w-pecl-memcached
-      - php70w-pecl-oauth
-      - php70w-intl
-      - php70w-bcmath
-      - php70w-xml
-      - php70w-pdo_dblib
-    - require:
+      - php-mcrypt
+      - php-imap
+      - php-gd
+      - php-mbstring
+      - php-ldap
+      - php-opcache
+      - php-pecl-memcached
+      - php-pecl-oauth
+      - php-intl
+      - php-bcmath
+      - php-xml
+      - php-pdo_dblib
+    - php:
       - sls: serverbase
   service.running:
     - require:
