@@ -8,6 +8,11 @@ mkdir -p /srv/builder
 #-----------------------------------------------------------------------
 yum install -y openssh-clients
 [ -d ~/.ssh ] || mkdir -p ~/.ssh
+
+# set up a config just incase to clear ssh warnings
+echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n\tLogLevel ERROR" >> ~/.ssh/config
+
+# just to be extra safe add github directly to them
 touch ~/.ssh/known_hosts
 ssh-keygen -R 192.30.252.128
 ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
