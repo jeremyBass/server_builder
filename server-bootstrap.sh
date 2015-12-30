@@ -9,12 +9,12 @@ mkdir -p /srv/builder
 yum install -y openssh-clients
 [ -d ~/.ssh ] || mkdir -p ~/.ssh
 
-if [ ! -z $(grep "Host *" ~/.ssh/config) ]; then
-	echo "host * ssh warning suppression already applied"
-else
 # set up a config just incase to clear ssh warnings
+if [ ! -z $(grep "Host *" ~/.ssh/config) ]; then
 	echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n\tLogLevel ERROR" >> ~/.ssh/config
 	echo "ssh warning suppression applied"
+else
+	echo "host * ssh warning suppression already applied"
 fi
 # just to be extra safe add github directly to them
 touch ~/.ssh/known_hosts
