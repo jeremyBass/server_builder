@@ -9,10 +9,15 @@ mkdir -p /srv/builder
 yum install -y openssh-clients
 [ -d ~/.ssh ] || mkdir -p ~/.ssh
 touch ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.128
 ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.129
 ssh-keyscan -H 192.30.252.129 >> ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.130
 ssh-keyscan -H 192.30.252.130 >> ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.130
 ssh-keyscan -H 192.30.252.131 >> ~/.ssh/known_hosts
+ssh-keygen -R github.com
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
 cd /
