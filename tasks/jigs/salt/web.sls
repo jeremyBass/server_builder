@@ -25,30 +25,27 @@ remi-php56-repo:
 php-fpm:
   pkg.latest:
     - pkgs:
-      - php-fpm
-      - php-cli
-      - php-common
-      - php-soap
-      - php-pear
-      - php-pdo
+      - php70w-fpm
+      - php70w-cli
+      - php70w-common
+      - php70w-soap
+      - php70w-pear
+      - php70w-pdo
 {% if 'database' in grains.get('roles') %}
-      - php-mysqlnd
+      - php70w-mysqlnd
 {% endif %}
-      - php-mcrypt
-      - php-mhash
-      - php-imap
-      - php-gd
-      - php-mbstring
-      - php-ldap
-      - php-opcache
-      - php-pecl-memcached
-      - php-pecl-oauth
-      - php-intl
-      - php-bcmath
-      - php-xsl
-      - php-curl
-      - php-openssl
-      - php-simplexml
+      - php70w-mcrypt
+      - php70w-imap
+      - php70w-gd
+      - php70w-mbstring
+      - php70w-ldap
+      - php70w-opcache
+      - php70w-pecl-memcached
+      - php70w-pecl-oauth
+      - php70w-intl
+      - php70w-bcmath
+      - php70w-xml
+      - php70w-pdo_dblib
     - require:
       - sls: serverbase
   service.running:
