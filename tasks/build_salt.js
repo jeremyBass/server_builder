@@ -212,6 +212,7 @@ module.exports = function(grunt) {
 
 				var tmpl = new nunjucks.Template(content);
 				var res = tmpl.render(_current_server);
+				grunt.stdoutlog( _current_server, true, true);
 				grunt.stdoutlog( "renderd", true, true);
 				fs.writeFile(targetFile, res, function(err){
 					grunt.stdoutlog( err ? err : "wrote to file", true, true);
