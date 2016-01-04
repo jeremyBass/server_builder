@@ -26,9 +26,6 @@ php-fpm:
   pkg.latest:
     - pkgs:
       - php-fpm
-{% if 'database' in grains.get('roles') %}
-      - php-mysqlnd
-{% endif %}
     - php:
       - sls: serverbase
   service.running:
