@@ -34,17 +34,6 @@ php-fpm:
 {% if 'database' in grains.get('roles') %}
       - php-mysqlnd
 {% endif %}
-      - php-mcrypt
-      - php-imap
-      - php-gd
-      - php-mbstring
-      - php-ldap
-      - php-opcache
-      - php-pecl-memcached
-      - php-pecl-oauth
-      - php-intl
-      - php-bcmath
-      - php-xml
     - php:
       - sls: serverbase
   service.running:
@@ -54,6 +43,64 @@ php-fpm:
       - file: /etc/php-fpm.d/www.conf
     - required_in:
       - sls: finalize.restart
+
+
+php-mcrypt:
+  pkg.latest:
+    - pkgs:
+      - php-mcrypt
+
+php-imap:
+  pkg.latest:
+    - pkgs:
+      - php-imap
+
+
+php-gd:
+  pkg.latest:
+    - pkgs:
+      - php-gd
+
+php-mbstring:
+  pkg.latest:
+    - pkgs:
+      - php-mbstring
+
+php-ldap:
+  pkg.latest:
+    - pkgs:
+      - php-ldap
+
+php-opcache:
+  pkg.latest:
+    - pkgs:
+      - php-opcache
+
+
+php-pecl-memcached:
+  pkg.latest:
+    - pkgs:
+      - php-pecl-memcached
+
+php-pecl-oauth:
+  pkg.latest:
+    - pkgs:
+      - php-pecl-oauth
+
+php-intl:
+  pkg.latest:
+    - pkgs:
+      - php-intl
+
+php-bcmath:
+  pkg.latest:
+    - pkgs:
+      - php-bcmath
+
+php-xml:
+  pkg.latest:
+    - pkgs:
+      - php-xml
 
 ImageMagick:
   pkg.latest:
