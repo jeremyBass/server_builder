@@ -76,6 +76,10 @@ php-opcache:
     - pkgs:
       - php-opcache
 
+php-pecl-msgpack:
+  pkg.latest:
+    - pkgs:
+      - php-pecl-msgpack
 
 php-pecl-memcached:
   pkg.latest:
