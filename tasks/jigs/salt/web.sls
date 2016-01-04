@@ -26,7 +26,6 @@ php-fpm:
   pkg.latest:
     - pkgs:
       - php-fpm
-
 {% if 'database' in grains.get('roles') %}
       - php-mysqlnd
 {% endif %}
@@ -40,6 +39,12 @@ php-fpm:
     - required_in:
       - sls: finalize.restart
 
+{% if 'database' in grains.get('roles') %}
+php-mysqlnd:
+  pkg.latest:
+    - pkgs:
+      - php-mysqlnd
+{% endif %}
 
 php-cli:
   pkg.latest:
