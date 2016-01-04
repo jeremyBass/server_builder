@@ -26,11 +26,7 @@ php-fpm:
   pkg.latest:
     - pkgs:
       - php-fpm
-      - php-cli
-      - php-common
-      - php-soap
-      - php-pear
-      - php-pdo
+
 {% if 'database' in grains.get('roles') %}
       - php-mysqlnd
 {% endif %}
@@ -43,6 +39,34 @@ php-fpm:
       - file: /etc/php-fpm.d/www.conf
     - required_in:
       - sls: finalize.restart
+
+
+php-cli:
+  pkg.latest:
+    - pkgs:
+      - php-cli
+
+php-common:
+  pkg.latest:
+    - pkgs:
+      - php-common
+
+php-soap:
+  pkg.latest:
+    - pkgs:
+      - php-soap
+
+php-pear:
+  pkg.latest:
+    - pkgs:
+      - php-pear
+
+php-pdo:
+  pkg.latest:
+    - pkgs:
+      - php-pdo
+
+
 
 
 php-mcrypt:
