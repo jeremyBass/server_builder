@@ -97,10 +97,10 @@ php-ldap:
     - pkgs:
       - php-ldap
 
-php-opcache:
-  pkg.latest:
-    - pkgs:
-      - php-opcache
+#php-opcache:
+#  pkg.latest:
+#    - pkgs:
+#      - php-opcache
 
 php-pecl-msgpack:
   pkg.latest:
