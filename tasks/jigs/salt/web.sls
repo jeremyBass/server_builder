@@ -97,11 +97,6 @@ php-ldap:
     - pkgs:
       - php-ldap
 
-#php-opcache:
-#  pkg.latest:
-#    - pkgs:
-#      - php-opcache
-
 php-pecl-msgpack:
   pkg.latest:
     - pkgs:
@@ -170,15 +165,6 @@ php-fpm-reboot-auto:
     - template: jinja
     - context:
       php: {{ php }}
-    - require:
-      - pkg: php-fpm
-
-/etc/php.d/opcache.ini:
-  file.managed:
-    - source: salt://config/php-fpm/opcache.ini
-    - user: root
-    - group: root
-    - mode: 644
     - require:
       - pkg: php-fpm
 
