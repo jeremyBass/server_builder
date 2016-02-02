@@ -333,7 +333,12 @@ nginx-compile:
     - cwd: /
     - user: root
     - stateful: True
-    - unless: nginx -v 2>&1 | grep -qi "{{ nginx.nginxVersion }}"
+    - unless: |
+         echo $(nginx -V 2>&1) | \
+         grep -i "nginx/{{ nginx.nginxVersion }}" | \
+         grep -i "ngx_pagespeed-release-{{ nginx.npsVersion }}" | \
+         grep -i "openssl-{{ nginx.opensslVersion }}" | \
+         grep -qi "modsecurity-{{ nginx.msVersion }}"
     - require:
       - pkg: nginx-compiler-base
 
