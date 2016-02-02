@@ -57,6 +57,15 @@ ini(){
 {% endif -%}
 
 {% if nginx['npsVersion']  != "false" -%}
+
+{% if '1.10.' in nginx['npsVersion'] %}
+	#note we should be checking for OS version
+	rpm --import https://linux.web.cern.ch/linux/scientific6/docs/repository/cern/slc6X/i386/RPM-GPG-KEY-cern
+	wget -O /etc/yum.repos.d/slc6-devtoolset.repo https://linux.web.cern.ch/linux/scientific6/docs/repository/cern/devtoolset/slc6-devtoolset.repo
+	yum install devtoolset-2-gcc-c++ devtoolset-2-binutils
+	PS_NGX_EXTRA_FLAGS="--with-cc=/opt/rh/devtoolset-2/root/usr/bin/gcc"
+{% endif %}
+
 	#get page speed
 	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
 	unzip release-${npsVersion}-beta 2>/var/log/nginx-${nginxVersion}_compile.log
@@ -68,7 +77,7 @@ ini(){
 	#mkdir /tmp/nginx-modules
 	#cd /tmp/nginx-modules
 	#wget https://github.com/agentzh/headers-more-nginx-module/archive/v0.19.tar.gz
-	#tar -xzvf v0.19.tar.gz 
+	#tar -xzvf v0.19.tar.gz
 
 	cd /src/nginx
 
