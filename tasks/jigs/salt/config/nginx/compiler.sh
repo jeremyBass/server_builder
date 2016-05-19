@@ -73,8 +73,8 @@ ini(){
 	cd /src/nginx
 
 	./configure \
---user=www-data \
---group=www-data \
+--user={{ nginx['user'] }} \
+--group={{ nginx['user'] }} \
 --prefix=/etc/nginx \
 --sbin-path=/usr/sbin/nginx \
 --conf-path=/etc/nginx/nginx.conf \

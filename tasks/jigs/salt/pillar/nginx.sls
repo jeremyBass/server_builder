@@ -4,3 +4,4 @@ nginx:
    npsVersion: 1.11.33.2
    msVersion: 2.9.1
    nginxServername: "Web Server"
+   user: "www-data"

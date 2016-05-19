@@ -315,6 +315,24 @@ nginx-reboot-auto:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
       cpu_count: {{ cpu_count }}
+      nginx: {{ nginx }}
+
+
+
+/etc/nginx/gzip.conf:
+  file.managed:
+    - source: salt://config/nginx/gzip.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+
 
 /etc/nginx/general-security.conf:
   file.managed:
@@ -328,6 +346,21 @@ nginx-reboot-auto:
     - context:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+
+/etc/nginx/general-security.conf:
+  file.managed:
+    - source: salt://config/nginx/general-security.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
 
 {% if nginx['msVersion'] %}
 /etc/nginx/modsecurity.conf:
@@ -342,7 +375,26 @@ nginx-reboot-auto:
     - context:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
 {% endif %}
+
+{% if nginx['npsVersion'] %}
+/etc/nginx/pagespeed.conf:
+  file.managed:
+    - source: salt://config/pagespeed/pagespeed.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+{% endif %}
+
+
 
 /etc/nginx/sites-enabled/default:
   file.managed:
