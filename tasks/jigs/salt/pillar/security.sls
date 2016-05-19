@@ -1,4 +1,4 @@
 fail2ban:
-  email: web.support@wsu.edu
+  email: jeremy.bass@wsu.edu
 mysql:
   pwd: sdislkeoweg
