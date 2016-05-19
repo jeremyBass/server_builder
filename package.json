@@ -9,13 +9,13 @@
     "url": "http://github.com/jeremyBass/server_builder.git"
   },
   "devDependencies": {
-    "deepmerge ": "~0.2.10",
+    "deepmerge": "~0.2.10",
     "extend": "~3.0.0",
     "fs-extra": "~0.26.2",
     "glob": "~6.0.1",
     "grunt": "^1.0.1",
     "load-grunt-tasks": "~3.3.0",
-    "nunjucks": "~2.2.0",
+    "nunjucks": "~2.4.2",
     "ping-wrapper": "~0.0.3",
     "shelljs": "~0.5.3",
     "spawn-command": "~0.0.2-1",
