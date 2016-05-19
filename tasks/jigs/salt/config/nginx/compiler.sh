@@ -97,6 +97,12 @@ ini(){
 --with-http_gzip_static_module \
 --with-http_stub_status_module \
 --with-http_sub_module \
+{% if nginx['npsVersion']  != "false" -%}
+--add-module=/src/nginx/ngx_pagespeed-release-${npsVersion}-beta \
+{% endif -%}
+{% if nginx['msVersion']  != "false" -%}
+--add-module=/src/nginx/modsecurity-${msVersion}/nginx/modsecurity \
+{% endif -%}
 {% if nginx['opensslVersion']  != "false" -%}
 --with-http_v2_module \
 --with-http_ssl_module \
