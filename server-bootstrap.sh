@@ -8,11 +8,25 @@ mkdir -p /srv/builder
 #-----------------------------------------------------------------------
 yum install -y openssh-clients
 [ -d ~/.ssh ] || mkdir -p ~/.ssh
+
+# set up a config just incase to clear ssh warnings
+if [ ! -z $(grep "Host *" ~/.ssh/config) ]; then
+    echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n\tLogLevel ERROR" >> ~/.ssh/config
+    echo "ssh warning suppression applied"
+else
+    echo "host * ssh warning suppression already applied"
+fi
+# just to be extra safe add github directly to them
 touch ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.128
 ssh-keyscan -H 192.30.252.128 >> ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.129
 ssh-keyscan -H 192.30.252.129 >> ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.130
 ssh-keyscan -H 192.30.252.130 >> ~/.ssh/known_hosts
+ssh-keygen -R 192.30.252.130
 ssh-keyscan -H 192.30.252.131 >> ~/.ssh/known_hosts
+ssh-keygen -R github.com
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
 cd /
@@ -36,7 +50,7 @@ fi
 
 gitploy init 2>&1 | grep -qi "already initialized" && echo ""
 gitploy ls 2>&1 | grep -qi "serverbase" && gitploy up serverbase
-gitploy ls 2>&1 | grep -qi "serverbase" || gitploy add -p /srv/builder serverbase https://github.com/jeremyBass/server_builder.git
+gitploy ls 2>&1 | grep -qi "serverbase" || gitploy add -p /srv/builder -b mage2 serverbase https://github.com/jeremyBass/server_builder.git
 
 if [[ $SERVER_TYPE = "VAGRANT" ]]; then
     cp /vagrant/server_project.conf /srv/builder/server_project.conf
@@ -45,10 +59,9 @@ fi
 
 cd /srv/builder
 npm install
-grunt build_salt
-grunt build_server
 
-
+grunt build -salt
+grunt build -server
 
 #salt-call --local --log-level=info --config-dir=/etc/salt state.highstate env=base
 #env=base
