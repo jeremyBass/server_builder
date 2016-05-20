@@ -27,26 +27,57 @@ module.exports = function( grunt ) {
             return ( base.substring( 0, charLength ) ) + int + "";
         });
 
-
-        wrench.mkdirSyncRecursive( "server/salt", 0777 );
-        var sourceDir = path.resolve( "tasks/jigs/salt" );
-        var targetDir = path.resolve( "server/salt" );
-
-        grunt.stdoutlog( "copy " + sourceDir, true );
-        grunt.stdoutlog( "to " + targetDir, true );
-
-        fsx.copy( sourceDir, targetDir, { "clobber": true }, function ( err ) {
-            if ( err ){
-                return grunt.stdoutlog( err, true );
-            }
-        });
-
-        grunt.stdoutlog( "building the salt minions", true) ;
-
-        wrench.mkdirSyncRecursive( "server/salt/deploy_minions", 0777 );
-
         var serverobj = grunt.createEnvTmp( );
         var servers = serverobj.servers;
+
+
+
+        var base_pillars = [];
+        function buildBaseSalePillar(_item) {
+            var item = _item.path.split("/").pop();
+            base_pillars.push(_item.path);
+            if( -1 !== item.indexOf(".sls") ){
+
+                grunt.stdoutlog( item + " -item for\r", true, true );
+                grunt.stdoutlog( " base -item for\r",true, true );
+
+                var sourceFile = "tasks/jigs/salt/pillar/_pillar-jigs/" + item;
+                var targetFile = "tasks/jigs/salt/salt/pillar/" + item;
+                grunt.stdoutlog( "trying to get ---" + item + "--- for " + sourceFile, true, true );
+                grunt.stdoutlog( "to  " + targetFile, true, true );
+
+                var content = fs.readFileSync(sourceFile,"utf8");
+                try{
+                    grunt.stdoutlog( "renderString of file", true, true );
+                    var tmpl = new nunjucks.Template( content, nenv );
+                    grunt.stdoutlog( "compile", true );
+                    var res = tmpl.render( _current_server.env.salt );
+                    grunt.stdoutlog( "renderd base pillar --- " + item, true, true );
+                    fs.writeFile( targetFile, res, function(err){
+                        grunt.stdoutlog( err ? err : "wrote base pillar :: "+targetFile, true );
+                    });
+                }catch (err) {
+                    grunt.stdoutlog( "failed on base pillar |||| " + item, true );
+                    grunt.stdoutlog( err, true );
+                }
+            }
+        }
+        function growSaltPillarsBase( callback ){
+            base_pillars = [];
+            fsx.walk( "tasks/jigs/salt/pillar/_pillar-jigs/" )
+            .on( "data", buildBaseSalePillar )
+            .on( "end", function(){
+                grunt.stdoutlog( base_pillars, true, true );
+                callback();
+             } );
+        }
+
+
+
+
+
+
+
 
         function load_apps( app_obj, callback ){
             grunt.stdoutlog( "start load_apps()", true );
@@ -167,12 +198,6 @@ module.exports = function( grunt ) {
         }
 
         var _current_server;
-        function logPillarCreation( pillars ){
-            grunt.stdoutlog( pillars, true, true );
-        }
-        function logErrorPillarCreation(err){
-            grunt.stdoutlog( err ? err : "wrote to file", true, true);
-        }
         function start_salt_production(){
             //set up the vagrant object so that we can just define the server if we want to
             //the vagrant needs some defaults, and so it's vagrant default then remote then
@@ -183,7 +208,25 @@ module.exports = function( grunt ) {
                 grunt.stdoutlog("found server salt "+key,true);
                 _current_server = servers[key];
                 _current_server.salt={};
+                base_pillars = [];
+                growSaltPillarsBase( function(){
+                    wrench.mkdirSyncRecursive( "server/salt", 0777 );
+                    var sourceDir = path.resolve( "tasks/jigs/salt" );
+                    var targetDir = path.resolve( "server/salt" );
 
+                    grunt.stdoutlog( "copy base " + sourceDir, true );
+                    grunt.stdoutlog( "to base " + targetDir, true );
+
+                    fsx.copy( sourceDir, targetDir, { "clobber": true }, function ( err ) {
+                        if ( err ){
+                            return grunt.stdoutlog( err, true );
+                        }
+                    });
+
+                    grunt.stdoutlog( "building the salt minions", true) ;
+
+                    wrench.mkdirSyncRecursive( "server/salt/deploy_minions", 0777 );
+                } );
                 grunt.stdoutlog( _current_server.apps, true );
                 for ( var app_key in _current_server.apps ) {
                     _used_app = _current_server.apps[ app_key ];
