@@ -192,7 +192,7 @@ module.exports = function( grunt ) {
                     pillars = [];
                     fsx.walk( "/var/app/" + _used_app.install_dir + "/provision/salt/pillar/_pillar-jigs/" )
                     .on( "data", build_pillars )
-                    .on( "end", logPillarCreation( pillars ) );
+                    .on( "end", function(){grunt.stdoutlog( pillars, true, true );} );
                 }
                 grunt.stdoutlog( "extenting server salt for " + key, true );
                 grunt.stdoutlog( "minion " + _current_server.env.salt.minion, true );
@@ -208,7 +208,9 @@ module.exports = function( grunt ) {
                 var res = tmpl.render( _current_server );
                 grunt.stdoutlog( _current_server, true, true );
                 grunt.stdoutlog( "renderd", true, true );
-                fs.writeFile( targetFile, res, logErrorPillarCreation );
+                fs.writeFile( targetFile, res, function(err){
+                    grunt.stdoutlog( err ? err : "wrote to file", true, true);
+                } );
             }
         }
         load_apps( false, start_salt_production );
