@@ -196,6 +196,7 @@ module.exports = function( grunt ) {
                 }
                 grunt.stdoutlog( "extenting server salt for " + key, true );
                 grunt.stdoutlog( "minion " + _current_server.env.salt.minion, true );
+                grunt.stdoutlog( "env.states " + _current_server.env.salt.states, true );
 
                 var sourceFile = "tasks/jigs/salt/minions/_template.conf";
                 var targetFile = "server/salt/deploy_minions/" + _current_server.env.salt.minion + ".conf";
