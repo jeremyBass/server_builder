@@ -94,8 +94,8 @@ module.exports = function(grunt) {
      * it's been set for the task set running
      */
     grunt.ensure_logfile = function(){
-        var logpath = grunt.setLogbase;
-        grunt.logFile =  grunt.createFileName(logpath,grunt.time+"--node-serverbuilder-log.txt");
+        var logpath = grunt.setLogbase();
+        grunt.logFile =  grunt.createFileName( logpath, grunt.time+"--node-serverbuilder-log.txt" );
     };
 
     grunt.setLogbase = function(){
@@ -120,7 +120,7 @@ module.exports = function(grunt) {
 
     grunt.createFileName = function(name,base_path){
         name = name || grunt.time+"--node-serverbuilder-log.txt";
-        base_path = base_path || grunt.setLogbase;
+        base_path = base_path || grunt.setLogbase();
         return base_path+"/"+name;
     };
 
