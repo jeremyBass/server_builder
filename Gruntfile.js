@@ -94,6 +94,11 @@ module.exports = function(grunt) {
      * it's been set for the task set running
      */
     grunt.ensure_logfile = function(){
+        var logpath = grunt.setLogbase;
+        grunt.logFile =  grunt.createFileName(logpath,grunt.time+"--node-serverbuilder-log.txt");
+    };
+
+    grunt.setLogbase = function(){
         var _base_path = "";
         var file = corePath.resolve( "/vagrant/" );
         try {
@@ -110,10 +115,14 @@ module.exports = function(grunt) {
         catch (err) {
             wrench.mkdirSyncRecursive(logpath, 0777);
         }
+        return logpath;
+    }
 
-        grunt.logFile = logpath+"/"+grunt.time+"--node-serverbuilder-log.txt";
+    grunt.createFileName = function(name,base_path){
+        name = name || grunt.time+"--node-serverbuilder-log.txt";
+        base_path = base_path || grunt.setLogbase;
+        return base_path+"/"+name;
     };
-
 
     /*
      * Writes to a log file and to the console as needed.
@@ -121,9 +130,11 @@ module.exports = function(grunt) {
      * @ log_to_file [boolean] append to log file
      * @ file_only [boolean] don't send to stdout/stderr
      */
-    grunt.stdoutlog = function( content, log_to_file, file_only ){
+    grunt.stdoutlog = function( content, log_to_file, file_only, file_name ){
         log_to_file = log_to_file || false;
         file_only = file_only || false;
+        file_name = file_name || grunt.logFile;
+
         var stdout = function( content ){
             if ( "string" === typeof content ) {
                 grunt.log.writeln( content );
@@ -141,7 +152,7 @@ module.exports = function(grunt) {
                 _content = content.split( "\n\n" ).join( "\n" );
             }
 
-            fs.appendFile( grunt.logFile, _content + "\n", "utf8", function ( err ) {
+            fs.appendFile( file_name, _content + "\n", "utf8", function ( err ) {
                 if( err ){
                     stdout( err );
                     throw err;
