@@ -14,7 +14,7 @@ module.exports = function( grunt ) {
 
 
         var nenv = new nunjucks.Environment( );
-
+        grunt.logFile =  grunt.createLogFileName(grunt.time+"_build_salt.txt");
 
         nenv.addFilter( "leadingzero", function( int, zerocount ) {
             var base = "";

@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         var fs = require( "fs" );
         var wrench = require( "wrench" ),
             spawn = require( "child_process" ).spawn;
-
+        grunt.logFile =  grunt.createLogFileName(grunt.time+"_build_server.txt");
 
 
         function run_env( envObj, log ){
