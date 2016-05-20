@@ -226,34 +226,35 @@ module.exports = function( grunt ) {
                     grunt.stdoutlog( "building the salt minions", true) ;
 
                     wrench.mkdirSyncRecursive( "server/salt/deploy_minions", 0777 );
-                } );
-                grunt.stdoutlog( _current_server.apps, true );
-                for ( var app_key in _current_server.apps ) {
-                    _used_app = _current_server.apps[ app_key ];
-                    // options is optional
-                    grunt.stdoutlog( _used_app, true, true );
-                    pillars = [];
-                    fsx.walk( "/var/app/" + _used_app.install_dir + "/provision/salt/pillar/_pillar-jigs/" )
-                    .on( "data", build_pillars )
-                    .on( "end", function(){grunt.stdoutlog( pillars, true, true );} );
-                }
-                grunt.stdoutlog( "extenting server salt for " + key, true );
-                grunt.stdoutlog( "minion " + _current_server.env.salt.minion, true );
-                grunt.stdoutlog( "env.states " + _current_server.env.salt.states, true, false, grunt.createLogFileName(grunt.time+"_State.txt") );
 
-                var sourceFile = "tasks/jigs/salt/minions/_template.conf";
-                var targetFile = "server/salt/deploy_minions/" + _current_server.env.salt.minion + ".conf";
-                var content = fs.readFileSync( sourceFile, "utf8" );
+                    grunt.stdoutlog( _current_server.apps, true );
+                    for ( var app_key in _current_server.apps ) {
+                        _used_app = _current_server.apps[ app_key ];
+                        // options is optional
+                        grunt.stdoutlog( _used_app, true, true );
+                        pillars = [];
+                        fsx.walk( "/var/app/" + _used_app.install_dir + "/provision/salt/pillar/_pillar-jigs/" )
+                        .on( "data", build_pillars )
+                        .on( "end", function(){grunt.stdoutlog( pillars, true, true );} );
+                    }
+                    grunt.stdoutlog( "extenting server salt for " + key, true );
+                    grunt.stdoutlog( "minion " + _current_server.env.salt.minion, true );
+                    grunt.stdoutlog( "env.states " + _current_server.env.salt.states, true, false, grunt.createLogFileName(grunt.time+"_State.txt") );
 
-                grunt.stdoutlog( "sourceFile :: " + sourceFile, true, true );
-                grunt.stdoutlog( "targetFile :: " + targetFile, true, true );
+                    var sourceFile = "tasks/jigs/salt/minions/_template.conf";
+                    var targetFile = "server/salt/deploy_minions/" + _current_server.env.salt.minion + ".conf";
+                    var content = fs.readFileSync( sourceFile, "utf8" );
 
-                var tmpl = new nunjucks.Template( content );
-                var res = tmpl.render( _current_server );
-                grunt.stdoutlog( _current_server, true, true );
-                grunt.stdoutlog( "renderd", true, true );
-                fs.writeFile( targetFile, res, function(err){
-                    grunt.stdoutlog( err ? err : "wrote to file", true, true);
+                    grunt.stdoutlog( "sourceFile :: " + sourceFile, true, true );
+                    grunt.stdoutlog( "targetFile :: " + targetFile, true, true );
+
+                    var tmpl = new nunjucks.Template( content );
+                    var res = tmpl.render( _current_server );
+                    grunt.stdoutlog( _current_server, true, true );
+                    grunt.stdoutlog( "renderd", true, true );
+                    fs.writeFile( targetFile, res, function(err){
+                        grunt.stdoutlog( err ? err : "wrote to file", true, true);
+                    } );
                 } );
             }
         }
