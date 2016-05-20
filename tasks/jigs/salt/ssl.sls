@@ -5,13 +5,13 @@
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
 
 {% if vars.isLocal %}
-ssl-cert:
-  tls.create_self_signed_cert
-    - bits: 2048
-    - CN: localhost
-    - C: US
-    - ST: Washington
-    - L: Pullman
-    - O: WSU
-    - emailAddress: dev.hotseat.wsu.edu
+#ssl-cert:
+#  tls.create_self_signed_cert
+#    - bits: 2048
+#    - CN: localhost
+#    - C: US
+#    - ST: Washington
+#    - L: Pullman
+#    - O: WSU
+#    - emailAddress: dev.hotseat.wsu.edu
 {% endif %}
