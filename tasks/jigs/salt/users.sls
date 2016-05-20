@@ -1,4 +1,5 @@
 {% set vars = {'isLocal': False} %}
+{%- set nginx = pillar['nginx'] -%}
 {% if vars.update({'ip': salt['cmd.run']('(ifconfig eth1 2>/dev/null || ifconfig eth0 2>/dev/null) | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
 
@@ -7,28 +8,28 @@
 ###########################################################
 # folder and users for web services
 ###########################################################
-group-www-data:
+group-{{ nginx['user'] }}:
   group.present:
-    - name: www-data
+    - name: {{ nginx['user'] }}
     - gid: 510
 
-user-www-data:
+user-{{ nginx['user'] }}:
   user.present:
-    - name: www-data
+    - name: {{ nginx['user'] }}
     - uid: 510
     - gid: 510
     - groups:
-      - www-data
+      - {{ nginx['user'] }}
     - require:
-      - group: www-data
+      - group: {{ nginx['user'] }}
 
 user-www-deploy:
   user.present:
     - name: deployment-admin
     - groups:
-      - www-data
+      - {{ nginx['user'] }}
     - require:
-      - group: www-data
+      - group: {{ nginx['user'] }}
 {% endif %}
 
 

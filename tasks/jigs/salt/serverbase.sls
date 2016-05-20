@@ -1,5 +1,6 @@
 # set up data first
 ###########################################################
+{%- set nginx = pillar['nginx'] -%}
 {% set vars = {'isLocal': False} %}
 {% if vars.update({'ip': salt['cmd.run']('(ifconfig eth1 2>/dev/null || ifconfig eth0 2>/dev/null) | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
@@ -38,7 +39,7 @@
 curl:
   pkg.installed:
     - name: curl
-    
+
 dos2unix:
   pkg.installed:
     - name: dos2unix
@@ -75,7 +76,7 @@ incrond-reboot-auto:
 
 ###########################################################
 ###########################################################
-# Add editors 
+# Add editors
 ###########################################################
 /etc/incron.allow:
   file.managed:
@@ -87,10 +88,11 @@ incrond-reboot-auto:
     - context:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
 
 ###########################################################
 ###########################################################
-# general updates to items 
+# general updates to items
 ###########################################################
 # Ensure that bash is at the latest version.
 bash:
@@ -101,7 +103,7 @@ bash:
 
 ###########################################################
 ###########################################################
-# Add editors 
+# Add editors
 ###########################################################
 nano:
   pkg.installed:
@@ -116,4 +118,4 @@ nano:
 #  pkg.installed:
 #    - name: monit
 #    #make configs and com back to apply them
-    
+

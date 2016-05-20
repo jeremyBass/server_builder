@@ -1,6 +1,6 @@
 # set up data first
 ###########################################################
-{%- set nginx = pillar['nginx'] -%} 
+{%- set nginx = pillar['nginx'] -%}
 {% set vars = {'isLocal': False} %}
 {% if vars.update({'ip': salt['cmd.run']('(ifconfig eth1 2>/dev/null || ifconfig eth0 2>/dev/null) | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
@@ -28,7 +28,7 @@
 
 
 
-###########################################################  
+###########################################################
 ###########################################################
 # php-fpm
 ###########################################################
@@ -89,10 +89,10 @@ php-fpm-reboot-auto:
     - require:
       - pkg: php-fpm
 
-      
-#***************************************      
+
+#***************************************
 # php-fpm files & configs
-#***************************************    
+#***************************************
 /etc/php-fpm.d/www.conf:
   file.managed:
     - source: salt://config/php-fpm/www.conf
@@ -101,6 +101,11 @@ php-fpm-reboot-auto:
     - mode: 644
     - require:
       - pkg: php-fpm
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
 
 /etc/php.ini:
   file.managed:
@@ -142,13 +147,13 @@ nginx-compiler-base:
       - autoconf
       - libtool
       - zlib-devel
-      - pcre-devel 
+      - pcre-devel
       - openssl-devel
       - libxml2
       - libxml2-devel
       - httpd-devel
       - curl
-      - libcurl-devel 
+      - libcurl-devel
 
 
 
@@ -277,7 +282,7 @@ nginx-compile-script:
     - name: dos2unix /src/compiler.sh
     - require:
       - pkg: dos2unix
-    
+
 # Run compiler
 nginx-compile:
   cmd.run:
@@ -298,10 +303,10 @@ nginx-reboot-auto:
     - require:
       - cmd: nginx-compile
 
-      
-#***************************************      
+
+#***************************************
 # nginx files & configs
-#***************************************         
+#***************************************
 /etc/nginx/nginx.conf:
   file.managed:
     - source: salt://config/nginx/nginx.conf
@@ -316,8 +321,6 @@ nginx-reboot-auto:
       saltenv: {{ saltenv }}
       cpu_count: {{ cpu_count }}
       nginx: {{ nginx }}
-
-
 
 /etc/nginx/gzip.conf:
   file.managed:
@@ -348,19 +351,6 @@ nginx-reboot-auto:
       saltenv: {{ saltenv }}
       nginx: {{ nginx }}
 
-/etc/nginx/general-security.conf:
-  file.managed:
-    - source: salt://config/nginx/general-security.conf
-    - user: root
-    - group: root
-    - mode: 644
-    - require:
-      - cmd: nginx-compile
-    - template: jinja
-    - context:
-      isLocal: {{ vars.isLocal }}
-      saltenv: {{ saltenv }}
-      nginx: {{ nginx }}
 
 {% if nginx['msVersion'] %}
 /etc/nginx/modsecurity.conf:
@@ -422,8 +412,8 @@ nginx:
     - user: root
     - require:
       - cmd: nginx-compile
-      - user: www-data
-      - group: www-data
+      - user: {{ nginx['user'] }}
+      - group: {{ nginx['user'] }}
     - watch:
       - file: /etc/nginx/nginx.conf
       - file: /etc/nginx/sites-enabled/default
@@ -435,7 +425,7 @@ nginx:
 ###########################################################
 ###########################################################
 # glassceiling
-###########################################################  
+###########################################################
 # set up a glass ceiling to stay below.  Once broken restart nginx and php-fpm services
 crash-prevention-update:
   cmd.run:
@@ -455,14 +445,14 @@ crash-prevention:
 ###########################################################
 ###########################################################
 # composer
-###########################################################    
+###########################################################
 #get-composer:
 #  cmd.run:
 #    - name: 'CURL=`which curl`; $CURL -sS https://getcomposer.org/installer | php'
 #    - unless: test -f /usr/local/bin/composer
 #    - user: root
 #    - cwd: /root/
-# 
+#
 #install-composer:
 #  cmd.wait:
 #    - name: mv /root/composer.phar /usr/local/bin/composer
@@ -470,5 +460,5 @@ crash-prevention:
 #    - user: root
 #    - watch:
 #      - cmd: get-composer
-    
+
 

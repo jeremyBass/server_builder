@@ -2,4 +2,4 @@ root
 {% if isLocal %}
 vagrant
 {%- endif %}
-www-data
+{{ nginx['user'] }}
