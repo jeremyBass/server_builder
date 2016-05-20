@@ -75,12 +75,12 @@ module.exports = function(grunt) {
         var year = date.getFullYear();
 
         var month = date.getMonth() + 1;
-        month = (month < 10 ? "0" : "") + month;
+        month = ( month < 10 ? "0" : "" ) + month;
 
         var day  = date.getDate();
-        day = (day < 10 ? "0" : "") + day;
+        day = ( day < 10 ? "0" : "" ) + day;
 
-        return hour + "_" + min +"--" + day + "-" + month + "-"+year;
+        return hour + "_" + min + "--" + day + "-" + month + "-" + year;
     };
 
     grunt.time = "";
@@ -94,8 +94,7 @@ module.exports = function(grunt) {
      * it's been set for the task set running
      */
     grunt.ensure_logfile = function(){
-        var logpath = grunt.setLogbase();
-        grunt.logFile =  grunt.createFileName( logpath, grunt.time+"--node-serverbuilder-log.txt" );
+        grunt.logFile =  grunt.createLogFileName();
     };
 
     grunt.setLogbase = function(){
@@ -112,16 +111,16 @@ module.exports = function(grunt) {
         try {
             fs.statSync( logpath ).isDirectory();
         }
-        catch (err) {
-            wrench.mkdirSyncRecursive(logpath, 0777);
+        catch ( err ) {
+            wrench.mkdirSyncRecursive( logpath, 0777 );
         }
         return logpath;
     }
 
-    grunt.createFileName = function(name,base_path){
-        name = name || grunt.time+"--node-serverbuilder-log.txt";
+    grunt.createLogFileName = function( name, base_path ){
+        name = name || grunt.time + "--node-serverbuilder-log.txt";
         base_path = base_path || grunt.setLogbase();
-        return base_path+"/"+name;
+        return base_path + "/" + name;
     };
 
     /*
