@@ -371,7 +371,7 @@ nginx-reboot-auto:
 {% if nginx['npsVersion'] %}
 /etc/nginx/pagespeed.conf:
   file.managed:
-    - source: salt://config/pagespeed/pagespeed.conf
+    - source: salt://config/nginx/pagespeed/pagespeed.conf
     - user: root
     - group: root
     - mode: 644
