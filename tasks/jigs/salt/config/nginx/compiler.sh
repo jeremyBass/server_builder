@@ -17,62 +17,71 @@ msVersion="{{ nginx['msVersion'] }}"
 touch /var/log/failed_nginx_compile.log
 touch /var/log/nginx-${nginxVersion}_compile.log
 
+{% if nginx['npsVersion']  != "false" -%}
+#for pagespeed
+yum -y install gcc-c++ pcre-devel zlib-devel make unzip
+rpm --import https://linux.web.cern.ch/linux/scientific6/docs/repository/cern/slc6X/i386/RPM-GPG-KEY-cern
+wget -O /etc/yum.repos.d/slc6-devtoolset.repo https://linux.web.cern.ch/linux/scientific6/docs/repository/cern/devtoolset/slc6-devtoolset.repo
+yum -y install devtoolset-3-gcc devtoolset-3-binutils devtoolset-3-gcc-c++
+PS_NGX_EXTRA_FLAGS="--with-cc=/opt/rh/devtoolset-2/root/usr/bin/gcc"
+{% endif -%}
+
 #set the compiler to be quite
 #then return message only it it's a fail
 ini(){
-	cd /src
+    cd /src
 
-	#clear past installs
-	rm -rf nginx*
+    #clear past installs
+    rm -rf nginx*
 
-	#nginxVersion="1.5.8" # set the value here from nginx website
-	wget -N http://nginx.org/download/nginx-${nginxVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
-	tar -xzf nginx-${nginxVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
-	ln -sf nginx-${nginxVersion} nginx
+    #nginxVersion="1.5.8" # set the value here from nginx website
+    wget -N http://nginx.org/download/nginx-${nginxVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
+    tar -xzf nginx-${nginxVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
+    ln -sf nginx-${nginxVersion} nginx
 
-	cd /src/nginx/src/http/
+    cd /src/nginx/src/http/
 
-	#/src/nginx/src/http/ngx_http_header_filter_module.c > src/http/ngx_http_header_filter_module.c.main.bak
-	# hidding the tech helps hide which attack to use
-	cp ngx_http_header_filter_module.c{,.bak}
-	sed -i 's|string\[\] = "Server: nginx"|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
-	sed -i 's|string\[\] = "Server: " NGINX_VER|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
+    #/src/nginx/src/http/ngx_http_header_filter_module.c > src/http/ngx_http_header_filter_module.c.main.bak
+    # hidding the tech helps hide which attack to use
+    cp ngx_http_header_filter_module.c{,.bak}
+    sed -i 's|string\[\] = "Server: nginx"|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
+    sed -i 's|string\[\] = "Server: " NGINX_VER|string[] = "Server: {{ nginx['nginxServername'] }}"|' ngx_http_header_filter_module.c
 
 {% if nginx['msVersion'] != "false" %}
-	cd /src/nginx/
-	# Fetch modsecurity
-	wget -N -O modsecurity-${msVersion}.tar.gz https://github.com/SpiderLabs/ModSecurity/releases/download/v${msVersion}/modsecurity-${msVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
-	tar -xzf modsecurity-${msVersion}.tar.gz
-	cd modsecurity-${msVersion}
-	./configure --enable-standalone-module
-	make && make install  2>/var/log/nginx-${nginxVersion}_compile.log
+    cd /src/nginx/
+    # Fetch modsecurity
+    wget -N -O modsecurity-${msVersion}.tar.gz https://github.com/SpiderLabs/ModSecurity/releases/download/v${msVersion}/modsecurity-${msVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
+    tar -xzf modsecurity-${msVersion}.tar.gz
+    cd modsecurity-${msVersion}
+    ./configure --enable-standalone-module
+    make && make install  2>/var/log/nginx-${nginxVersion}_compile.log
 {% endif %}
 
-	cd /src/nginx
+    cd /src/nginx
 
 {% if nginx['opensslVersion'] != "false" -%}
-	# Fetch openssl
-	wget -N http://www.openssl.org/source/openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
-	tar -xzf openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
+    # Fetch openssl
+    wget -N http://www.openssl.org/source/openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
+    tar -xzf openssl-${opensslVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
 {% endif -%}
 
 {% if nginx['npsVersion']  != "false" -%}
-	#get page speed
-	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
-	unzip release-${npsVersion}-beta 2>/var/log/nginx-${nginxVersion}_compile.log
-	cd ngx_pagespeed-release-${npsVersion}-beta/
-	wget https://dl.google.com/dl/page-speed/psol/${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
-	tar -xzvf ${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log # expands to psol/
+    #get page speed
+    wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${npsVersion}-beta.zip 2>/var/log/nginx-${nginxVersion}_compile.log
+    unzip release-${npsVersion}-beta 2>/var/log/nginx-${nginxVersion}_compile.log
+    cd ngx_pagespeed-release-${npsVersion}-beta/
+    wget https://dl.google.com/dl/page-speed/psol/${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log
+    tar -xzvf ${npsVersion}.tar.gz 2>/var/log/nginx-${nginxVersion}_compile.log # expands to psol/
 {% endif -%}
 
-	#mkdir /tmp/nginx-modules
-	#cd /tmp/nginx-modules
-	#wget https://github.com/agentzh/headers-more-nginx-module/archive/v0.19.tar.gz
-	#tar -xzvf v0.19.tar.gz 
+    #mkdir /tmp/nginx-modules
+    #cd /tmp/nginx-modules
+    #wget https://github.com/agentzh/headers-more-nginx-module/archive/v0.19.tar.gz
+    #tar -xzvf v0.19.tar.gz
 
-	cd /src/nginx
+    cd /src/nginx
 
-	./configure \
+    ./configure \
 --user={{ nginx['user'] }} \
 --group={{ nginx['user'] }} \
 --prefix=/etc/nginx \
@@ -116,18 +125,18 @@ ini(){
 --with-http_realip_module \
 --without-http_scgi_module \
 --without-http_uwsgi_module
-	make && make install  2>/var/log/nginx-${nginxVersion}_compile.log
+    make && make install  2>/var/log/nginx-${nginxVersion}_compile.log
 }
 
 LOGOUTPUT=$(ini)
 
 if [ $(nginx -v 2>&1 | grep -qi "$nginx_version") ]; then
-	resulting="Just finished installing nginx $nginxVersion"
-	echo "result=True changed=True comment='$resulting'"
-	#echo "{'name': 'nginx-compile', 'changes': {}, 'result': True, 'comment': ''}"
+    resulting="Just finished installing nginx $nginxVersion"
+    echo "result=True changed=True comment='$resulting'"
+    #echo "{'name': 'nginx-compile', 'changes': {}, 'result': True, 'comment': ''}"
 else
-	resulting="Failed installing nginx $nginxVersion, check /failed_nginx_compile for details"
-	echo $LOGOUTPUT >> /failed_nginx_compile
-	echo "result=False changed=False comment='$resulting'"
-	#echo "{'name': 'nginx-compile', 'changes': {}, 'result': False, 'comment': ''}"
+    resulting="Failed installing nginx $nginxVersion, check /failed_nginx_compile for details"
+    echo $LOGOUTPUT >> /failed_nginx_compile
+    echo "result=False changed=False comment='$resulting'"
+    #echo "{'name': 'nginx-compile', 'changes': {}, 'result': False, 'comment': ''}"
 fi
