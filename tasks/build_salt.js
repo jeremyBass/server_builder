@@ -30,7 +30,7 @@ module.exports = function( grunt ) {
         var serverobj = grunt.createEnvTmp( );
         var servers = serverobj.servers;
 
-
+        wrench.mkdirSyncRecursive( "server/salt/pillar", 0777 );
 
         var base_pillars = [];
         function buildBaseSalePillar(_item) {
@@ -42,7 +42,7 @@ module.exports = function( grunt ) {
                 grunt.stdoutlog( " base -item for\r",true, true );
 
                 var sourceFile = "tasks/jigs/salt/pillar/_pillar-jigs/" + item;
-                var targetFile = "tasks/jigs/salt/salt/pillar/" + item;
+                var targetFile = "server/salt/pillar/" + item;
                 grunt.stdoutlog( "trying to get ---" + item + "--- for " + sourceFile, true, true );
                 grunt.stdoutlog( "to  " + targetFile, true, true );
 
@@ -210,7 +210,7 @@ module.exports = function( grunt ) {
                 _current_server.salt={};
                 base_pillars = [];
                 growSaltPillarsBase( function(){
-                    wrench.mkdirSyncRecursive( "server/salt", 0777 );
+
                     var sourceDir = path.resolve( "tasks/jigs/salt" );
                     var targetDir = path.resolve( "server/salt" );
 
