@@ -2,7 +2,7 @@
 ###########################################################
 {%- set nginx = pillar['nginx'] -%}
 {%- set php = pillar['php'] -%}
-{%- set caching = pillar['caching'] -%}
+{%- set memcached = pillar['memcached'] -%}
 {% set vars = {'isLocal': False} %}
 {% if vars.update({'ip': salt['cmd.run']('(ifconfig eth1 2>/dev/null || ifconfig eth0 2>/dev/null) | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
@@ -118,7 +118,7 @@ php-fpm-reboot-auto:
     - template: jinja
     - context:
       php: {{ php }}
-      memcached: {{ caching.memcached }}
+      memcached: {{ memcached }}
     - require:
       - pkg: php-fpm
 
