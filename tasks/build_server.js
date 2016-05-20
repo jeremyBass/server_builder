@@ -63,7 +63,7 @@ module.exports = function(grunt) {
                     },function(){
                         grunt.stdoutlog(sourceDir+" >> "+targetDir,true);
 
-                        var serverobj = grunt.create_env_tmp();
+                        var serverobj = grunt.createEnvTmp();
                         //var serverobj = grunt.load_server_config();
                         var servers = serverobj.servers;
 
