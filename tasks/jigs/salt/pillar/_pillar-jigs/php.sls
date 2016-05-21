@@ -7,8 +7,8 @@ php:
    file_uploads: {{ pillar.file_uploads if pillar.file_uploads else "On" }}
    upload_max_filesize: {{ pillar.upload_max_filesize if pillar.upload_max_filesize else "20M" }}
    max_file_uploads: {{ pillar.max_file_uploads if pillar.max_file_uploads else "20" }}
-   date_timezone: {{ pillar.date_timezone if pillar.date_timezone else "America/Los_Angeles" }}
-   date_default_latitude: {{ pillar.date_default_latitude if pillar.date_default_latitude else "46.7311399" }}
-   date_default_longitude: {{ pillar.date_default_longitude if pillar.date_default_longitude else "-117.1603188" }}
-   error_reporting: {{ pillar.error_reporting if pillar.error_reporting else "E_ALL & ~E_DEPRECATED & ~E_STRICT" }}
+   date_timezone: "{{ pillar.date_timezone if pillar.date_timezone else "America/Los_Angeles" }}"
+   date_default_latitude: "{{ pillar.date_default_latitude if pillar.date_default_latitude else "46.7311399" }}"
+   date_default_longitude: "{{ pillar.date_default_longitude if pillar.date_default_longitude else "-117.1603188" }}"
+   error_reporting: "{{ pillar.error_reporting if pillar.error_reporting else "E_ALL & ~E_DEPRECATED & ~E_STRICT" }}"
    post_max_size: {{ pillar.post_max_size if pillar.post_max_size else "50M" }}
