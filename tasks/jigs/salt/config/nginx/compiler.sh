@@ -23,7 +23,13 @@ yum -y install gcc-c++ pcre-devel zlib-devel make unzip
 rpm --import https://linux.web.cern.ch/linux/scientific6/docs/repository/cern/slc6X/i386/RPM-GPG-KEY-cern
 wget -O /etc/yum.repos.d/slc6-devtoolset.repo https://linux.web.cern.ch/linux/scientific6/docs/repository/cern/devtoolset/slc6-devtoolset.repo
 yum -y install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++
-scl enable devtoolset-2 bash
+
+alias gcc='gcc-4.8'
+alias cc='gcc-4.8'
+alias g++='g++-4.8'
+alias c++='c++-4.8'
+
+
 PS_NGX_EXTRA_FLAGS="--with-cc=/opt/rh/devtoolset-2/root/usr/bin/gcc"
 {% endif -%}
 
@@ -130,6 +136,15 @@ ini(){
 }
 
 LOGOUTPUT=$(ini)
+
+{% if nginx['npsVersion']  != "false" -%}
+unalias gcc
+unalias cc
+unalias g++
+unalias c++
+{% endif -%}
+
+
 
 if [ $(nginx -v 2>&1 | grep -qi "$nginx_version") ]; then
     resulting="Just finished installing nginx $nginxVersion"
