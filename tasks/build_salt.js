@@ -12,7 +12,7 @@ module.exports = function( grunt ) {
             fsx = require( "fs-extra" );
         var wrench = require( "wrench" );
 
-
+        nunjucks.configure({autoescape:false});
         var nenv = new nunjucks.Environment( );
         grunt.logFile =  grunt.createLogFileName(grunt.time+"_build_salt.txt");
 
