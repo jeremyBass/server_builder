@@ -21,13 +21,13 @@ base:
 {% if 'ssl' in grains.get('roles') %}
     - ssl
 {% endif %}
+{% if 'webcaching' in grains.get('roles') %}
+    - caching
+{% endif %}
 {% if 'web' in grains.get('roles') %}
     - web
 {% endif %}
     - node
-{% if 'webcaching' in grains.get('roles') %}
-    - caching
-{% endif %}
 {% if 'java' in grains.get('roles') %}
     - java
 {% endif %}

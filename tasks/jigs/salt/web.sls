@@ -63,7 +63,6 @@ php-fpm:
       - php-mbstring
       - php-ldap
       - php-opcache
-      - php-pecl-memcached
       - php-pecl-oauth
     - require:
       - sls: serverbase
@@ -390,8 +389,6 @@ nginx-reboot-auto:
       nginx: {{ nginx }}
 {% endif %}
 
-
-
 /etc/nginx/sites-enabled/default:
   file.managed:
     - source: salt://config/nginx/default
@@ -400,6 +397,12 @@ nginx-reboot-auto:
     - mode: 644
     - require:
       - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+
 
 /etc/nginx/mime.types:
   file.managed:
