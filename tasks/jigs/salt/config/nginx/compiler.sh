@@ -107,7 +107,7 @@ ini(){
 --with-http_stub_status_module \
 --with-http_sub_module \
 {% if nginx['npsVersion']  != "false" -%}
---add-module=/src/nginx/ngx_pagespeed-release-${npsVersion}-beta ${PS_NGX_EXTRA_FLAGS}\
+--add-module=/src/nginx/ngx_pagespeed-release-${npsVersion}-beta ${PS_NGX_EXTRA_FLAGS} \
 {% endif -%}
 {% if nginx['msVersion']  != "false" -%}
 --add-module=/src/nginx/modsecurity-${msVersion}/nginx/modsecurity \
