@@ -106,9 +106,6 @@ ini(){
 --with-http_gzip_static_module \
 --with-http_stub_status_module \
 --with-http_sub_module \
-{% if nginx['npsVersion']  != "false" -%}
---add-module=/src/nginx/ngx_pagespeed-release-${npsVersion}-beta ${PS_NGX_EXTRA_FLAGS} \
-{% endif -%}
 {% if nginx['msVersion']  != "false" -%}
 --add-module=/src/nginx/modsecurity-${msVersion}/nginx/modsecurity \
 {% endif -%}
@@ -124,7 +121,10 @@ ini(){
 --with-file-aio \
 --with-http_realip_module \
 --without-http_scgi_module \
---without-http_uwsgi_module
+--without-http_uwsgi_module \
+{% if nginx['npsVersion']  != "false" -%}
+--add-module=/src/nginx/ngx_pagespeed-release-${npsVersion}-beta ${PS_NGX_EXTRA_FLAGS}
+{% endif -%}
     make && make install  2>/var/log/nginx-${nginxVersion}_compile.log
 }
 
