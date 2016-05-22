@@ -359,6 +359,14 @@ nginx-reboot-auto:
 
 
 {% if nginx['msVersion'] %}
+
+# Ensure a source folder (/src/) is there to do `make`'s in
+/etc/nginx/modsecurity/:
+  file.directory:
+    - name: /etc/nginx/modsecurity/
+    - user: root
+    - group: root
+
 /etc/nginx/modsecurity/modsecurity.conf:
   file.managed:
     - source: salt://config/nginx/modsecurity/modsecurity.conf
