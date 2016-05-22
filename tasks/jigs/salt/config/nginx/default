@@ -19,7 +19,7 @@ server {
 
     location / {
         #put in security parts
-        include /etc/nginx/general-security.conf;
+        include /etc/nginx/location-security.conf;
         index index.php;
         try_files $uri $uri/ /index.php?$args;
     }
