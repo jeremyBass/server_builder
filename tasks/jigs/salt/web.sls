@@ -8,16 +8,12 @@
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
 {% set cpu_count = salt['grains.get']('num_cpus', '') %}
 
-
-
-
 #/etc/hosts:
 #  file.managed:
 #    - source: salt://config/hosts
 #    - user: root
 #    - group: root
 #    - mode: 644
-
 
 #worth noting that there will be some changes as this just gets nuked it seems
 #a fix here http://totalcae.com/blog/2013/06/prevent-etcresolv-conf-from-being-blown-away-by-rhelcentos-after-customizing/
@@ -27,8 +23,6 @@
 #    - user: root
 #    - group: root
 #    - mode: 644
-
-
 
 ###########################################################
 ###########################################################
@@ -132,10 +126,6 @@ php-fpm-reboot-auto:
       memcached: {{ memcached }}
     - require:
       - pkg: php-fpm
-
-
-
-
 
 
 
@@ -360,9 +350,9 @@ nginx-reboot-auto:
 
 
 {% if nginx['msVersion'] %}
-/etc/nginx/modsecurity.conf:
+/etc/nginx/modsecurity/modsecurity.conf:
   file.managed:
-    - source: salt://config/nginx/modsecurity.conf
+    - source: salt://config/nginx/modsecurity/modsecurity.conf
     - user: root
     - group: root
     - mode: 644
@@ -373,6 +363,14 @@ nginx-reboot-auto:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
       nginx: {{ nginx }}
+/etc/nginx/modsecurity/unicode.mapping:
+  file.managed:
+    - source: salt://config/nginx/modsecurity/unicode.mapping
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
 {% endif %}
 
 {% if nginx['npsVersion'] %}
