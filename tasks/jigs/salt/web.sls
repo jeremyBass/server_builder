@@ -360,7 +360,7 @@ nginx-reboot-auto:
 
 {% if nginx['msVersion'] %}
 
-# Ensure a source folder (/src/) is there to do `make`'s in
+# Ensure a source folder (/etc/nginx/modsecurity/ is there to do `make`'s in
 /etc/nginx/modsecurity/:
   file.directory:
     - name: /etc/nginx/modsecurity/
