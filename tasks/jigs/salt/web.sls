@@ -316,6 +316,14 @@ nginx-reboot-auto:
       saltenv: {{ saltenv }}
       nginx: {{ nginx }}
 
+
+# Ensure a source folder (/etc/nginx/cache/) is there to do `make`'s in
+/etc/nginx/cache/:
+  file.directory:
+    - name: /etc/nginx/cache/
+    - user: {{ nginx['user'] }}
+    - group: {{ nginx['user'] }}
+
 /etc/nginx/fastcgi_caching.conf:
   file.managed:
     - source: salt://config/nginx/caching/fastcgi_caching.conf
