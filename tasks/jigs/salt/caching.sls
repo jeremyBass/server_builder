@@ -24,7 +24,7 @@
 
 {% if 'web' in grains.get('roles') %}
 # Set memcached to run in levels 2345.
-memcached-init:
+memcached-groupinstall-dev-tools:
   cmd.run:
     - name: yum -y groupinstall "Development Tools"
     - cwd: /
