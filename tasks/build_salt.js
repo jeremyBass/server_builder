@@ -62,7 +62,7 @@ module.exports = function( grunt ) {
                 }
             }
         }
-        function growSaltPillarsBase( callback ){
+        function growSaltPillarsServerBase( callback ){
             base_pillars = [];
             fsx.walk( "tasks/jigs/salt/pillar/_pillar-jigs/" )
             .on( "data", buildBaseSalePillar )
@@ -209,7 +209,7 @@ module.exports = function( grunt ) {
                 _current_server = servers[key];
                 _current_server.salt={};
                 base_pillars = [];
-                growSaltPillarsBase( function(){
+                growSaltPillarsServerBase( function(){
 
                     var sourceDir = path.resolve( "tasks/jigs/salt" );
                     var targetDir = path.resolve( "server/salt" );
@@ -235,7 +235,9 @@ module.exports = function( grunt ) {
                         pillars = [];
                         fsx.walk( "/var/app/" + _used_app.install_dir + "/provision/salt/pillar/_pillar-jigs/" )
                         .on( "data", build_pillars )
-                        .on( "end", function(){grunt.stdoutlog( pillars, true, true );} );
+                        .on( "end", function(){
+                            grunt.stdoutlog( pillars, true, true );
+                        } );
                     }
                     grunt.stdoutlog( "extenting server salt for " + key, true );
                     grunt.stdoutlog( "minion " + _current_server.env.salt.minion, true );

@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         var fs = require("fs");
         var wrench = require("wrench"),
             spawn = require("child_process").spawn;
-        var ip,_ip="10.255.255.2";
+        //var ip,_ip="10.255.255.2";
 
         /*come back to this.
         function ip_inuse(_ip){
