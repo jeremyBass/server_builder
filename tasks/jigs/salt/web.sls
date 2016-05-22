@@ -37,10 +37,20 @@
 
 # Remi has a repository specifically setup for PHP 5.5. This continues
 # to reply on the standard Remi repository for some packages.
-remi-php55-repo:
+#remi-php55-repo:
+#  pkgrepo.managed:
+#    - humanname: Remi PHP 5.5 Repository
+#    - baseurl: http://rpms.famillecollet.com/enterprise/$releasever/php55/$basearch/
+#    - gpgcheck: 0
+#    - require_in:
+#      - pkg: php-fpm
+
+# Remi has a repository specifically setup for PHP 7.0. This continues
+# to reply on the standard Remi repository for some packages.
+remi-php70-repo:
   pkgrepo.managed:
-    - humanname: Remi PHP 5.5 Repository
-    - baseurl: http://rpms.famillecollet.com/enterprise/$releasever/php55/$basearch/
+    - humanname: Remi PHP 7 Repository
+    - baseurl: http://rpms.famillecollet.com/enterprise/$releasever/php70/$basearch/
     - gpgcheck: 0
     - require_in:
       - pkg: php-fpm
@@ -62,8 +72,10 @@ php-fpm:
       - php-gd
       - php-mbstring
       - php-ldap
-      - php-opcache
+      - php-pecl-msgpack
       - php-pecl-oauth
+      - php-intl
+      - php-xml
     - require:
       - sls: serverbase
   service.running:
