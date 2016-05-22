@@ -184,17 +184,6 @@ nginx-compiler-base:
     - require_in:
       - cmd: nginx-compile
 
-{% if 'ssl' in grains.get('roles') %}
-# Provide the ssl directory for nginx
-/etc/nginx/ssl:
-  file.directory:
-    - user: root
-    - group: root
-    - mode: 600
-    - makedirs: true
-    - require_in:
-      - cmd: nginx-compile
-{% endif %}
 
 # Provide the proxy directory for nginx
 /var/lib/nginx:
@@ -327,10 +316,24 @@ nginx-reboot-auto:
       saltenv: {{ saltenv }}
       nginx: {{ nginx }}
 
+/etc/nginx/fastcgi_caching.conf:
+  file.managed:
+    - source: salt://config/nginx/caching/fastcgi_caching.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+
 
 /etc/nginx/general-security.conf:
   file.managed:
-    - source: salt://config/nginx/general-security.conf
+    - source: salt://config/nginx/security/general-security.conf
     - user: root
     - group: root
     - mode: 644
@@ -345,7 +348,7 @@ nginx-reboot-auto:
 
 /etc/nginx/location-security.conf:
   file.managed:
-    - source: salt://config/nginx/location-security.conf
+    - source: salt://config/nginx/security/location-security.conf
     - user: root
     - group: root
     - mode: 644
@@ -358,8 +361,38 @@ nginx-reboot-auto:
       nginx: {{ nginx }}
 
 
-{% if nginx['msVersion'] %}
 
+
+
+{% if 'ssl' in grains.get('roles') %}
+# Provide the ssl directory for nginx
+/etc/nginx/ssl:
+  file.directory:
+    - user: root
+    - group: root
+    - mode: 600
+    - makedirs: true
+    - require_in:
+      - cmd: nginx-compile
+
+/etc/nginx/ssl/ssl-base.conf:
+  file.managed:
+    - source: salt://config/nginx/security/ssl-base.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+{% endif %}
+
+
+
+{% if nginx['msVersion'] %}
 # Ensure a source folder (/etc/nginx/modsecurity/ is there to do `make`'s in
 /etc/nginx/modsecurity/:
   file.directory:
@@ -369,7 +402,7 @@ nginx-reboot-auto:
 
 /etc/nginx/modsecurity/modsecurity.conf:
   file.managed:
-    - source: salt://config/nginx/modsecurity/modsecurity.conf
+    - source: salt://config/nginx/security/modsecurity/modsecurity.conf
     - user: root
     - group: root
     - mode: 644
@@ -383,7 +416,7 @@ nginx-reboot-auto:
 
 /etc/nginx/modsecurity/unicode.mapping:
   file.managed:
-    - source: salt://config/nginx/modsecurity/unicode.mapping
+    - source: salt://config/nginx/security/modsecurity/unicode.mapping
     - user: root
     - group: root
     - mode: 644
@@ -394,7 +427,7 @@ nginx-reboot-auto:
 {% if nginx['npsVersion'] %}
 /etc/nginx/pagespeed.conf:
   file.managed:
-    - source: salt://config/nginx/pagespeed/pagespeed.conf
+    - source: salt://config/nginx/caching/pagespeed/pagespeed.conf
     - user: root
     - group: root
     - mode: 644
