@@ -256,12 +256,6 @@ nginx-compiler-base:
     - group: root
     - mode: 777
 
-#/srv/salt/base/config/nginx/compiler.sh:
-#  file.managed:
-#   - user: root
-#   - group: root
-#   - mode: 755
-
 # ensure compile script for Nginx exists
 nginx-compile-script:
   file.managed:
@@ -349,6 +343,21 @@ nginx-reboot-auto:
       nginx: {{ nginx }}
 
 
+/etc/nginx/location-security.conf:
+  file.managed:
+    - source: salt://config/nginx/location-security.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+
+
 {% if nginx['msVersion'] %}
 /etc/nginx/modsecurity/modsecurity.conf:
   file.managed:
@@ -363,6 +372,7 @@ nginx-reboot-auto:
       isLocal: {{ vars.isLocal }}
       saltenv: {{ saltenv }}
       nginx: {{ nginx }}
+
 /etc/nginx/modsecurity/unicode.mapping:
   file.managed:
     - source: salt://config/nginx/modsecurity/unicode.mapping
