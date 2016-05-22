@@ -133,16 +133,6 @@ php-fpm-reboot-auto:
     - require:
       - pkg: php-fpm
 
-/etc/php.d/opcache.ini:
-  file.managed:
-    - source: salt://config/php-fpm/opcache.ini
-    - user: root
-    - group: root
-    - mode: 644
-    - require:
-      - pkg: php-fpm
-
-
 
 
 
