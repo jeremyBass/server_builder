@@ -83,16 +83,6 @@ innodb_memcached:
     - name: 'mysql --login-path=local -e "CREATE DATABASE test;" && mysql --login-path=local -e "source /usr/share/mysql/innodb_memcached_config.sql" && mysql --login-path=local -e "install plugin daemon_memcached soname \"libmemcached.so\""'
     - cwd: /
 
-# Replicate the functionality of mysql_secure_installation.
-mysql-secure-installation:
-  mysql_user.absent:
-    - name: ""
-    - require:
-      - service: mysqld
-#  mysql_database.absent:
-#    - name: test
-#    - require:
-#      - service: mysqld
 
 /etc/my.cnf:
   file.managed:
@@ -107,6 +97,17 @@ mysql-secure-installation:
 #    - require:
 #      - pkg: mysql
 
+
+# Replicate the functionality of mysql_secure_installation.
+mysql-secure-installation:
+  mysql_user.absent:
+    - name: ""
+    - require:
+      - service: mysqld
+  mysql_database.absent:
+    - name: test
+    - require:
+      - service: mysqld
 
 remove_mysql_config_editor:
   cmd.run:
