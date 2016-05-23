@@ -8,12 +8,12 @@
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
 {% set cpu_count = salt['grains.get']('num_cpus', '') %}
 
-#php-opcache:
-#  pkg.latest:
-#    - pkgs:
-#      - php-opcache
+php-opcache:
+  pkg.installed:
+    - pkgs:
+      - php-opcache
 
-/etc/php.d/opcache.ini:
+/etc/php.d/10-opcache.ini:
   file.managed:
     - source: salt://config/php-fpm/10-opcache.ini
     - user: root
