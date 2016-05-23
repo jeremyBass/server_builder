@@ -56,10 +56,6 @@ mysqld:
       - pkg: mysql
   service.running:
     - name: mysqld
-    - watch:
-      - file: /etc/my.cnf
-    - require:
-      - file: /etc/my.cnf
 
 #set_localhost_root_password:
 #  mysql_user.present:
