@@ -1,6 +1,13 @@
+# set up data first
+###########################################################
+{%- set nginx = pillar['nginx'] -%}
+{%- set php = pillar['php'] -%}
+{%- set memcached = pillar['memcached'] -%}
+{%- set database = pillar['database'] -%}
 {% set vars = {'isLocal': False} %}
 {% if vars.update({'ip': salt['cmd.run']('(ifconfig eth1 2>/dev/null || ifconfig eth0 2>/dev/null) | grep "inet " | awk \'{gsub("addr:","",$2);  print $2 }\'') }) %} {% endif %}
 {% if vars.update({'isLocal': salt['cmd.run']('test -n "$SERVER_TYPE" && echo $SERVER_TYPE || echo "false"') }) %} {% endif %}
+{% set cpu_count = salt['grains.get']('num_cpus', '') %}
 
 /var/log/mysql:
   file.directory:
@@ -14,7 +21,7 @@
         - mode
 
 
-# A repository specifically setup for MySQL 5.6. 
+# A repository specifically setup for MySQL 5.6.
 mysql56-community-repo:
   pkgrepo.managed:
     - humanname: MySQL 5.6 Community Server
@@ -47,6 +54,10 @@ mysqld-init:
     - user: root
     - group: root
     - mode: 664
+    - template: jinja
+    - context:
+      php: {{ php }}
+      memcached: {{ memcached }}
 #    - require:
 #      - pkg: mysql
 
@@ -72,6 +83,17 @@ mysqld:
 #    - require:
 #      - service: mysqld
 
+libevent-dev:
+  pkg.latest:
+    - pkgs:
+      - libevent-dev
+
+##install sample data
+innodb_memcached:
+  cmd.run:
+    - unless: [ $(mysql -h {{ database['host'] }} -u {{ database['user'] }} -p{{ database['pass'] }} --skip-column-names  --batch -D {{ database['name'] }} -e 'show plugins;' 2>&1 | grep -cFf <( echo 'libmemcached.so' )) -eq 1 ]
+    - name: 'mysql -h {{ database['host'] }} -u {{ database['user'] }} -p{{ database['pass'] }} {{ database['name'] }} -e "source /usr/share/mysql/innodb_memcached_config.sql" && mysql -h {{ database['host'] }} -u {{ database['user'] }} -p{{ database['pass'] }} {{ database['name'] }} -e "install plugin daemon_memcached soname \"libmemcached.so\""'
+    - cwd: {{ web_root }}
 
 # Replicate the functionality of mysql_secure_installation.
 mysql-secure-installation:
