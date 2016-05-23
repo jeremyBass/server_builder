@@ -321,8 +321,9 @@ nginx-reboot-auto:
 /etc/nginx/cache/:
   file.directory:
     - name: /etc/nginx/cache/
-    - user: root
-    - group: root
+    - user: {{ nginx['user'] }}
+    - group: {{ nginx['user'] }}
+    - mode: 777
 
 /etc/nginx/fastcgi_caching.conf:
   file.managed:
