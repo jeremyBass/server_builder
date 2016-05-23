@@ -48,19 +48,6 @@ mysqld-init:
     - require:
       - pkg: mysql
 
-/etc/my.cnf:
-  file.managed:
-    - source: salt://config/mysql/my.cnf
-    - user: root
-    - group: root
-    - mode: 664
-    - template: jinja
-    - context:
-      php: {{ php }}
-      memcached: {{ memcached }}
-#    - require:
-#      - pkg: mysql
-
 mysqld:
   cmd.run:
     - name: sudo service mysqld restart
@@ -107,6 +94,18 @@ mysql-secure-installation:
       - service: mysqld
 
 
+/etc/my.cnf:
+  file.managed:
+    - source: salt://config/mysql/my.cnf
+    - user: root
+    - group: root
+    - mode: 664
+    - template: jinja
+    - context:
+      php: {{ php }}
+      memcached: {{ memcached }}
+#    - require:
+#      - pkg: mysql
 
 
 
