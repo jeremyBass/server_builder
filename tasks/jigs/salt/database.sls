@@ -75,11 +75,16 @@ libevent-dev:
     - pkgs:
       - libevent-dev
 
+set_mysql_config_editor:
+  cmd.run:
+    - name: 'touch .mylogin.cnf && printf "[local]\nuser = {{ database['user'] }}\npassword = {{ database['pass'] }}\nhost = {{ database['host'] }}" >> .mylogin.cnf'
+    - cwd: /
+
 ##install sample data
 innodb_memcached:
   cmd.run:
-    - unless: [ $(mysql -h {{ database['host'] }} -u {{ database['user'] }} -p{{ database['pass'] }} --skip-column-names  --batch -D {{ database['name'] }} -e 'show plugins;' 2>&1 | grep -cFf <( echo 'libmemcached.so' )) -eq 1 ]
-    - name: 'mysql -h {{ database['host'] }} -u {{ database['user'] }} -p{{ database['pass'] }} {{ database['name'] }} -e "source /usr/share/mysql/innodb_memcached_config.sql" && mysql -h {{ database['host'] }} -u {{ database['user'] }} -p{{ database['pass'] }} {{ database['name'] }} -e "install plugin daemon_memcached soname \"libmemcached.so\""'
+    - unless: [ $(mysql --login-path=local -e 'show plugins;' 2>&1 | grep -cFf <( echo 'libmemcached.so' )) -eq 1 ]
+    - name: 'mysql --login-path=local {{ database['name'] }} -e "source /usr/share/mysql/innodb_memcached_config.sql" && mysql --login-path=local {{ database['name'] }} -e "install plugin daemon_memcached soname \"libmemcached.so\""'
     - cwd: /
 
 # Replicate the functionality of mysql_secure_installation.
@@ -108,5 +113,8 @@ mysql-secure-installation:
 #      - pkg: mysql
 
 
-
+remove_mysql_config_editor:
+  cmd.run:
+    - name: 'mysql_config_editor remove --login-path=local'
+    - cwd: /
 
