@@ -70,6 +70,7 @@ php-fpm:
       - php-pecl-oauth
       - php-intl
       - php-xml
+      - php-opcache
     - require:
       - sls: serverbase
   service.running:
@@ -128,6 +129,15 @@ php-fpm-reboot-auto:
       - pkg: php-fpm
 
 
+
+/etc/php.d/10-opcache.ini:
+  file.managed:
+    - source: salt://config/php-fpm/10-opcache.ini
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - pkg: php-fpm
 
 
 ###########################################################
