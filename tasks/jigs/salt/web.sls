@@ -316,6 +316,13 @@ nginx-reboot-auto:
       saltenv: {{ saltenv }}
       nginx: {{ nginx }}
 
+# Ensure a source folder (/etc/nginx/cache/) is there to do `make`'s in
+/var/nginx/:
+  file.directory:
+    - name: /var/nginx/
+    - user: {{ nginx['user'] }}
+    - group: {{ nginx['user'] }}
+    - mode: 777
 
 # Ensure a source folder (/etc/nginx/cache/) is there to do `make`'s in
 /var/nginx/cache/:
