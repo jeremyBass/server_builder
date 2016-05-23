@@ -98,6 +98,15 @@ innodb_memcached:
 #      - pkg: mysql
 
 
+mysqld-innodb_memcached-restart:
+  cmd.run:
+    - name: sudo service mysqld restart
+    - cwd: /
+    - require:
+      - pkg: mysql
+  service.running:
+    - name: mysqld
+
 # Replicate the functionality of mysql_secure_installation.
 mysql-secure-installation:
   mysql_user.absent:
