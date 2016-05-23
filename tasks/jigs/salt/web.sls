@@ -339,6 +339,33 @@ nginx-reboot-auto:
       saltenv: {{ saltenv }}
       nginx: {{ nginx }}
 
+/etc/nginx/fastcgi_caching_set_no_cache_general.conf:
+  file.managed:
+    - source: salt://config/nginx/caching/fastcgi_caching_set_no_cache_general.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
+
+/etc/nginx/fastcgi_caching_general_location.conf:
+  file.managed:
+    - source: salt://config/nginx/caching/fastcgi_caching_general_location.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - require:
+      - cmd: nginx-compile
+    - template: jinja
+    - context:
+      isLocal: {{ vars.isLocal }}
+      saltenv: {{ saltenv }}
+      nginx: {{ nginx }}
 
 /etc/nginx/general-security.conf:
   file.managed:
