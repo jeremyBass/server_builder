@@ -80,7 +80,7 @@ set_mysql_config_editor:
 innodb_memcached:
   cmd.run:
     - unless: [ $(mysql --login-path=local -e 'show plugins;' 2>&1 | grep -cFf <( echo 'libmemcached.so' )) -eq 1 ]
-    - name: 'mysql --login-path=local -e "source /usr/share/mysql/innodb_memcached_config.sql" && mysql --login-path=local -e "install plugin daemon_memcached soname \"libmemcached.so\""'
+    - name: 'mysql --login-path=local -e "CREATE DATABASE test;" && mysql --login-path=local -e "source /usr/share/mysql/innodb_memcached_config.sql" && mysql --login-path=local -e "install plugin daemon_memcached soname \"libmemcached.so\""'
     - cwd: /
 
 # Replicate the functionality of mysql_secure_installation.
