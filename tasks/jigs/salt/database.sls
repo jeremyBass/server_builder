@@ -67,9 +67,9 @@ mysqld:
 #      - service: mysqld
 
 libevent-dev:
-  pkg.latest:
-    - pkgs:
-      - libevent-dev
+  cmd.run:
+    - name: 'wget "https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz" && tar -xzvf libevent-2.0.22-stable.tar.gz && cd libevent-2.0.22-stable && ./configure && make && sudo make install'
+    - cwd: /src
 
 set_mysql_config_editor:
   cmd.run:
