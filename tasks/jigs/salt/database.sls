@@ -85,15 +85,14 @@ innodb_memcached:
 
 # Replicate the functionality of mysql_secure_installation.
 mysql-secure-installation:
-  mysql_database.absent:
-    - name: test
-    - require:
-      - service: mysqld
   mysql_user.absent:
     - name: ""
     - require:
       - service: mysqld
-
+#  mysql_database.absent:
+#    - name: test
+#    - require:
+#      - service: mysqld
 
 /etc/my.cnf:
   file.managed:
