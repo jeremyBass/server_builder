@@ -318,9 +318,9 @@ nginx-reboot-auto:
 
 
 # Ensure a source folder (/etc/nginx/cache/) is there to do `make`'s in
-/etc/nginx/cache/:
+/var/nginx/cache/:
   file.directory:
-    - name: /etc/nginx/cache/
+    - name: /var/nginx/cache/
     - user: {{ nginx['user'] }}
     - group: {{ nginx['user'] }}
     - mode: 777
