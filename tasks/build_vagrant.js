@@ -84,7 +84,7 @@ module.exports = function(grunt) {
         normalize_vagrant_plugins(["vagrant-vbguest","vagrant-hosts","vagrant-hostsupdater","vagrant-triggers"]);
 
 
-        var serverobj = grunt.create_env_tmp();
+        var serverobj = grunt.createEnvTmp();
         grunt.stdoutlog( serverobj , true, true);
 
         var sourceFile = "tasks/jigs/vagrant/Vagrantfile";
